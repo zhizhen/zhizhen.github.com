@@ -6,4 +6,4 @@ comments: true
 categories: Easy
 
 ---
-Yeah ! to be a hacker .
+Yeah ! to be a hacker , and write a blog with coding.
