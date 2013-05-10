@@ -4,7 +4,7 @@
   <title><![CDATA[Zhizhen's Blog]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2013-05-10T16:57:44+08:00</updated>
+  <updated>2013-05-10T17:05:55+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[zhizhen]]></name>
@@ -14,11 +14,19 @@
 
   
   <entry>
-    <title type="html"><![CDATA[to be a hacker]]></title>
+    <title type="html"><![CDATA[To Be A Hacker]]></title>
     <link href="http://zhizhen.github.io/blog/2013/05/10/to-be-a-hacker/"/>
-    <updated>2013-05-10T16:37:00+08:00</updated>
+    <updated>2013-05-10T00:00:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/05/10/to-be-a-hacker</id>
-    <content type="html"><![CDATA[<p>Yeah ! to be a hacker .</p>
+    <content type="html"><![CDATA[<hr />
+
+<p>layout: post
+title: &ldquo;to be a hacker&rdquo;
+date: 2013-05-10 16:37
+comments: true
+categories: Easy</p>
+
+<p>Yeah ! to be a hacker .</p>
 ]]></content>
   </entry>
   
