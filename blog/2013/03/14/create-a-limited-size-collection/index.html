@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Categories - Zhizhen's Blog</title>
+  <title>create a limited size collection - Zhizhen's Blog</title>
   <meta name="author" content="zhizhen">
 
   
-  <meta name="description" content="Blog Categories 2013 Easy mongo mongo About Me A little something about me. Recent Posts Git命令备忘 To Be a Hacker Create a Limited Size Collection &hellip;">
+  <meta name="description" content="we create a collection with limited size 100000: &gt; db.createCollection("colcase1", {capped:true, size:100000})
+{ "ok" : 1 }
+&gt; show collections &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://zhizhen.github.io/blog/categories">
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2013/03/14/create-a-limited-size-collection">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Zhizhen's Blog" type="application/atom+xml">
@@ -65,72 +67,115 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Categories</h1>
+    
+      <h1 class="entry-title">Create a Limited Size Collection</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-14T15:17:00+08:00" pubdate data-updated="true">Mar 14<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-categories">
 
 
+<div class="entry-content"><p>we create a collection with limited size 100000:</p>
 
-  
-  <h2>2013</h2>
+<pre><code>&gt; db.createCollection("colcase1", {capped:true, size:100000})
+{ "ok" : 1 }
+&gt; show collections
+colcase
+colcase1
+system.indexes
+&gt;
+</code></pre>
 
-<category>
-  
+<p>and, we can convert a exist collection to a limited one:</p>
 
+<pre><code>&gt; db.colcase.isCapped()
+false
+&gt; db.runCommand({"convertToCapped":"colcase",size:100000})
+{ "ok" : 1 }
+&gt; db.colcase.isCapped()
+true
+&gt;
+</code></pre>
 
-</category>
-
-
-
-<category>
-  
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/easy/'>Easy</a>
-  
-</span>
-
-
-</category>
-
-
-
-<category>
-  
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/mongo/'>mongo</a>
-  
-</span>
-
-
-</category>
-
-
-
-<category>
-  
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/mongo/'>mongo</a>
-  
-</span>
-
-
-</category>
-
+<p>Look ! we did it</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">zhizhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-14T15:17:00+08:00" pubdate data-updated="true">Mar 14<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mongo/'>mongo</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/03/12/simple-introduce-of-mongodb/" title="Previous Post: simple introduction of mongodb">&laquo; simple introduction of mongodb</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/05/10/to-be-a-hacker/" title="Next Post: to be a hacker">to be a hacker &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -185,7 +230,10 @@
       var disqus_shortname = 'zhizhen';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2013/03/14/create-a-limited-size-collection/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2013/03/14/create-a-limited-size-collection/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
