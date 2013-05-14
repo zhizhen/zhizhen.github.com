@@ -23,4 +23,4 @@ and, we can convert a exist collection to a limited one:
     >
 Look ! we did it
 
-![123](/sources/images/qiaofeng.jpg)
+![](/sources/images/qiaofeng.jpg)
