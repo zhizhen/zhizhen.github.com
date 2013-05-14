@@ -4,7 +4,7 @@
   <title><![CDATA[Zhizhen's Blog]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2013-05-14T11:08:39+08:00</updated>
+  <updated>2013-05-14T11:12:08+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[zhizhen]]></name>
@@ -177,15 +177,6 @@ git remote set-head origin master   # 设置远程仓库的HEAD指向master分�
 <pre><code>git branch --set-upstream master origin/master
 git branch --set-upstream develop origin/develop
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[to be a hacker]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/05/10/to-be-a-hacker/"/>
-    <updated>2013-05-10T16:37:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/05/10/to-be-a-hacker</id>
-    <content type="html"><![CDATA[<p>Yeah ! to be a hacker , and write a blog with coding.</p>
 ]]></content>
   </entry>
   
