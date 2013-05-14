@@ -23,4 +23,4 @@ and, we can convert a exist collection to a limited one:
     >
 Look ! we did it
 
-![123](~/octopress/source/images/qiaofeng.jpg)
+![12](~/octopress/source/images/qiaofeng.jpg)
