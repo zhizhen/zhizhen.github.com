@@ -22,3 +22,5 @@ and, we can convert a exist collection to a limited one:
     true
     >
 Look ! we did it
+
+image /sources/images/qiaofeng.jpg
