@@ -3,7 +3,7 @@ layout: post
 title: "Git命令备忘"
 date: 2013-05-13 12:21
 comments: true
-categories: 
+categories: Git
 ---
 ## Git配置
     git config --global user.name "robbin"   
