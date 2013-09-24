@@ -8,7 +8,7 @@ categories: php
 
 先看这段代码：
     <?php
-    abstract class A{
+    class A{
         public static funciton create(){
             return new static();
         }
