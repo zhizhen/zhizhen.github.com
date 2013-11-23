@@ -69,3 +69,5 @@ cocos2dx是这样使用lua引擎的
 cocos2dx_lua_loader 这个函数会在当lua文件被required 进来的时候调用，因此就达到了加密和
 解密的效果。
 enjoying!
+就在昨天，quick-cocos2dx 的2.2.1版本发布，已经支持lua的加密和解密了，也可以参考一下
+http://cn.quick-x.com/
