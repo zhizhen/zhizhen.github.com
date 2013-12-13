@@ -6,7 +6,7 @@ comments: true
 categories: haskell
 ---
 
-Haskell是一门纯函数式语言。它因为monads一级其类型系统而出名，初窥haskell,倒是觉得
+Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
 其中的列表跟erlang特别像。  
 下面是基础语法：
     -- 单行注释以两个破折号开头
@@ -24,7 +24,7 @@ Haskell是一门纯函数式语言。它因为monads一级其类型系统而出�
     8 - 1 --7
     10 * 2 --20
     35 / 5 --7.0 注意这里除了之后是浮点数
-    35 
+    35 `div` 5 -- 7 
     True
     False
     not True
