@@ -12,8 +12,95 @@ categories: c
 关于设计思想方面的说明。  
 不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
 代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。
+
+### skynet是什么
+请看原作者博客[skynet开源](http://blog.codingnow.com/2012/08/skynet.html)  
+*“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。  
+现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”*  
+由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。   
+***
+下面来看关于skynet架构的说明：  
+*“这个系统是单进程多线程模型。”*   
+*“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。  
+线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”*  
+skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：  
+	
+	root = "./"
+	thread = 8                                                                      
+	logger = nil 
+	harbor = 1 
+	address = "127.0.0.1:2526"
+	master = "127.0.0.1:2013"
+	start = "main"
+	standalone = "0.0.0.0:2013"
+	luaservice = root.."service/?.lua;"..root.."service/?/init.lua"
+	cpath = root.."service/?.so"
+	protopath = root.."proto"
+	redis = root .. "redisconf"
+thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来  
+***
+来看看关于agent的说明：  
+*“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”*  
+是不是跟erlang的init, terminate 很像？  
+*“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。  
+一、一个服务的 callback 函数永远不会被并发。  
+二、一个服务向两一个服务发送的消息的次序是严格保证的。  
+我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”*  
+来看它的启动流程：  
+skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化  
+然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context  
+接着是logger, harbor, snlua这些服务模块的启动  
+所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环  
+亮代码：  
+
+	void 
+	skynet_start(struct skynet_config * config) {
+    	skynet_group_init();
+    	skynet_harbor_init(config->harbor);
+    	skynet_handle_init(config->harbor);
+    	skynet_mq_init();
+    	skynet_module_init(config->module_path);
+    	skynet_timer_init();
+    	skynet_socket_init();
+
+    	struct skynet_context *ctx;
+    	ctx = skynet_context_new("logger", config->logger);
+    	if (ctx == NULL) {
+        	fprintf(stderr,"launch logger error");
+        	exit(1);
+    	}   
+
+    	if (config->standalone) {
+        	if (_start_master(config->standalone)) {
+            	fprintf(stderr, "Init fail : mater");
+            	return;
+        	}   
+    	}   
+    	// harbor must be init first
+    	if (skynet_harbor_start(config->master , config->local)) {
+        	fprintf(stderr, "Init fail : no master");
+        	return;
+    	}   
+
+    	ctx = skynet_context_new("localcast", NULL);
+    	if (ctx == NULL) {
+        	fprintf(stderr,"launch local cast error");
+        	exit(1);
+    	}   
+    	ctx = skynet_context_new("snlua", "launcher");
+    	if (ctx) {
+        	skynet_command(ctx, "REG", ".launcher");
+        	ctx = skynet_context_new("snlua", config->start);
+    	}   
+
+    	_start(config->thread);
+    	skynet_socket_free();                                                       
+	}
+
+
+
 ### skynet集群及RPC
-云风的博客上这么写着：  
+云风的博客[skynet集群及RPC](http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html)上这么写着：  
 *“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”*  
 按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。  
 而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件 
@@ -145,5 +232,5 @@ skynet_context_send(skynet_server.c 第682行)
 
     	skynet_mq_push(ctx->queue, &smsg);
 	} 
-它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。
-说点心得，skynet的集群有点类似erlang的节点这一概念
+它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。  
+说点心得，skynet的集群的确是有点类似erlang的节点这一概念
