@@ -233,4 +233,40 @@ skynet_context_send(skynet_server.c 第682行)
     	skynet_mq_push(ctx->queue, &smsg);
 	} 
 它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。  
-说点心得，skynet的集群的确是有点类似erlang的节点这一概念
+最终harbor的register消息发向了哪里呢？master !
+***
+#### RPC核心和模块化思想
+RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：  
+*"master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。  
+master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。  
+skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。"*  
+skynet/config配置文件里面有这么两条配置：
+	
+	master = "127.0.0.1:2013"
+	standalone = "0.0.0.0:2013"  
+然后再看：
+
+	skynet_start(struct skynet_config * config) {
+	// ...
+	if (config->standalone) {
+		if (_start_master(config->standalone)) {
+			fprintf(stderr, "Init fail : mater");
+			return;
+		}
+	}
+	
+	// harbor must be init first
+	if (skynet_harbor_start(config->master , config->local)) {
+		fprintf(stderr, "Init fail : no master");
+		return;
+	}
+	// ...
+	}
+这里配得standalone = "0.0.0.0:2013" 就表示这个skynet节点在本机开启2013端口作为master使用。  
+而如果这个节点不是master，那么这里配的master = "127.0.0.1:2013" 则告诉它master在哪里。  
+
+master纪录所有worker的信息是在skynet_handle文件实现的一个哈希表存储的。当由skynet_harbor发起注册register的时候，它就实现了一个句柄handle到skynet_context的映射。
+
+真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c ...等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。  
+
+基本上以上就是skynet的主体流程了。
