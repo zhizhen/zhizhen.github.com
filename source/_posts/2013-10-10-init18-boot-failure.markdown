@@ -16,3 +16,4 @@ categories: gentoo
 * * *
 ## 解决办法
 改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo
+<!--more-->

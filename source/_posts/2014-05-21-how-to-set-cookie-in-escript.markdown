@@ -8,6 +8,7 @@ categories: erlang
 ###Question
 As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.  
 * * *
+<!--more-->
 As you know, I need to keep my escript's cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)  
 
     #!/usr/bin/env escript

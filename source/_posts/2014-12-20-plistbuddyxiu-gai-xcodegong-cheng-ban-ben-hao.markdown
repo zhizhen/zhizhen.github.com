@@ -15,4 +15,5 @@ categories: mac
 
     /usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
 
+<!--more-->
 最后准备把这东西用上去的时候，发现之前队友已经加过了，给力。

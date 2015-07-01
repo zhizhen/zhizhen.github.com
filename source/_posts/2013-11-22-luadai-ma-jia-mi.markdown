@@ -10,6 +10,7 @@ categories: cocos2dx
 比如常见的AES, XXTEA .. 等等，在cocos2dx加载加密后的lua文件后，解密之后再
 执行.
 
+<!--more-->
 * * *
 加密工具我用c写了一个,代码放在github上了：https://github.com/zhizhen/cocos2dx-lua-crypto.git  
 关键代码如下

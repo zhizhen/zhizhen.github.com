@@ -12,6 +12,7 @@ categories: nginx
     try_files file1 [file2...fileN] fallback
 默认值：无
 作用域：location
+<!--more-->
 * * *
 今天碰到一个问题，nginx 中这样写:
     try_files $url $url/ /index.php

@@ -9,6 +9,7 @@ categories: cocos2dx
 前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
 解密后的lua代码了  
 
+<!--more-->
 * * *
 cocos2dx是这样使用lua引擎的
     // 初始化lua引擎

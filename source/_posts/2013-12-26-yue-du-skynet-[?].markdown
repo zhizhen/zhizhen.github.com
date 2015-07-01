@@ -12,6 +12,7 @@ categories: c
 关于设计思想方面的说明。  
 不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
 代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。
+<!--more-->
 
 ### skynet是什么
 请看原作者博客[skynet开源](http://blog.codingnow.com/2012/08/skynet.html)  

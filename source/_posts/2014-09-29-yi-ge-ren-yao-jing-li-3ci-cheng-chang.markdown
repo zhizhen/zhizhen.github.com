@@ -14,9 +14,11 @@ categories:
 
 * 第三次在，明知道有些事无能为力，但还是开始尽力争取的时候  
 
+<!--more-->
   还记得电影《大话西游》么，长大后再看，其实感触最深的，已经是至尊宝跪下来跟唐僧说的那句：  
   师傅！弟子昔日罪孽深重，幸得观音大士指点迷津，现在已一心皈依我佛，决不再留恋尘世间半点情欲。护送师傅西天取经的重任，弟子愿一肩承担！  
  
+
   ![](/images/zhizunbao.png "zhizunbao")
 
  <embed src="http://www.xiami.com/widget/0_2079912/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed> 

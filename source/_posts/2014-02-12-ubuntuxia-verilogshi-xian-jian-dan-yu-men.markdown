@@ -10,6 +10,7 @@ categories:
 verilog有两个比较常用的编译器：  
 1. Icarus Verilog  
 2. VeriWell Verilog Simulator  
+<!--more-->
 ubuntu源里面默认的是Icarus Verilog，安装编译器：  
 
 	sudo apt-get install verilog  
