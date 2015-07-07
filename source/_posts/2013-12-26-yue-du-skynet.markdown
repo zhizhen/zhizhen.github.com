@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "阅读skynet(一)"
+title: "阅读skynet"
 date: 2013-12-26 09:57
 comments: true
 categories: c
