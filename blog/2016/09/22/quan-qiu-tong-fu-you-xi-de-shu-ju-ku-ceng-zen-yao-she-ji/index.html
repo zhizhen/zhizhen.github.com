@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>全球同服游戏的数据库层怎么设计 - 植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="怎么样设计百万DAU的数据层？ 老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。 数据库集群解决什么问题 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">全球同服游戏的数据库层怎么设计</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-22T23:34:00+08:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2016</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><hr />
+
+<h2>怎么样设计百万DAU的数据层？</h2>
+
+<p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
+
+<h3>数据库集群解决什么问题</h3>
+
+<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+
+<h3>分布式数据库解决什么问题</h3>
+
+<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+
+<hr />
+
+<p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
+
+<h2>简单了解一下mnesia的分布式</h2>
+
+<ul>
+<li>适用范围：<br/>
+较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
+<li>优势：<br/>
+erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
+<li>问题：<br/>
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+n(n-1)/2，承载有限。</li>
+</ul>
+
+
+<h3>实例：</h3>
+
+<pre><code>-module(db_sync).
+
+-export([create_schema/0, create_table/0, i/0]).
+-export([add_account/3, del_account/1,
+        read_account/1]).
+
+-record(account, {id = 0, name = "", phone =
+        13800000000}).
+
+create_schema() -&gt;
+net_kernel:connect('two@MacAir'),
+io:format("Self:~w, Connect
+        Nodes:~w",[node(),
+        nodes()]),
+mnesia:create_schema([node()|nodes()]).
+
+create_table() -&gt;
+    mnesia:create_table(account,
+            [{disc_copies, [node()|nodes()]},
+            {attributes,
+            record_info(fields,
+                account)}]
+            ).
+
+i() -&gt;
+mnesia:system_info().
+
+add_account(ID, Name, Phone) -&gt;
+mnesia:transaction(fun() -&gt;
+        mnesia:write(#account{id
+            = ID, name
+            = Name,
+            phone =
+            Phone})
+        end).
+
+del_account(ID) -&gt;
+    mnesia:transaction(fun() -&gt;
+            mnesia:delete({account,
+                ID})
+            end).
+
+read_account(ID) -&gt;
+    mnesia:transaction(fun()
+            -&gt;
+            mnesia:read({account,
+                ID})
+            end).
+</code></pre>
+
+<p>xterm1中</p>
+
+<pre><code>erl -pa ebin -sname two -mnesia dir "two"
+</code></pre>
+
+<p>xterm2中</p>
+
+<pre><code>erl -pa
+ebin -sname one -mnesia dir "one"
+db_sync:create_schema().
+</code></pre>
+
+<p>xterm1,xterm2中分别：</p>
+
+<pre><code>mnesia:start().
+</code></pre>
+
+<p>任意节点创建表:</p>
+
+<pre><code>db_sync:create_table().
+</code></pre>
+
+<p>one节点插入数据:</p>
+
+<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
+</code></pre>
+
+<p>two节点查找数据:</p>
+
+<pre><code>db_sync:read_account(2).
+</code></pre>
+
+<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。比较简单.一旦DAU达到一定量级，全联通节点之间的数据同步，是肯定有性能压力的。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
+
+<h2>我们还是以mnesia为例，再来了解一下水平切分</h2>
+
+<ul>
+<li>适用范围：
+百万级甚至千万级大数据情况通用解决方案</li>
+<li>问题：
+单点故障恢复难做</li>
+</ul>
+
+
+<h3>简单的水平切分，hash</h3>
+
+<p>未完待续。。。</p>
+
+<h2>参考文章</h2>
+
+<ul>
+<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">张植臻</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-22T23:34:00+08:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2016</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/05/07/yi-ci-wei-qi-dian/" title="Previous Post: 以此为起点">&laquo; 以此为起点</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

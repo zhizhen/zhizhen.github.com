@@ -1,0 +1,928 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行
+创建hello.hs文件 ">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io/blog/page/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/03/haskell-er/">Haskell(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-03T11:50:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/12/03/haskell-er/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
+创建hello.hs文件</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/03/haskell-er/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/30/haskell-%5B%3F%5D/">Haskell(一)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-30T10:00:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/11/30/haskell-%5B%3F%5D/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
+其中的列表跟erlang特别像。<br/>
+下面是基础语法：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/11/30/haskell-%5B%3F%5D/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian/">Cocos2dx解密执行lua文件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-22T20:54:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
+解密后的lua代码了</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/22/luadai-ma-jia-mi/">Lua代码加密</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-22T12:45:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/11/22/luadai-ma-jia-mi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>开发者为了防止代码泄漏，在发布前一般会对脚本进行加密，加密方式有多种，
+比如常见的AES, XXTEA .. 等等，在cocos2dx加载加密后的lua文件后，解密之后再
+执行.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/11/22/luadai-ma-jia-mi/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/10/init18-boot-failure/">INIT18 BOOT FAILURE</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-10T11:40:00+08:00" pubdate data-updated="true">Oct 10<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/10/init18-boot-failure/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>问题描述</h2>
+
+<p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
+
+<hr />
+
+<h2>问题原因</h2>
+
+<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+
+<hr />
+
+<h2>解决办法</h2>
+
+<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/10/init18-boot-failure/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/one-billion-customers/">One Billion Customers 部分摘录</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T11:46:00+08:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/09/one-billion-customers/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>是开端亦是转折</h2>
+
+<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。</p>
+
+<hr />
+
+<p>1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
+裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
+党加速了私有化和市场改革的进程，因为党的威信已经被打破，只能通过快速提高人民
+生活水平来重建。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/09/one-billion-customers/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/02/nginxzhong-de-try-files/">Nginx中的try_files</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T00:32:00+08:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/02/nginxzhong-de-try-files/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
+用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
+处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
+
+<hr />
+
+<pre><code>try_files file1 [file2...fileN] fallback
+</code></pre>
+
+<p>默认值：无
+作用域：location</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/02/nginxzhong-de-try-files/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/24/phpdelaystaticbind/">php5.3引入的延迟静态绑定</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-24T12:52:00+08:00" pubdate data-updated="true">Sep 24<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/24/phpdelaystaticbind/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先看这段代码：</p>
+
+<pre><code>&lt;?php
+class A{
+    public static funciton create(){
+        return new static();
+    }
+    public static function createself(){
+        return new self();
+    }
+}
+
+class B extends A{
+
+}
+
+class C extends A{
+
+}
+var_dump( B::create() );
+var_dump( C::createself() );
+?&gt;
+</code></pre>
+
+<p>得到结果如下</p>
+
+<pre><code>object(B)#1 (0) { } 
+object(A)#1 (0) { } 
+</code></pre>
+
+<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+static与self的区别就是它的执行环境是调用它的对象。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/15/vs2010pei-zhi-zhi-cocos2dxchou-lou-de-helloluamo-ban/">Cocos2dx之修改vs2010下丑陋的hellolua模板</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-15T20:06:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/15/vs2010pei-zhi-zhi-cocos2dxchou-lou-de-helloluamo-ban/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直想抽时间把cocos2dx入门这自己的经历写一下，终于周末啦！<br/>
+首先说明，本人win7用户，IDE是vs2010，编译环境是win32，这篇文章是介绍如何在vs2010中开始你的第一个cocos2dx+lua项目的
+前提是你必须安装了vs2010哈！<br/>
+第一步，下载<a href="www.cocos2d-x.org/projects/cocos2d-x/wiki/Download">cocos2dx</a>，下载后解压，这个放在哪个目录都没关系。<br/>
+第二步，安装cocos2dx工程模板，双击解压后目录下的 install-templates-msvc.bat 这个文件，如下图<br/>
+<img src="/images/vs-cocos2d/anzhuangmuban.png" alt="" /><br/>
+第三步，打开你的vs2010,文件-> 新建项目，这时候你会看到，已安装的模板一栏里有Cocos2d-win32 Application 这个模板，并且有cocos2dx的经典图标在那！<br/>
+<img src="/images/vs-cocos2d/xinjianxiangmu.png" alt="" /><br/>
+这时候，你需要输入名称，然后点确认.<br/>
+<img src="/images/vs-cocos2d/Wizard.png" alt="" /><br/>
+点击下一步<br/>
+<img src="/images/vs-cocos2d/selectengine.png" alt="Select engile" /><br/>
+选择引擎，这里选择audio和lua引擎<br/>
+然后就能看到刚刚创建的项目了:<br/>
+<img src="/images/vs-cocos2d/initproject.png" alt="init project" /><br/>
+这时候如果我们点debug按钮，项目是不能运行起来的，因为它缺少一些库<br/>
+第四步，运行cocos2dx目录下，也就是之前解压的目录下的build-win32.bat，等运行完后，会在当前目录下生成Debug.win32这个目录
+<img src="/images/vs-cocos2d/buildcocos2d.png" alt="build cocos2dx" />
+然后找到Demo项目下的Debug.win32,如果没有这个目录的话，执行一下Demo项目的Debug就有了（尽管执行报错），但是会生成这个目录:
+<img src="/images/vs-cocos2d/demodebugdir.png" alt="" />
+然后我们把cocos2dx/Debug.win32 这个目录下的这些文件拷贝到 Demo/Debug.win32 下</p>
+
+<pre><code>glew32.lib
+libcocos2d.lib
+libCocosDenshion.lib
+liblua.lib
+lua51.lib
+pthreadVCE2.lib
+
+glew32.dll
+libcocos2d.dll
+libCocosDenshion.dll
+libtiff.dll
+lua51.dll
+pthreadVCE2.dll
+zlib1.dll
+</code></pre>
+
+<p>有点多，需要一个一个拷贝过去，如果缺了其中一个的话，会报错<br/>
+<img src="/images/vs-cocos2d/libs.png" alt="libs" /><br/>
+第五步，在Demo/Demo目录下创建Libs目录，把cocos2dx目录下的cocos2dx;CocosDenshion;extensions;以及cocos2dx/scripting 目录下的lua 都拷贝到新建的Libs中来。<br/>
+<img src="/images/vs-cocos2d/copylibs.png" alt="copylibs" /><br/>
+第六步，配置包含路径，项目上点右键 &ndash;> 属性 &ndash;> C/C++ &ndash;> 常规-> 附加包含目录 ，删除它原来的那些，将下面这些加入<br/>
+<img src="/images/vs-cocos2d/fujiamulu.png" alt="fujiamulu" /><br/>
+再打开链接器的输入，加入lua51.lib
+<img src="/images/vs-cocos2d/lianjieqi.png" alt="lianjieqi" />
+设置完后点击应用，然后就可以运行了，结果如下，瞧！一个小农场游戏：
+<img src="/images/vs-cocos2d/Demo.png" alt="Demo" /></p>
+
+<p>当然，还没完，因为我们不仅仅是要运行第一个cocos2dx + lua项目，我们是要改它生成的不美观的目录结构：
+<img src="/images/vs-cocos2d/demo_pic1.png" alt="" /><img src="/images/vs-cocos2d/demo_pic2.png" alt="" />
+首先，删掉Demo目录下的proj.win32文件夹，因为里面什么东西都没有！<br/>
+然后在项目的资源管理器面板中，在Demo.rc;Demo.ico;Demo.png这三个文件上点击右键-> 移除-> 删除;
+再删除Demo/Demo/proj.win32下的res文件夹.<br/>
+将main.h;main.cpp这两个文件移动到Demo/Demo/Classes 文件夹中.退出vs2010.<br/>
+将Demo.win32.vcxproj;Demo.win32.vcxproj.filters;Demo.win32.vcxproj.user 三个文件移动到Demo目录下；删除Demo/Demo/proj.win32这个文件夹<br/>
+将Demo/Demo下的Classes;Libs;Resources三个文件夹移动到Demo目录下；并删除Demo/Demo这个目录.<br/>
+修改完之后，整个项目目录结构是这样子的：
+<img src="/images/vs-cocos2d/final.png" alt="" /><br/>
+然而这时候是无法打开项目的，打开Demo.sln文件编辑,并删掉这一部分：
+<img src="/images/vs-cocos2d/modifysln.png" alt="" /><br/>
+删除Demo.win32.vcxproj.filters这个文件，让我们来重新设置filters过滤器,删除之后打开Demo.sln。移除项目中的所有文件:
+然后依次按照我们项目中Classes;Libs;Resources这样的目录重新设置filters,分别用点击右键 &ndash;> 添加筛选器;右键 &ndash;> 添加现有项， 将我们的文件导入:
+<img src="/images/vs-cocos2d/newfilter.png" alt="" /><br/>
+由于采用的是相对路径，所以附加目录这里得改一下啦：
+<img src="/images/vs-cocos2d/newfujia.png" alt="" /><br/>
+还有这里，我习惯把中间目录跟Debug目录放到一块儿去
+<img src="/images/vs-cocos2d/zhongjianmulu.png" alt="" /><br/>
+这时候改完之后发现跑不动了，因为找不到Resources目录
+<img src="/images/vs-cocos2d/resourcebug.png" alt="" /><br/>
+看到没，在这里设置的
+<img src="/images/vs-cocos2d/resourcefinal.png" alt="" /><br/>
+好了，修改完之后，又能够看到我们的农场游戏了：
+<img src="/images/Demo.png" alt="" /><br/>
+这时候的项目组织方式，已经按照我自己的想法完全改了:
+<img src="/images/vs-cocos2d/final.png" alt="" /><br/>
+按照这些方法，你完全可以以你自己的方式去组织项目结构</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/15/linux-c-gdb/">Linux C (三) Gdb</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-15T16:31:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/15/linux-c-gdb/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入</p>
+
+<pre><code>gdb -v
+</code></pre>
+
+<p>查看gdb的版本信息</p>
+
+<pre><code>zhang@note:~/test_make$ gdb -v
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
+</code></pre>
+
+<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
+
+<pre><code>CFLAGS = -g
+main:main.o test1.o test2.o
+    gcc -o $@ $^
+..c.o:
+    gcc $(CFLAGS) -c $&lt; 
+</code></pre>
+
+<p>然后先删了老的main<em> 和</em>.o文件</p>
+
+<pre><code>zhang@note:~/test_make$ rm main
+zhang@note:~/test_make$ rm *.o
+</code></pre>
+
+<p>好了，重新编译</p>
+
+<pre><code>zhang@note:~/test_make$ make
+cc -g   -c -o main.o main.c
+cc -g   -c -o test1.o test1.c
+cc -g   -c -o test2.o test2.c
+gcc -o main main.o test1.o test2.o
+zhang@note:~/test_make$
+</code></pre>
+
+<p>编译完后运行gdb</p>
+
+<pre><code>zhang@note:~/test_make$ gdb ./main
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
+Reading symbols from /home/zhang/test_make/main...done.
+(gdb)
+</code></pre>
+
+<p>输入命令</p>
+
+<pre><code>(gdb) list
+1   #include "test1.h"
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       test1_print("Hello ");
+7       test2_print("World !");
+8   }
+(gdb) 
+Line number 9 out of range; main.c has 8 lines.
+(gdb)
+</code></pre>
+
+<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
+
+<pre><code>(gdb) list
+No symbol table is loaded.  Use the "file" command.
+(gdb)
+</code></pre>
+
+<p>如果只想列出2-9行之间的代码</p>
+
+<pre><code>(gdb) list 2,9
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       test1_print("Hello ");
+7       test2_print("World !");
+8   }
+</code></pre>
+
+<p>如果只想列出某个函数</p>
+
+<pre><code>(gdb) list test1_print 
+1   #include "stdio.h"
+2   #include "test1.h"
+3   
+4   void test1_print(char *print_str)
+5   {
+6       printf("This is test1 print %s \n", print_str);
+7   }
+(gdb)
+</code></pre>
+
+<p>为了能够下断点查看变量值，我们改下main函数</p>
+
+<pre><code>void main(int argc, char **argv)
+   {
+       char msg1[128] = "Hello ";
+       char msg2[128] = "World !";
+       test1_print(msg1);
+       test2_print(msg2);
+   }
+</code></pre>
+
+<p>然后</p>
+
+<pre><code>zhang@note:~/test_make$ make        #编译
+cc -g   -c -o main.o main.c
+cc -g   -c -o test1.o test1.c
+cc -g   -c -o test2.o test2.c
+gcc -o main main.o test1.o test2.o
+zhang@note:~/test_make$ gdb ./main
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
+Reading symbols from /home/zhang/test_make/main...done.
+(gdb) list                          #列出代码
+1   #include "test1.h"
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       char msg1[128] = "Hello ";
+7       char msg2[128] = "World !";
+8       test1_print(msg1);
+9       test2_print(msg2);
+10  }
+(gdb) break 7                       #在第7行的位置下断点
+Breakpoint 1 at 0x804847c: file main.c, line 7.
+(gdb) run main                      #执行调试
+Starting program: /home/zhang/test_make/main main
+
+Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
+7       char msg2[128] = "World !";
+(gdb) print msg1                    #查看断点处变量msg1的值
+$1 = "Hello ", '\000' &lt;repeats 121 times&gt;
+(gdb) continue                      #继续往下执行
+Continuing.
+This is test1 print Hello  
+This is test2 print World ! 
+[Inferior 1 (process 3270) exited normally]
+(gdb)
+</code></pre>
+
+<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
+附上常用命令：</p>
+
+<pre><code>小结：常用的gdb命令
+backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
+breakpoint 在程序中设置一个断点
+cd 改变当前工作目录
+clear 删除刚才停止处的断点
+commands 命中断点时，列出将要执行的命令
+continue 从断点开始继续执行
+delete 删除一个断点或监测点；也可与其他命令一起使用
+display 程序停止时显示变量和表达时
+down 下移栈帧，使得另一个函数成为当前函数
+frame 选择下一条continue命令的帧
+info 显示与该程序有关的各种信息
+jump 在源程序中的另一点开始运行
+kill 异常终止在gdb 控制下运行的程序
+list 列出相应于正在执行的程序的原文件内容
+next 执行下一个源程序行，从而执行其整体中的一个函数
+print 显示变量或表达式的值
+pwd 显示当前工作目录
+pype 显示一个数据结构（如一个结构或C++类）的内容
+quit 退出gdb
+reverse-search 在源文件中反向搜索正规表达式
+run 执行该程序
+search 在源文件中搜索正规表达式
+set variable 给变量赋值
+signal 将一个信号发送到正在运行的进程
+step 执行下一个源程序行，必要时进入下一个函数
+undisplay display命令的反命令，不要显示表达式
+until 结束当前循环
+up 上移栈帧，使另一函数成为当前函数
+watch 在程序中设置一个监测点（即数据断点）
+whatis 显示变量或函数类型 
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,787 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="怎么样设计百万DAU的数据层？ 老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。 数据库集群解决什么问题 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-22T23:34:00+08:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2016</time>
+        
+         | <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><hr />
+
+<h2>怎么样设计百万DAU的数据层？</h2>
+
+<p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
+
+<h3>数据库集群解决什么问题</h3>
+
+<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+
+<h3>分布式数据库解决什么问题</h3>
+
+<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+
+<hr />
+
+<p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
+
+<h2>简单了解一下mnesia的分布式</h2>
+
+<ul>
+<li>适用范围：<br/>
+较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
+<li>优势：<br/>
+erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
+<li>问题：<br/>
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+n(n-1)/2，承载有限。</li>
+</ul>
+
+
+<h3>实例：</h3>
+
+<pre><code>-module(db_sync).
+
+-export([create_schema/0, create_table/0, i/0]).
+-export([add_account/3, del_account/1,
+        read_account/1]).
+
+-record(account, {id = 0, name = "", phone =
+        13800000000}).
+
+create_schema() -&gt;
+net_kernel:connect('two@MacAir'),
+io:format("Self:~w, Connect
+        Nodes:~w",[node(),
+        nodes()]),
+mnesia:create_schema([node()|nodes()]).
+
+create_table() -&gt;
+    mnesia:create_table(account,
+            [{disc_copies, [node()|nodes()]},
+            {attributes,
+            record_info(fields,
+                account)}]
+            ).
+
+i() -&gt;
+mnesia:system_info().
+
+add_account(ID, Name, Phone) -&gt;
+mnesia:transaction(fun() -&gt;
+        mnesia:write(#account{id
+            = ID, name
+            = Name,
+            phone =
+            Phone})
+        end).
+
+del_account(ID) -&gt;
+    mnesia:transaction(fun() -&gt;
+            mnesia:delete({account,
+                ID})
+            end).
+
+read_account(ID) -&gt;
+    mnesia:transaction(fun()
+            -&gt;
+            mnesia:read({account,
+                ID})
+            end).
+</code></pre>
+
+<p>xterm1中</p>
+
+<pre><code>erl -pa ebin -sname two -mnesia dir "two"
+</code></pre>
+
+<p>xterm2中</p>
+
+<pre><code>erl -pa
+ebin -sname one -mnesia dir "one"
+db_sync:create_schema().
+</code></pre>
+
+<p>xterm1,xterm2中分别：</p>
+
+<pre><code>mnesia:start().
+</code></pre>
+
+<p>任意节点创建表:</p>
+
+<pre><code>db_sync:create_table().
+</code></pre>
+
+<p>one节点插入数据:</p>
+
+<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
+</code></pre>
+
+<p>two节点查找数据:</p>
+
+<pre><code>db_sync:read_account(2).
+</code></pre>
+
+<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。比较简单.一旦DAU达到一定量级，全联通节点之间的数据同步，是肯定有性能压力的。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
+
+<h2>我们还是以mnesia为例，再来了解一下水平切分</h2>
+
+<ul>
+<li>适用范围：
+百万级甚至千万级大数据情况通用解决方案</li>
+<li>问题：
+单点故障恢复难做</li>
+</ul>
+
+
+<h3>简单的水平切分，hash</h3>
+
+<p>未完待续。。。</p>
+
+<h2>参考文章</h2>
+
+<ul>
+<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-07T00:50:00+08:00" pubdate data-updated="true">May 7<span>th</span>, 2016</time>
+        
+         | <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><hr />
+
+<blockquote><p>There are some birds that you can&rsquo;t lock,their every feather on their body is
+sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
+
+<hr />
+
+<p><img src="/images/2016/1.pic_hd.jpg" alt="" /></p>
+
+<p>来自《创游记》。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/05/07/yi-ci-wei-qi-dian/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-07T11:13:00+08:00" pubdate data-updated="true">Jul 7<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/07/07/wo-yu-you-xi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><hr />
+
+<blockquote><p>The farther backward you can look, the farther forward you will see.<br/>
+——Winston Churchill</p></blockquote>
+
+<hr />
+
+<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br/>
+某一天，拿着零花钱去买冰棒，要是当初，把钱买了冰棒。。。。。。
+<img src="/images/blog_image/games/konglongkuaida.png" alt="" /></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/07/07/wo-yu-you-xi/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-27T11:41:00+08:00" pubdate data-updated="true">Dec 27<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>历史</h2>
+
+<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。</p>
+
+<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-20T01:48:00+08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行：</p>
+
+<pre><code>&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt;
+</code></pre>
+
+<p>后来发现mac下直接有现成工具可用:</p>
+
+<pre><code>/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/">Mac Sed 替换搜索到文本的下一行</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-18T22:15:00+08:00" pubdate data-updated="true">Dec 18<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
+举个例子，比如有一个test文件,内容是：</p>
+
+<pre><code>version
+1.0.1
+XXX
+version
+1.0.2
+XXX
+version
+1.0.3
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang/">一个人要经历3次成长</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-09-29T10:55:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul>
+<li><p>第一次在，发现自己不是世界中心的时候</p></li>
+<li><p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候</p></li>
+<li><p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候</p></li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/21/how-to-set-cookie-in-escript/">How to Set_cookie in Escript</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-21T10:10:00+08:00" pubdate data-updated="true">May 21<span>st</span>, 2014</time>
+        
+         | <a href="/blog/2014/05/21/how-to-set-cookie-in-escript/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>Question</h3>
+
+<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.</p>
+
+<hr />
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/21/how-to-set-cookie-in-escript/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men/">Ubuntu下verilog实现简单“与门”</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-12T16:51:00+08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><hr />
+
+<h3>第一步 搭建环境</h3>
+
+<p>verilog有两个比较常用的编译器：<br/>
+1. Icarus Verilog<br/>
+2. VeriWell Verilog Simulator</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/26/yue-du-skynet/">阅读skynet</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-26T09:57:00+08:00" pubdate data-updated="true">Dec 26<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/12/26/yue-du-skynet/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
+优化的博客了。<br/>
+云风关于skynet的介绍说了，skynet主要还是参照了erlang的
+服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
+关于设计思想方面的说明。<br/>
+不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/26/yue-du-skynet/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: gentoo | 植臻]]></title>
+  <link href="http://zhizhen.github.io/blog/categories/gentoo/atom.xml" rel="self"/>
+  <link href="http://zhizhen.github.io/"/>
+  <updated>2016-09-23T03:03:58+08:00</updated>
+  <id>http://zhizhen.github.io/</id>
+  <author>
+    <name><![CDATA[张植臻]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[INIT18 BOOT FAILURE]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/10/10/init18-boot-failure/"/>
+    <updated>2013-10-10T11:40:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/10/10/init18-boot-failure</id>
+    <content type="html"><![CDATA[<h2>问题描述</h2>
+
+<p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
+
+<hr />
+
+<h2>问题原因</h2>
+
+<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+
+<hr />
+
+<h2>解决办法</h2>
+
+<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+</feed>

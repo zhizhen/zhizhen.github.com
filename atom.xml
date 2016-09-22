@@ -1,0 +1,1971 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[植臻]]></title>
+  <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
+  <link href="http://zhizhen.github.io/"/>
+  <updated>2016-09-23T03:03:58+08:00</updated>
+  <id>http://zhizhen.github.io/</id>
+  <author>
+    <name><![CDATA[张植臻]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[全球同服游戏的数据库层怎么设计]]></title>
+    <link href="http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/"/>
+    <updated>2016-09-22T23:34:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji</id>
+    <content type="html"><![CDATA[<hr />
+
+<h2>怎么样设计百万DAU的数据层？</h2>
+
+<p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
+
+<h3>数据库集群解决什么问题</h3>
+
+<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+
+<h3>分布式数据库解决什么问题</h3>
+
+<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+
+<hr />
+
+<p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
+
+<h2>简单了解一下mnesia的分布式</h2>
+
+<ul>
+<li>适用范围：<br/>
+较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
+<li>优势：<br/>
+erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
+<li>问题：<br/>
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+n(n-1)/2，承载有限。</li>
+</ul>
+
+
+<h3>实例：</h3>
+
+<pre><code>-module(db_sync).
+
+-export([create_schema/0, create_table/0, i/0]).
+-export([add_account/3, del_account/1,
+        read_account/1]).
+
+-record(account, {id = 0, name = "", phone =
+        13800000000}).
+
+create_schema() -&gt;
+net_kernel:connect('two@MacAir'),
+io:format("Self:~w, Connect
+        Nodes:~w",[node(),
+        nodes()]),
+mnesia:create_schema([node()|nodes()]).
+
+create_table() -&gt;
+    mnesia:create_table(account,
+            [{disc_copies, [node()|nodes()]},
+            {attributes,
+            record_info(fields,
+                account)}]
+            ).
+
+i() -&gt;
+mnesia:system_info().
+
+add_account(ID, Name, Phone) -&gt;
+mnesia:transaction(fun() -&gt;
+        mnesia:write(#account{id
+            = ID, name
+            = Name,
+            phone =
+            Phone})
+        end).
+
+del_account(ID) -&gt;
+    mnesia:transaction(fun() -&gt;
+            mnesia:delete({account,
+                ID})
+            end).
+
+read_account(ID) -&gt;
+    mnesia:transaction(fun()
+            -&gt;
+            mnesia:read({account,
+                ID})
+            end).
+</code></pre>
+
+<p>xterm1中</p>
+
+<pre><code>erl -pa ebin -sname two -mnesia dir "two"
+</code></pre>
+
+<p>xterm2中</p>
+
+<pre><code>erl -pa
+ebin -sname one -mnesia dir "one"
+db_sync:create_schema().
+</code></pre>
+
+<p>xterm1,xterm2中分别：</p>
+
+<pre><code>mnesia:start().
+</code></pre>
+
+<p>任意节点创建表:</p>
+
+<pre><code>db_sync:create_table().
+</code></pre>
+
+<p>one节点插入数据:</p>
+
+<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
+</code></pre>
+
+<p>two节点查找数据:</p>
+
+<pre><code>db_sync:read_account(2).
+</code></pre>
+
+<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。比较简单.一旦DAU达到一定量级，全联通节点之间的数据同步，是肯定有性能压力的。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
+
+<h2>我们还是以mnesia为例，再来了解一下水平切分</h2>
+
+<ul>
+<li>适用范围：
+百万级甚至千万级大数据情况通用解决方案</li>
+<li>问题：
+单点故障恢复难做</li>
+</ul>
+
+
+<h3>简单的水平切分，hash</h3>
+
+<p>未完待续。。。</p>
+
+<h2>参考文章</h2>
+
+<ul>
+<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[以此为起点]]></title>
+    <link href="http://zhizhen.github.io/blog/2016/05/07/yi-ci-wei-qi-dian/"/>
+    <updated>2016-05-07T00:50:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2016/05/07/yi-ci-wei-qi-dian</id>
+    <content type="html"><![CDATA[<hr />
+
+<blockquote><p>There are some birds that you can&rsquo;t lock,their every feather on their body is
+sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/2016/1.pic_hd.jpg" alt="" /></p>
+
+<p>来自《创游记》。</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>独立游戏<br/>
+独立游戏，真的独立？<br/>
+我并不认为，世界上存在商业游戏与独立游戏的划分。混迹在独立游戏圈子也有一段时间，渐渐感觉自己似乎是个过于理智的人，跟不少人的执念、偏见,格格不入。他们似乎讨厌一切商业游戏，反感一切PVP联网，还有高粘度游戏。他们的偏见曾让我很困惑。<br/>
+大学时候老师曾说过，独立之思想，自由之灵魂.独立，不应该等同于带有偏见的特立独行。<br/>
+如果独立开发者大多都不明白其中深意，做出来的产品，又何来独立一说？</p>
+
+<hr />
+
+<p>自由职业<br/>
+自由职业者，并不自由<br/>
+这不是一句博人眼球的说道，在国外，自由工作者由于拥有非常好的社会保障福利。可以没有后顾之忧。而在国内呢？辞掉工作做一个自由职业者，意味着没了工资，社保，以及一切，还有人说要为了自由而辞掉工作做一个自由职业者？<br/>
+那么你很快就会发现，为了一日三餐，为了生活，你马上不得不投入到紧张的工作中去，当你完成手头的工作准备睡觉之前，还必须得担忧明天有没有活接。这种吃者这顿要思考下一顿的生活，自由？为了追求自由而反而失去了自由。在国内要成为自由职业者，需要强大的知识技能储备，和优秀的自律，以及科学的时间分配。这么优秀的人，目前多半都在国内顶级大公司担任非常重要的职务。<br/>
+到底是自由职业的门槛太高？还是自由的代价太大？</p>
+
+<hr />
+
+<p>正在手中做的这个，是一个射击类游戏。也是第一次尝试。凡事总得开始的对不？
+呵呵，在此还是先不兜底，立贴为证，不管好坏，一定要做完放上来 ^_^</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[我与街机]]></title>
+    <link href="http://zhizhen.github.io/blog/2015/07/07/wo-yu-you-xi/"/>
+    <updated>2015-07-07T11:13:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2015/07/07/wo-yu-you-xi</id>
+    <content type="html"><![CDATA[<hr />
+
+<blockquote><p>The farther backward you can look, the farther forward you will see.<br/>
+——Winston Churchill</p></blockquote>
+
+<hr />
+
+<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br/>
+某一天，拿着零花钱去买冰棒，要是当初，把钱买了冰棒。。。。。。
+<img src="http://zhizhen.github.io/images/blog_image/games/konglongkuaida.png" alt="" /></p>
+
+<!--more-->
+
+
+<p>原本是在恐龙的世界里生存，但是，最坏最恶心的BOSS永远都是人类，即便，在这恐龙的世界里。。。。。。</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/mingjiang.png" alt="" /></p>
+
+<p>十八般兵器，耍得再熟练，永远都怕背后猥琐着徘徊的小兵。</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/shihun.png" alt="" /></p>
+
+<p>我一直在思考，日本人在打斗设计上的高度，是否与之民族好狠斗勇精神相关。</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/sanguozhi.png" alt="" /></p>
+
+<p>草剑，在这里可不是割草的剑</p>
+
+<hr />
+
+<p>转眼间二十多年过去，有时候不仅在回忆里问自己，那个鼻子刚刚够得着摇杆的小孩,真的是我吗？
+<img src="http://zhizhen.github.io/images/blog_image/games/xingsugedou.png" alt="" />
+大哥，这么多影子，你好意思叫无影？</p>
+
+<hr />
+
+<p>我曾有一方地盘，在这里，不用被高年级同学収保护费，我就是王，称霸一方
+<img src="http://zhizhen.github.io/images/blog_image/games/jietoubawang.png" alt="" />
+格斗鼻祖，掌握了勾拳，别人再扔多少板子都打不赢你</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/xiyoushiezhuan.png" alt="" />
+它总是让我想起那个同桌，一块板子从西天取经回来，而且，是带着我这个坑。。。。。。<br/>
+时隔多年，不知道你在哪里。</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/quanhuang97.png" alt="" />
+如果说这个是街机的巅峰，我相信没人有异议</p>
+
+<hr />
+
+<p><img src="http://zhizhen.github.io/images/blog_image/games/sanguozhanji.png" alt="" />
+高中升学考试那天中午，一块板子干死了曹操。并且，下午考数学，150分的试卷考了140多分。这是一个圆满的结束。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[erlang-mysql-driver]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/12/27/chu-tan-erlang-mysql-driver/"/>
+    <updated>2014-12-27T11:41:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/12/27/chu-tan-erlang-mysql-driver</id>
+    <content type="html"><![CDATA[<h2>历史</h2>
+
+<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。</p>
+
+<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。</p>
+
+<!--more-->
+
+
+<p>在erlang-mysql-driver从ejabberd分支fork出来之后，Yxa跟ejabberd分支都有一些改动并没有合并到erlang-mysql-driver里来，不过很有可能这些也不重要。这些小修改对erlang-mysql-driver是否能达到最终目的来讲并不明显。</p>
+
+<p>这几个fork发展到现在，似乎最终都在上层接口层变得非常复杂，mysql.erl,开始与mysql_conn.erl 高度耦合在一起。也许这也正是为什么这几个fork从来没有合并过了。</p>
+
+<p>erlang-mysql-driver 一直没被知晓，直到07年十月，写rebar项目的这个家伙Dave Smith,对他做了一些更新，并且放到了github上。现在它已经被很多开发者fork并且活跃在github上。</p>
+
+<p>从Yariv原项目里面fork出来的许多并行分支里，有一个跟Dave（rebar）fork出来的没有关联，就是Nick Gerakines 的项目，我猜他应该是erlang-mysql-driver 这些forks里面技术最强的。Nick对它进行了大量的代码整理工作，尽管它很少被人知道，被fork也不多。并且到最后，这个项目因为更好的Emysql而终止。</p>
+
+<p>老古董了，呵呵<br/>
+有兴趣的可以看看Emysql,在<a href="https://github.com/Eonblast/Emysql">Eonblast</a>这个分支里，有对这几个驱动的分析</p>
+
+<h2>模型</h2>
+
+<p>这是它的进程模型：<br/>
+<img src="http://zhizhen.github.io/images/erlang-mysql-driver-model.png" alt="" /></p>
+
+<p>call process 是调用数据库进程，mysql_dispatcher是调度进程，mysql_conn 是真正的数据库连接进程，它们是standalone的。</p>
+
+<p>在mysql_dispatcher进程里进行调度，mysql_dispatcher 进程中，维护了一份连接进程的调度信息，用gb_trees存储。</p>
+
+<p>mysql_dispatcher只做一个调度，并不真正替call process 工作，所以对于call process的call请求，是noreply的，把请求者Pid分发给mysql_conn，他们得到数据库结果后，分别去reply call process进程。这便是整个erlang-mysql-driver的pool 模型。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PlistBuddy修改Xcode工程版本号]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/"/>
+    <updated>2014-12-20T01:48:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao</id>
+    <content type="html"><![CDATA[<p>上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行：</p>
+
+<pre><code>&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt;
+</code></pre>
+
+<p>后来发现mac下直接有现成工具可用:</p>
+
+<pre><code>/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
+</code></pre>
+
+<!--more-->
+
+
+<p>最后准备把这东西用上去的时候，发现之前队友已经加过了，给力。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mac sed 替换搜索到文本的下一行]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/"/>
+    <updated>2014-12-18T22:15:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-[?]-xing</id>
+    <content type="html"><![CDATA[<p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
+举个例子，比如有一个test文件,内容是：</p>
+
+<pre><code>version
+1.0.1
+XXX
+version
+1.0.2
+XXX
+version
+1.0.3
+</code></pre>
+
+<!--more-->
+
+
+<p>现在我要将所有version的下一行，也就是1.0.1, 1.0.2, 1.0.3全部都替换成我想要的值，比如1.0.4,在linux中，我们这样用</p>
+
+<pre><code>sed -i '/version/{n;s/.*/1.0.4/g;}' test
+</code></pre>
+
+<p>不过在mac上，则得这样：</p>
+
+<pre><code>sed -i '' '/version/{n;s/.*/1.0.4/g;}' test
+</code></pre>
+
+<p>多了个&#8217;&lsquo;,这是mac上sed用来存备份文件的，为空则不将修改前的文件备份。<br/>
+sed 基本语法：</p>
+
+<pre><code>sed [options] { sed-commands } { input-file }
+</code></pre>
+
+<p>每次sed从{ input-file }读取一行，然后在这行上执行{ sed-commands }.<br/>
+n是sed命令之一，表示多读取一行，并从第二行开始操作，而后面的</p>
+
+<pre><code>s/.*/1.0.4/g
+</code></pre>
+
+<p>就是将这一行内容替换成1.0.4。s/old/new/g 是sed命令，跟vim里一样，表示替换，
+而这里的old是一个正则, &lsquo;.&#8217;在正则里表示匹配任意字符，而 &rsquo; * &lsquo; 在正则里表示重复，
+&rsquo; . * &lsquo; 组合起来表示替换这一行。</p>
+
+<p>只要你还是一个程序员，你就永远免不了要跟正则表达式打交道。<br/>
+最后，向大家推荐Steve Mansour的这本《正则表达式之道》:</p>
+
+<p><img src="http://zhizhen.github.io/images/regex-rules.png" alt="" /></p>
+
+<p>全书只有11页，为数不多的案头必备书籍之一。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一个人要经历3次成长]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang/"/>
+    <updated>2014-09-29T10:55:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>第一次在，发现自己不是世界中心的时候</p></li>
+<li><p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候</p></li>
+<li><p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候</p></li>
+</ul>
+
+
+<!--more-->
+
+
+<p>  还记得电影《大话西游》么，长大后再看，其实感触最深的，已经是至尊宝跪下来跟唐僧说的那句：<br/>
+  师傅！弟子昔日罪孽深重，幸得观音大士指点迷津，现在已一心皈依我佛，决不再留恋尘世间半点情欲。护送师傅西天取经的重任，弟子愿一肩承担！</p>
+
+<p>  <img src="http://zhizhen.github.io/images/zhizunbao.png" title="zhizunbao" alt="" /></p>
+
+<p> <embed src="http://www.xiami.com/widget/0_2079912/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed></p>
+
+<pre><code>一生所爱  
+演唱：卢冠庭
+
+从前现在过去了再不来  
+红红落叶长埋尘土内  
+开始终结总是没变改  
+天边的你飘泊白云外  
+苦海翻起爱浪  
+在世间难逃避命运  
+相亲竟不可接近  
+或我应该相信是缘份  
+
+情人别后永远再不来(消散的情缘)  
+无言独坐放眼尘世外(愿来日再续)  
+鲜花虽会凋谢(只愿)但会再开(为你)  
+一生所爱隐约(守候)在白云外(期待)  
+苦海翻起爱浪  
+在世间难逃避命运  
+相亲竟不可接近  
+或我应该相信是缘份  
+
+苦海翻起爱浪  
+在世间难逃避命运  
+相亲竟不可接近  
+或我应该相信是缘份  
+</code></pre>
+
+<ul>
+<li>最后，附图一张<br/>
+  <img src="http://zhizhen.github.io/images/dahuajieju.png" title="jieju" alt="" /></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to set_cookie in escript]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/05/21/how-to-set-cookie-in-escript/"/>
+    <updated>2014-05-21T10:10:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/05/21/how-to-set-cookie-in-escript</id>
+    <content type="html"><![CDATA[<h3>Question</h3>
+
+<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.</p>
+
+<hr />
+
+<!--more-->
+
+
+<p>As you know, I need to keep my escript&rsquo;s cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)</p>
+
+<pre><code>#!/usr/bin/env escript
+
+main([Node]) -&gt;
+erlang:set_cookie(node(), mycookie),
+Resp = net_adm:ping(list_to_atom(Node)),
+io:format("~p~n", [Resp]).
+</code></pre>
+
+<p>The result maybe</p>
+
+<pre><code>Eshell V5.10.4  (abort with ^G)
+1&gt; erlang:set_cookie(node(), mycookie).
+** exception error: no function clause matching 
+                    erlang:set_cookie(nonode@nohost,mycookie) 
+2&gt; 
+</code></pre>
+
+<p>Wait a minute, what&rsquo;s nonode@nohost?</p>
+
+<pre><code>Eshell V5.10.4  (abort with ^G)
+1&gt; erlang:set_cookie(node(), mycookie).
+** exception error: no function clause matching 
+                    erlang:set_cookie(nonode@nohost,mycookie) 
+2&gt; node().
+nonode@nohost
+3&gt; 
+</code></pre>
+
+<p>So we need to start a erlang node, Oh! the escript didn&rsquo;t start one for us! when I searching in google, found someone who noticed erlang:setnode() , But there&rsquo;s no manual about how the specs we need? Somebody who knows? please contact me, thanks!</p>
+
+<hr />
+
+<p>So how could we solve this?</p>
+
+<pre><code>Eshell V5.10.4  (abort with ^G)
+1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
+{ok,&lt;0.35.0&gt;}
+(mynode@127.0.0.1)2&gt;
+</code></pre>
+
+<p>You see? we got a node named &lsquo;<a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6d;&#x79;&#x6e;&#x6f;&#100;&#x65;&#x40;&#x31;&#x32;&#55;&#x2e;&#x30;&#x2e;&#48;&#46;&#x31;">&#109;&#121;&#110;&#x6f;&#100;&#x65;&#64;&#x31;&#50;&#55;&#x2e;&#48;&#x2e;&#x30;&#46;&#49;</a>&rsquo;, then we can set_cookie</p>
+
+<pre><code>Eshell V5.10.4  (abort with ^G)
+1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
+{ok,&lt;0.35.0&gt;}
+(mynode@127.0.0.1)2&gt; node().                                           
+'mynode@127.0.0.1'
+(mynode@127.0.0.1)3&gt; erlang:set_cookie(node(), mycookie).
+true
+(mynode@127.0.0.1)4&gt; erlang:get_cookie().
+mycookie
+(mynode@127.0.0.1)5&gt; 
+</code></pre>
+
+<hr />
+
+<p>So, we can write our escript like this:</p>
+
+<pre><code>#!/usr/bin/env escript
+
+main([Node]) -&gt;
+{ok, _} = net_kernel:start(['mynode@127.0.0.1', longnames]).
+erlang:set_cookie(node(), mycookie),
+Resp = net_adm:ping(list_to_atom(Node)),
+io:format("~p~n", [Resp]).
+</code></pre>
+
+<h3>Notice</h3>
+
+<p>If you want to use this escript in nagios, better to add try catch for all:</p>
+
+<pre><code>#!/usr/bin/env escript
+
+main([Node]) -&gt;
+try
+    {ok, _} = net_kernel:start(['mynode@127.0.0.1', longnames]).
+    erlang:set_cookie(node(), mycookie),
+    case net_adm:ping(list_to_atom(Node)) of
+    pong -&gt; halt(0);
+    pang -&gt; halt(2)
+    end
+catch _:Reason
+    io:format("~p~n", [Reason]),
+    halt(3)
+end.
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ubuntu下verilog实现简单“与门”]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men/"/>
+    <updated>2014-02-12T16:51:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men</id>
+    <content type="html"><![CDATA[<hr />
+
+<h3>第一步 搭建环境</h3>
+
+<p>verilog有两个比较常用的编译器：<br/>
+1. Icarus Verilog<br/>
+2. VeriWell Verilog Simulator</p>
+
+<!--more-->
+
+
+<p>ubuntu源里面默认的是Icarus Verilog，安装编译器：</p>
+
+<pre><code>sudo apt-get install verilog  
+</code></pre>
+
+<p>然后再安装模拟器，用来查看波形的软件：</p>
+
+<pre><code>sudo apt-get install gtkwave  
+</code></pre>
+
+<p>这样就ok了</p>
+
+<h3>第二步 写一个简单的与门</h3>
+
+<p>and.v</p>
+
+<pre><code>module add(a, b, c);
+input a;
+input b;
+output c;
+
+assign c = a &amp; b;
+endmodule
+</code></pre>
+
+<p>ok了，再写一个testbench，用来测试刚才的与门是否正常工作:<br/>
+test_and.v</p>
+
+<pre><code>`timescale 1ns/1ns
+module test_and;
+reg a;
+reg b;
+wire c;
+
+add t(a, b, c);
+
+initial
+begin
+    $dumpfile("test.lxt");
+    $dumpvars(0, test_add);
+    $dumpvars(0, t.a, t.b, t.c);
+end
+
+initial
+begin
+    #10 a = 1; b = 0;
+    #10 a = 0; b = 1;
+    #10 a = 0; b = 0;
+    #10 a = 1; b = 1;
+    #50 $finish;
+end
+
+initial
+    $monitor("a = %d, ", a, "b = %d, ", b, "c = %d\n", c);
+endmodule
+</code></pre>
+
+<h3>第三步 编译运行和查看波形</h3>
+
+<p>在命令行下执行：</p>
+
+<pre><code>iverilog -o my_and and.v test_and.v
+</code></pre>
+
+<p>执行完后会生成一个名为my_and 的文件，./my_and就能运行，如图：<br/>
+<img src="http://zhizhen.github.io/images/verilog/verilog_and_output.jpg" alt="" /><br/>
+这个命令跟gcc很像，当然后期你也可以用MakeFile来写编译依赖关系。</p>
+
+<pre><code>vvp -n my_and -lxt2
+</code></pre>
+
+<p>之后就会生成一个test.lxt的文件</p>
+
+<pre><code>gtkwave test.lxt
+</code></pre>
+
+<p>然后选择t，同时选中a[0], b[0], c[0], 点击Insert, 就能看到波形了：结果如图:<br/>
+<img src="http://zhizhen.github.io/images/verilog/verilog_simulator.jpg" alt="" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[阅读skynet]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/12/26/yue-du-skynet/"/>
+    <updated>2013-12-26T09:57:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/12/26/yue-du-skynet</id>
+    <content type="html"><![CDATA[<p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
+优化的博客了。<br/>
+云风关于skynet的介绍说了，skynet主要还是参照了erlang的
+服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
+关于设计思想方面的说明。<br/>
+不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
+
+<!--more-->
+
+
+<h3>skynet是什么</h3>
+
+<p>请看原作者博客<a href="http://blog.codingnow.com/2012/08/skynet.html">skynet开源</a><br/>
+<em>“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。<br/>
+现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”</em><br/>
+由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。</p>
+
+<hr />
+
+<p>下面来看关于skynet架构的说明：<br/>
+<em>“这个系统是单进程多线程模型。”</em> <br/>
+<em>“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。<br/>
+线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”</em><br/>
+skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：</p>
+
+<pre><code>root = "./"
+thread = 8                                                                      
+logger = nil 
+harbor = 1 
+address = "127.0.0.1:2526"
+master = "127.0.0.1:2013"
+start = "main"
+standalone = "0.0.0.0:2013"
+luaservice = root.."service/?.lua;"..root.."service/?/init.lua"
+cpath = root.."service/?.so"
+protopath = root.."proto"
+redis = root .. "redisconf"
+</code></pre>
+
+<p>thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来</p>
+
+<hr />
+
+<p>来看看关于agent的说明：<br/>
+<em>“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”</em><br/>
+是不是跟erlang的init, terminate 很像？<br/>
+<em>“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。<br/>
+一、一个服务的 callback 函数永远不会被并发。<br/>
+二、一个服务向两一个服务发送的消息的次序是严格保证的。<br/>
+我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”</em><br/>
+来看它的启动流程：<br/>
+skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化<br/>
+然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context<br/>
+接着是logger, harbor, snlua这些服务模块的启动<br/>
+所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环<br/>
+亮代码：</p>
+
+<pre><code>void 
+skynet_start(struct skynet_config * config) {
+    skynet_group_init();
+    skynet_harbor_init(config-&gt;harbor);
+    skynet_handle_init(config-&gt;harbor);
+    skynet_mq_init();
+    skynet_module_init(config-&gt;module_path);
+    skynet_timer_init();
+    skynet_socket_init();
+
+    struct skynet_context *ctx;
+    ctx = skynet_context_new("logger", config-&gt;logger);
+    if (ctx == NULL) {
+        fprintf(stderr,"launch logger error");
+        exit(1);
+    }   
+
+    if (config-&gt;standalone) {
+        if (_start_master(config-&gt;standalone)) {
+            fprintf(stderr, "Init fail : mater");
+            return;
+        }   
+    }   
+    // harbor must be init first
+    if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
+        fprintf(stderr, "Init fail : no master");
+        return;
+    }   
+
+    ctx = skynet_context_new("localcast", NULL);
+    if (ctx == NULL) {
+        fprintf(stderr,"launch local cast error");
+        exit(1);
+    }   
+    ctx = skynet_context_new("snlua", "launcher");
+    if (ctx) {
+        skynet_command(ctx, "REG", ".launcher");
+        ctx = skynet_context_new("snlua", config-&gt;start);
+    }   
+
+    _start(config-&gt;thread);
+    skynet_socket_free();                                                       
+}
+</code></pre>
+
+<h3>skynet集群及RPC</h3>
+
+<p>云风的博客<a href="http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html">skynet集群及RPC</a>上这么写着：<br/>
+<em>“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”</em><br/>
+按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。<br/>
+而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件</p>
+
+<pre><code>#ifndef SKYNET_HARBOR_H                                                          
+#define SKYNET_HARBOR_H
+
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define GLOBALNAME_LENGTH 16
+#define REMOTE_MAX 256
+
+// reserve high 8 bits for remote id
+// 可以看到，这里取高8位用来作为机器识别，而低24位用作服务节点id
+#define HANDLE_MASK 0xffffff
+#define HANDLE_REMOTE_SHIFT 24
+
+// 消息目的skynet节点名，包含一个名字和一个32位无符号的id
+struct remote_name {
+    char name[GLOBALNAME_LENGTH];
+    uint32_t handle;
+};
+
+struct remote_message {
+    struct remote_name destination;
+    const void * message;
+    size_t sz; 
+};
+
+// 发送消息，同时带上发送者的id
+void skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session);
+// 向master节点注册一个skynet进程
+void skynet_harbor_register(struct remote_name *rname);
+// 这个函数用来判断消息是来自本机器还是外部机器
+int skynet_harbor_message_isremote(uint32_t handle);
+// 初始化harbor
+void skynet_harbor_init(int harbor);
+// 启动harbor
+int skynet_harbor_start(const char * master, const char *local);
+
+#endif
+</code></pre>
+
+<p>看这段文字：<br/>
+<em>&ldquo;为了定位方便，我希望整个系统里，所有服务节点都有唯一 id 。那么最简单的方案就是限制有限的机器数量、同时设置中心服务器来协调。我用 32bit 的 id 来标识 skynet 上的服务节点。其中高 8 位是机器标识，低 24 位是同一台机器上的服务节点 id 。我们用简单的判断算法就可以知道一个 id 是远程 id 还是本地 id （只需要比较高 8 位就可以了）。&rdquo;</em><br/>
+HANDLE_REMOTE_SHIFT 其实是用来取高8位机器识别码，而HANDLE_MASK则是取低24位skynet节点唯一id长度。我们看一下skynet_harbor_send(skyner_harbor.c 13行) 发消息函数的实现就知道：</p>
+
+<pre><code>void 
+skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session) {
+    int type = rmsg-&gt;sz &gt;&gt; HANDLE_REMOTE_SHIFT;
+    rmsg-&gt;sz &amp;= HANDLE_MASK;
+    assert(type != PTYPE_SYSTEM &amp;&amp; type != PTYPE_HARBOR);                                       
+    skynet_context_send(REMOTE, rmsg, sizeof(*rmsg) , source, type , session);
+}
+</code></pre>
+
+<p>通过将sz向右移24位来取高8位的机器识别码，而通过与0xffffff相与来取低24位的id，在断言这里，有PTYPE_SYSTEM 和PTYPE_HARBOR 两个宏定义在skynet.h中定义着，它们标识着skynet中的消息类型，看skynet.h:</p>
+
+<pre><code>...
+#define PTYPE_TEXT 0
+#define PTYPE_RESPONSE 1
+#define PTYPE_MULTICAST 2
+#define PTYPE_CLIENT 3
+#define PTYPE_SYSTEM 4 // SYSTEM
+#define PTYPE_HARBOR 5 // HARBOR                                                               
+#define PTYPE_SOCKET 6
+// read lualib/skynet.lua lualib/simplemonitor.lua
+#define PTYPE_RESERVED_ERROR 7  
+// read lualib/skynet.lua lualib/mqueue.lua
+#define PTYPE_RESERVED_QUEUE 8
+#define PTYPE_RESERVED_DEBUG 9
+#define PTYPE_RESERVED_LUA 10
+
+#define PTYPE_TAG_DONTCOPY 0x10000
+#define PTYPE_TAG_ALLOCSESSION 0x20000
+...
+</code></pre>
+
+<p>再来看 skynet_harbor.c里面skynet_harbor_message_isremote(skynet_harbor.c 36行) 的实现:</p>
+
+<pre><code>int 
+skynet_harbor_message_isremote(uint32_t handle) {
+    int h = (handle &amp; ~HANDLE_MASK);
+    return h != HARBOR &amp;&amp; h !=0;
+}
+</code></pre>
+
+<p>挺简单的一个位运算，好了，再看skynet_harbor_register(skynet_harbor.c 21行)：</p>
+
+<pre><code>void 
+skynet_harbor_register(struct remote_name *rname) {
+    int i;
+    int number = 1;
+    for (i=0;i&lt;GLOBALNAME_LENGTH;i++) {
+        char c = rname-&gt;name[i];
+        if (!(c &gt;= '0' &amp;&amp; c &lt;='9')) {
+            number = 0;
+            break;
+        }   
+    }   
+    assert(number == 0); 
+    skynet_context_send(REMOTE, rname, sizeof(*rname), 0, PTYPE_SYSTEM , 0); 
+}
+</code></pre>
+
+<p>看到了，harbor在register的时候向master节点发送的是类型PTYPE_SYSTEM的系统消息，并且source id为0， session 也为0，但是skynet_context_send 函数干了什么呢？<br/>
+好了，等我们先看完skynet_harbor_init(skynet_harbor.c 42行) 和skynet_harbor_start(skynet_harbor.c 47行)分别做了什么之后，再来看skynet_context_send 到底干了什么</p>
+
+<pre><code>void
+skynet_harbor_init(int harbor) {
+    HARBOR = (unsigned int)harbor &lt;&lt; HANDLE_REMOTE_SHIFT;
+}
+
+int
+skynet_harbor_start(const char * master, const char *local) {
+    size_t sz = strlen(master) + strlen(local) + 32; 
+    char args[sz];
+    sprintf(args, "%s %s %d",master,local,HARBOR &gt;&gt; HANDLE_REMOTE_SHIFT);
+    struct skynet_context * inst = skynet_context_new("harbor",args);
+    if (inst == NULL) {
+        return 1;
+    }   
+    REMOTE = inst;
+
+    return 0;
+}  
+</code></pre>
+
+<p>哦，init函数里设置了HARBOR的值，它在skynet_harbor.c 第10行声明着。<br/>
+而start函数设置了REMOTE的值，它在skynet_harbor.c 第9行声明着。<br/>
+skynet_context_send(skynet_server.c 第682行)</p>
+
+<pre><code>void
+skynet_context_send(struct skynet_context * ctx, void * msg, size_t sz, uint32_t    source, int type, int session) {
+    struct skynet_message smsg;
+    smsg.source = source;
+    smsg.session = session;
+    smsg.data = msg;
+    smsg.sz = sz | type &lt;&lt; HANDLE_REMOTE_SHIFT;
+
+    skynet_mq_push(ctx-&gt;queue, &amp;smsg);
+} 
+</code></pre>
+
+<p>它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。<br/>
+最终harbor的register消息发向了哪里呢？master !</p>
+
+<hr />
+
+<h4>RPC核心和模块化思想</h4>
+
+<p>RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：<br/>
+<em>&ldquo;master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。<br/>
+master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。<br/>
+skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。&rdquo;</em><br/>
+skynet/config配置文件里面有这么两条配置：</p>
+
+<pre><code>master = "127.0.0.1:2013"
+standalone = "0.0.0.0:2013"  
+</code></pre>
+
+<p>然后再看：</p>
+
+<pre><code>skynet_start(struct skynet_config * config) {
+// ...
+if (config-&gt;standalone) {
+    if (_start_master(config-&gt;standalone)) {
+        fprintf(stderr, "Init fail : mater");
+        return;
+    }
+}
+
+// harbor must be init first
+if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
+    fprintf(stderr, "Init fail : no master");
+    return;
+}
+// ...
+}
+</code></pre>
+
+<p>这里配得standalone = &ldquo;0.0.0.0:2013&rdquo; 就表示这个skynet节点在本机开启2013端口作为master使用。<br/>
+而如果这个节点不是master，那么这里配的master = &ldquo;127.0.0.1:2013&rdquo; 则告诉它master在哪里。</p>
+
+<p>master纪录所有worker的信息是在skynet_handle文件实现的一个哈希表存储的。当由skynet_harbor发起注册register的时候，它就实现了一个句柄handle到skynet_context的映射。</p>
+
+<p>真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c &hellip;等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。</p>
+
+<p>基本上以上就是skynet的主体流程了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[haskell(二)]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/12/03/haskell-er/"/>
+    <updated>2013-12-03T11:50:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/12/03/haskell-er</id>
+    <content type="html"><![CDATA[<p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
+创建hello.hs文件</p>
+
+<!--more-->
+
+
+<pre><code>main = putStrLn "Hello world !"
+</code></pre>
+
+<p>保存之后，编译</p>
+
+<pre><code>ghc -o hello hello.hs
+</code></pre>
+
+<p>编译之后执行</p>
+
+<pre><code>./hello
+</code></pre>
+
+<p>便能够看到</p>
+
+<pre><code>Hello world !
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[haskell(一)]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/11/30/haskell-%5B%3F%5D/"/>
+    <updated>2013-11-30T10:00:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/11/30/haskell-[?]</id>
+    <content type="html"><![CDATA[<p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
+其中的列表跟erlang特别像。<br/>
+下面是基础语法：</p>
+
+<!--more-->
+
+
+<pre><code>-- 单行注释以两个破折号开头
+{-  多行注释被
+    一个闭合的块包围
+-}
+-----------------------------------------------
+-- 1. 简单地数据类型和操作符
+-----------------------------------------------
+
+-- 你有数字
+3 --3
+-- 数学计算就像你所期待的那样
+1 + 1 --2
+8 - 1 --7
+10 * 2 --20
+35 / 5 --7.0 注意这里除了之后是浮点数
+35 `div` 5 -- 7 
+True
+False
+not True
+not False
+1 == 1 -- True
+1 /= 1 -- False
+1 &lt; 10 -- True
+"This is a string" -- 字符串用双引号
+'a' -- 字符用单引号
+"Hello" ++ "world !" -- "Hello world !" 字符串连接
+"This is a string" !! 0 -- 一个字符串是一系列字符，取第一个就是'T'
+
+-----------------------------------------------
+-- 列表和元组 
+-----------------------------------------------
+
+-- 一个列表中得每一个元素都必须是相同类型
+[1, 2, 3, 4, 5] == [1..5] -- True
+
+-- 在haskell 你可以拥有含有无限元素的列表
+[1..] -- 一个含有所有自然数的列表
+
+-- 因为haskell 有“懒惰计算”，所以无限元素的列表可以正常运作。这意味着
+-- haskell 可以只在它需要的时候计算。所以你可以请求
+-- 列表中的第1000个元素，haskell 会返回给你
+[1..] !! 999 -- 1000
+
+-- haskell 计算了列表中 1 - 1000 个元素。。但是
+-- 这个无限元素的列表中剩下的元素还不存在！ haskell 不会
+-- 真正地计算它们直到它需要
+
+-- 连接两个列表
+[1..5] ++ [6..10]
+
+-- 往列表头增加元素
+0:[1..5] -- [0, 1, 2, 3, 4, 5]
+
+-- 列表中的下标
+[0..0] !! 5 -- 5
+
+-- 更多的列表操作
+head [1..5] -- 1
+tail [1..5] -- [2, 3, 4, 5]
+init [1..5] -- [1, 2, 3, 4]
+last [1..5] -- 5
+
+-- 列表推导
+[x * 2 | x &lt;- [1..5]] -- [2, 4, 6, 8, 10]
+
+-- 附带条件
+[x * 2 | x &lt;- [1..5], x * 2 &gt; 4] -- [6, 8, 10]
+
+-- 元组中的每一个元素可以是不同类型的，但是一个元组
+-- 的长度是固定的
+-- 一个元组
+("haskell", 1)
+
+-- 获取元组中的元素
+fst("haskell", 1) -- "haskell"
+snd("haskell", 1) -- 1
+
+-----------------------------------------------
+-- 3. 函数 
+-----------------------------------------------
+-- 一个接受两个变量的简单函数
+add a b = a + b
+
+-- 注意，如果你使用ghci（haskell 解释器）
+-- 你将需要使用 `let`, 也就是
+-- let add a b = a + b
+
+-- 使用函数
+add 1 2 -- 3
+
+-- 你也可以把函数放置在两个参数之间
+-- 附带倒引号:
+1 `add` 2 --3
+
+-- 你也可以定义不带字符的函数！这使得
+-- 你定义自己的操作符！这里有个操作符
+-- 来做整除
+(//) a b = a `div` b
+35 //4 --8
+
+-- 守卫: 一个简单的方法在函数里做分支
+fib x
+  | x &lt; 2 =x
+  | otherwise = fib (x -1) + fib (x -2)
+
+-- 模式匹配是类型的。这里有三种不同的fib
+-- 定义。haskell将自动调用第一个
+-- 匹配值的模式的函数。
+fib 1 = 1
+fib 2 = 2
+fib x = fib (x - 1) + fib (x - 2)
+
+-- 元组的模式匹配
+foo (x, y) = (x + 1, y + 2)
+
+-- 列表的模式匹配。 这里 `x`是列表的第一个元素，
+-- 并且 `xs` 是列表剩余的部分。我们可以写
+-- 自己的map 函数
+myMap func [] = []
+myMap func (x:xs) = func x:(myMap func xs)
+
+-- 编写出来的匿名函数带有一个反斜杠，后面跟着
+-- 所有的参数
+myMap (\x -&gt; x + 2)[1..5] -- [3, 4, 5, 6, 7]
+
+-- 使用fold （在一些语言称为`inject`）随着一个匿名的
+-- 函数。foldl1 意味着左折叠(fold left), 并且使用列表中的第一个值
+-- 作为累加器的初始化值。
+foldl1(\acc x -&gt; acc + x) [1..5] -- 15
+
+----------------------------------------------------------
+-- 4. 更多函数
+----------------------------------------------------------
+
+-- 柯里化(currying):如果你不传递函数中所有的参数，
+-- 它就变成“柯里化的”。这意味着，它返回一个接受剩余参数的函数.
+
+add a b = a + b
+foo = add 10 -- foo 现在是一个接受一个数并对其加10的函数
+foo 5 -- 15
+
+-- 另外一种方式去做同样的事
+foo = (+10)]
+foo 5 -- 15
+
+-- 函数组合
+-- (.) 函数把其他函数链接到一起
+-- 举个例子，这里foo是一个接受一个值的函数。它对接受的值加10，
+-- 并对结果乘以5， 之后返回最后的值
+foo = (*5) . (+10)
+
+-- (5 + 10) * 5 = 75
+foo 5 --75
+
+-- 修复优先级
+-- haskell 有另外一个函数称为 `$`. 它改变优先级
+-- 使得其左侧的每一个操作先计算然后应用到
+-- 右侧的每一个操作。你可以使用 `.` 和 `$` 来除去很多
+-- 括号:
+
+-- before
+(even (fib 7)) -- true
+
+- after
+even . fib $ 7 -- true
+
+------------------------------------------------------------
+-- 5. 类型签名
+------------------------------------------------------------
+
+-- haskell 有一个非常强壮的类型系统，一切都有一个类型签名。
+-- 一些基本的类型
+5 :: Integer
+"hello" :: String
+True :: Bool
+
+-- 函数也有类型
+-- `not` 接受一个布尔型返回一个布尔型:
+-- not :: Bool -&gt; Boll
+
+-- 这是接受两个参数的函数:
+--add :: Integer -&gt; Integer -&gt; Integer
+
+-- 当你定义一个值，在其上写明它的类型是一个好实践
+double :: Integer -&gt; Integer
+double x = x * 2
+
+-------------------------------------------------------------
+-- 6. 控制流和If语句
+-------------------------------------------------------------
+-- if 语句
+haskell = if 1 == 1 then "awesome" else "awful" -- haskell = "awesome"
+
+-- if 渔具也可以有多行，缩进是很重要的
+haskell = if 1 == 1
+            then "awesome"
+            else "awful"
+
+-- case 语句:这里是你可以怎样去解析命令行参数
+case args of
+    "help" -&gt; printHelp
+    "start" -&gt; startProgram
+    _ -&gt; putStrLn "bad args"
+
+-- haskell 没有循环因为它使用递归取代之。
+-- map 应用一个函数到数组中的每一个元素
+
+map (*2)[1..5] -- [2, 4, 6, 8, 10]
+
+-- 你可以使用map来编写for函数
+for array func = map func array
+
+-- 然后使用它
+for [0..5] $ \i -&gt; show i
+
+-- 我们也可以这样写
+for [0..5] show
+
+-- 你可以使用foldl或者foldr来分解列表
+-- foldl (\x y -&gt; 2*x + y) 4 [1, 2, 3] -- 43
+
+-- 这和下面是一样的
+(2 * (2 * (2 * 4 + 1) + 2) + 3)
+
+--foldl 是左手边的，foldr是右手边的
+foldr (\x, y -&gt; 2*x + y) 4 [1, 2, 3] -- 16
+
+-- 这和下面的是一样的
+(2 * 3 + (2 * 2 + (2 * 1 + 4)))
+
+-------------------------------------------------------
+-- 7. 数据类型
+-------------------------------------------------------
+
+-- 这里展示在haskell 中你怎样编写自己的数据类型
+data Color = Red | Blue | Green
+
+-- 现在你可以在函数中使用它
+
+say :: Color -&gt; String
+say Red = "You are Red !"
+say Blue = "You ara Blue!"
+say Green = "You are Green!"
+
+-- 你的数据类型也可以有参数
+
+data Maybe a = Nothing | Just a
+
+-- 类型 Maybe 的所有
+Just "hello"    -- of type `Maybe String`
+Just 1          -- of type `Maybe Int`
+Nothing         -- of type `Maybe a` for any `a`
+
+--------------------------------------------------------
+-- 8. haskell IO
+--------------------------------------------------------
+
+-- 虽然在没有解释monads 的情况下，IO不能被完全地解释，
+-- 着手解释到位并不难
+
+-- 当一个haskell程序被执行，函数`main` 就被调用。
+-- 它必须返回一个类型`IO()`的值。举个例子
+
+main :: IO ()
+main = putStrLn $ "Hello, sky! " ++ (say Blue)
+-- putStrLn has type String -&gt; IO ()
+
+-- 如果你能实现你的程序依照函数从String到String，那样编写IO是最简单的。
+-- 函数
+--      interact :: (String -&gt; String) -&gt; IO ()
+-- 输入一些文本，在其上运行一个函数，并打印出输出
+
+countLines :: String -&gt; String
+countLines = show . length . lines
+
+main' = interact countLines
+
+-- 你可以考虑一个 `IO()` 类型的值，当做一系列计算机所完成的动作的代表
+-- 就像一个以命令式语言编写的计算机程序。我们可以使用`do`符号来把动作连接到一起。
+-- 举个例子
+
+sayHello :: IO ()
+sayHello = do
+    putStrLn "What is your name?"
+    name &lt;- getLine -- this gets a line and gives it the name "input"
+    putStrLn $ "Hello, " ++ name
+
+-- 练习：编写只读取一行输入的`interact`
+
+-- 然而,`sayHello` 中得代码将不会被执行。唯一 被执行的动作是`main`的值。
+-- 为了运行 `sayHello`, 注释上面`main` 的定义，并代替它:
+-- main = sayHello
+
+--让我们来更好地理解刚才所使用的函数 `getLine` 是怎样工作的。它的类型是：
+-- getLine :: IO String
+-- 你可以考虑一个 `IO a` 类型的值，代表一个当被执行的时候
+-- 将产生一个 `a` 类型的值的计算机程序（除了它所做的任何事情之外）。我们可以保存
+-- 和重用这个值通过`&lt;-`
+-- 我们也可以写自己的 `IO String` 类型的动作
+
+action :: IO String
+action = do
+    putStrLn "This is a line, Duh"
+    input1 &lt;- getLine
+    input2 &lt;- getLine
+    -- The type of the `do` statement is that of its last line
+    -- `return` is not a keyword, but merely a function
+    return (input1 ++ \n ++ input2) --return :: String -&gt; IO String
+
+-- 我们可以使用这个动作就像我们使用 `getLine`:
+main'' = do
+    putStrLn "I will echo two lines!"
+    result &lt;- action
+    putStrLn result
+    putStrLn "This was all, folks!"
+
+-- `IO` 类型是一个"monad"的例子，haskell使用一个monad来 做IO得方式允许它是一门纯函数式语言。
+-- 任何与外界交互的函数（也就是IO）都在它的类型签名处做一个`IO`标识
+-- 这让我们推出 什么样的函数是“纯洁的”（不与外界交互，不修改状态）和 什么呀的函数是“不纯洁的”
+
+-- 这是一个强有力的特征，因为并发地运行纯函数是简单的；因此，haskell中并发是非常简单的。
+
+------------------------------------------------------------
+-- 9. the haskell REPL
+------------------------------------------------------------
+-- 键入 `ghci` 开始repl.
+--任何新值都需要通过 let 来创建
+let foo = 5
+
+-- 你可以查看任何值的类型，通过命令 :t
+:t foo
+foo :: Integer
+
+-- 你也可以运行任何 `IO ()` 类型的动作
+
+&gt;sayHello
+What is your name?
+Friend!
+Hello, Friend!
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2dx解密执行lua文件]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian/"/>
+    <updated>2013-11-22T20:54:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian</id>
+    <content type="html"><![CDATA[<p>前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
+解密后的lua代码了</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>cocos2dx是这样使用lua引擎的</p>
+
+<pre><code>// 初始化lua引擎
+CCLuaEngine* pEngine = CCLuaEngine::defaultEngine();
+CCScriptEngineManager::sharedManager()-&gt;setScriptEngine(pEngine);
+
+CCLuaStack *pStack = pEngine-&gt;getLuaStack();
+
+pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
+</code></pre>
+
+<p>这里添加了cocos2dx_lua_loader,那么，在cocos2dx_lua_loader里面：</p>
+
+<pre><code>int cocos2dx_lua_loader(lua_State *L)
+{
+    std::string filename(luaL_checkstring(L, 1));
+    // 这里我们将它改成查找.so后缀的lua文件
+    size_t pos = filename.rfind(".so");
+    if (pos != std::string::npos)
+    {
+        filename = filename.substr(0, pos);
+    }
+
+    pos = filename.find_first_of(".");
+    while (pos != std::string::npos)
+    {
+        filename.replace(pos, 1, "/");
+        pos = filename.find_first_of(".");
+    }
+    //后缀改为.so
+    filename.append(".so");
+
+    //使用一个tmpBuffer来读取密文
+    unsigned long tmpSize = 0;
+    unsigned char* tmpBuffer = CCFileUtils::sharedFileUtils()-&gt;getFileData(filename.c_str(), "rb", &amp;tmpSize);
+    if(!tmpBuffer){ return 1;}
+
+    //解密后再传给codeBuffer执行
+    unsigned long codeBufferSize = 0;
+    unsigned char* codeBuffer = xxtea_decrypt(tmpBuffer, tmpSize, (unsigned char*)SCRIPT_KEY, sizeof(SCRIPT_KEY), &amp;codeBufferSize);
+
+    if (codeBuffer)
+    {
+        if (luaL_loadbuffer(L, (char*)codeBuffer, codeBufferSize, filename.c_str()) != 0)
+        {
+            luaL_error(L, "error loading module %s from file %s :\n\t%s",
+                lua_tostring(L, 1), filename.c_str(), lua_tostring(L, -1));
+        }
+        delete []codeBuffer;
+    }
+    else
+    {
+        CCLog("can not get file data of %s", filename.c_str());
+    }
+
+    return 1;
+}
+</code></pre>
+
+<p>我们采用的是xxtea加密，所以在这里，调用相反的算法，使用相同的秘钥SCRIPT_KEY 解密。
+cocos2dx_lua_loader 这个函数会在当lua文件被required 进来的时候调用，因此就达到了加密和
+解密的效果。
+enjoying!
+就在昨天，quick-cocos2dx 的2.2.1版本发布，已经支持lua的加密和解密了，也可以参考一下
+<a href="http://cn.quick-x.com/">http://cn.quick-x.com/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[lua代码加密]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/11/22/luadai-ma-jia-mi/"/>
+    <updated>2013-11-22T12:45:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/11/22/luadai-ma-jia-mi</id>
+    <content type="html"><![CDATA[<p>开发者为了防止代码泄漏，在发布前一般会对脚本进行加密，加密方式有多种，
+比如常见的AES, XXTEA .. 等等，在cocos2dx加载加密后的lua文件后，解密之后再
+执行.</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>加密工具我用c写了一个,代码放在github上了：<a href="https://github.com/zhizhen/cocos2dx-lua-crypto.git  ">https://github.com/zhizhen/cocos2dx-lua-crypto.git  </a>
+关键代码如下</p>
+
+<pre><code>FILE *file;
+char* inPath = argv[1];     //源文件路径
+char* outPath = argv[2];    //目标文件路径
+unsigned char* fileData = malloc(FILE_LEN);
+
+file = fopen(inPath, "rb");
+unsigned long num = fread(fileData, 1, FILE_LEN, file);
+fclose(file);
+
+unsigned int dataLen = 0;
+unsigned char* data = xxtea_encrypt(fileData, num, (unsigned char*)KEY, 32, &amp;dataLen);
+
+file = fopen(outPath, "web+");
+fwrite(data, 1, dataLen, file);
+fclose(file);
+</code></pre>
+
+<p>在sh代码中遍历文件夹，调用c生成的工具对单个文件进行加密</p>
+
+<pre><code>#!/bin/sh
+EXDIR=`cd $(dirname $0); pwd`
+cd "$EXDIR/$1"
+
+#echo please input source dir:
+#read FROMDIR
+#echo please input output dir:
+#read TODIR
+
+FROMDIR="lua"
+TODIR="out"
+
+rm -rf $TODIR
+cp -r $FROMDIR $TODIR
+
+deepls(){
+    for x in $1/*
+    do
+        y=`basename $x .lua`
+        if [ -f $x ]
+        then
+            $EXDIR/debug/file_encrypto "$EXDIR/$1/$y.lua" "$EXDIR/$2/$y.so"
+        fi
+        if [ -d $x ]
+        then
+            deepls "$1/$y" "$2/$y"
+        fi
+    done
+}
+
+deepls $FROMDIR $TODIR
+
+find $TODIR -name '*.lua' -exec rm {} \;
+</code></pre>
+
+<p>执行./build.sh 就能将lua文件夹中的lua脚本全部加密后放到out目录下，然后就剩下
+怎么在cocos2dx里面修改代码读取加密后的脚本问题了</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[INIT18 BOOT FAILURE]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/10/10/init18-boot-failure/"/>
+    <updated>2013-10-10T11:40:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/10/10/init18-boot-failure</id>
+    <content type="html"><![CDATA[<h2>问题描述</h2>
+
+<p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
+
+<hr />
+
+<h2>问题原因</h2>
+
+<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+
+<hr />
+
+<h2>解决办法</h2>
+
+<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[one billion customers 部分摘录]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/10/09/one-billion-customers/"/>
+    <updated>2013-10-09T11:46:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/10/09/one-billion-customers</id>
+    <content type="html"><![CDATA[<h2>是开端亦是转折</h2>
+
+<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。</p>
+
+<hr />
+
+<p>1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
+裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
+党加速了私有化和市场改革的进程，因为党的威信已经被打破，只能通过快速提高人民
+生活水平来重建。</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>看待中国这个全世界最宏大的开端和转折，同时思考外国公司和中国传统在这个过程中
+所扮演的角色时，我们应该记住清朝时出现，毛泽东经常引用的一句口号：古为今用，洋为中用。</p>
+
+<hr />
+
+<h2>庄严的谈判</h2>
+
+<p>中国在2001年加入世界贸易组织，而谈判早在1973年就开始了，那时候中国还是乾隆盛世。
+那一年，乔治.马格尔尼勋爵带领一支英国船队抵达中国的北部港口。作为乔治三世国王经验
+最丰富的外交官之一，马格尔尼意在为英国商人打开广阔的中国市场。这本来就是一场
+关于公平的讨论。中国出口丝绸，茶叶，家具和瓷器等产品，却很少甚至从来不进口任何东西。
+金钱流入中国，但是从来不外流。因此马格尔尼带来英国生产的最好的产品，其中有来福枪，
+加侬炮，堆成山的最好的毛纺织品，还有一个配备了驾驶员的热气球。受到了乾隆皇帝的冷待。
+最后&mdash;中国真正有资格被批准进入全球贸易团体，是在206年以后。</p>
+
+<hr />
+
+<p>我猜想大多数西方人都会怀疑从马格尔尼勋爵的中国之旅到中国最终被允许加入世界贸易组织之间
+的二百年对在中国做生意到底有多大的影响。你也许会说这是老皇历了。但是在中国做生意的外国人
+必须理解过去这二百年一点也不老，中国人在此期间所受的屈辱一点也不老。在中国人的
+灵魂中，深深埋藏着的信念就是在过去二百年中，外国人用武力开道进入中国，是为了掠夺这个国家
+的财富。他们从幼时起就被教导中国曾是全世界最强大的帝国，在各方面都是最优秀的，直到外国人
+在18世纪末来到门口，无情地剥削这个民族，而这个民族在对外国人一点伤害也不曾有过。
+所以即便在今天，仍有很多中国人，一旦谈到外国列强在中国的角色就会立刻变得愤怒。的确，谁也不能
+对鸦片贸易以及英国人强加给中国人的这种灾难的流行性瘾毒，抑或日本在30到40年代早期堆中国大片
+国土的占领以及随之而来的数百万人口的屠杀说出半句好话。</p>
+
+<hr />
+
+<p>&hellip;&hellip;</p>
+
+<hr />
+
+<h2>推动变革</h2>
+
+<p>89TM之后，1991年初，美中两国谈判代表们再次做到谈判桌前，中国的谈判代表们进退维谷。顽固的官僚们一点也不想为了讨好外国人而放弃自己的权利，
+但是谈判代表们也明白中国的经济增长严重依赖于占到中国总出口三分之一的对美出口业务。最终，
+谈判变成一场个人力量的较量。中国的谈判代表们只能通过李鹏总理的积极推进来击退来自各大部委和
+国有企业的一片反对。李总理，天安门广场中政府的强硬派人物，无论是在国内还是国外
+都受到广泛的鄙视。很多西方人都认为他是一个十足的顽固不化者。但他们没有意识到，
+李鹏在推动谈判达成协议的过程中起到了至关重要的作用，他深深地希望作为一名改革者而被载入史册。
+&hellip;..</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nginx中的try_files]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files/"/>
+    <updated>2013-10-02T00:32:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files</id>
+    <content type="html"><![CDATA[<p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
+用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
+处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
+
+<hr />
+
+<pre><code>try_files file1 [file2...fileN] fallback
+</code></pre>
+
+<p>默认值：无
+作用域：location</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>今天碰到一个问题，nginx 中这样写:</p>
+
+<pre><code>try_files $url $url/ /index.php
+</code></pre>
+
+<p>然后访问</p>
+
+<pre><code>localhost/guess/add/playWay/?pwid=3&amp;gpid=1&amp;inajax=1
+</code></pre>
+
+<p>这个访问被跳转到/index.php 之后，后面的参数</p>
+
+<pre><code>pwid=3&amp;gpid=1&amp;inajax=1
+</code></pre>
+
+<p>没有出现在$_GET变量中</p>
+
+<hr />
+
+<p>于是上网查了try_files 的写法，说是如果要带上参数的话，必须这样写</p>
+
+<pre><code>try_files $url $url/ /index.php?$args
+</code></pre>
+
+<p>这样子前面那些参数就被带到了index.php中的$_GET变量里</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php5.3引入的延迟静态绑定]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind/"/>
+    <updated>2013-09-24T12:52:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind</id>
+    <content type="html"><![CDATA[<p>先看这段代码：</p>
+
+<pre><code>&lt;?php
+class A{
+    public static funciton create(){
+        return new static();
+    }
+    public static function createself(){
+        return new self();
+    }
+}
+
+class B extends A{
+
+}
+
+class C extends A{
+
+}
+var_dump( B::create() );
+var_dump( C::createself() );
+?&gt;
+</code></pre>
+
+<p>得到结果如下</p>
+
+<pre><code>object(B)#1 (0) { } 
+object(A)#1 (0) { } 
+</code></pre>
+
+<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+static与self的区别就是它的执行环境是调用它的对象。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2dx之修改vs2010下丑陋的hellolua模板]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/06/15/vs2010pei-zhi-zhi-cocos2dxchou-lou-de-helloluamo-ban/"/>
+    <updated>2013-06-15T20:06:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/06/15/vs2010pei-zhi-zhi-cocos2dxchou-lou-de-helloluamo-ban</id>
+    <content type="html"><![CDATA[<p>一直想抽时间把cocos2dx入门这自己的经历写一下，终于周末啦！<br/>
+首先说明，本人win7用户，IDE是vs2010，编译环境是win32，这篇文章是介绍如何在vs2010中开始你的第一个cocos2dx+lua项目的
+前提是你必须安装了vs2010哈！<br/>
+第一步，下载<a href="www.cocos2d-x.org/projects/cocos2d-x/wiki/Download">cocos2dx</a>，下载后解压，这个放在哪个目录都没关系。<br/>
+第二步，安装cocos2dx工程模板，双击解压后目录下的 install-templates-msvc.bat 这个文件，如下图<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/anzhuangmuban.png" alt="" /><br/>
+第三步，打开你的vs2010,文件-> 新建项目，这时候你会看到，已安装的模板一栏里有Cocos2d-win32 Application 这个模板，并且有cocos2dx的经典图标在那！<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/xinjianxiangmu.png" alt="" /><br/>
+这时候，你需要输入名称，然后点确认.<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/Wizard.png" alt="" /><br/>
+点击下一步<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/selectengine.png" alt="Select engile" /><br/>
+选择引擎，这里选择audio和lua引擎<br/>
+然后就能看到刚刚创建的项目了:<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/initproject.png" alt="init project" /><br/>
+这时候如果我们点debug按钮，项目是不能运行起来的，因为它缺少一些库<br/>
+第四步，运行cocos2dx目录下，也就是之前解压的目录下的build-win32.bat，等运行完后，会在当前目录下生成Debug.win32这个目录
+<img src="http://zhizhen.github.io/images/vs-cocos2d/buildcocos2d.png" alt="build cocos2dx" />
+然后找到Demo项目下的Debug.win32,如果没有这个目录的话，执行一下Demo项目的Debug就有了（尽管执行报错），但是会生成这个目录:
+<img src="http://zhizhen.github.io/images/vs-cocos2d/demodebugdir.png" alt="" />
+然后我们把cocos2dx/Debug.win32 这个目录下的这些文件拷贝到 Demo/Debug.win32 下</p>
+
+<pre><code>glew32.lib
+libcocos2d.lib
+libCocosDenshion.lib
+liblua.lib
+lua51.lib
+pthreadVCE2.lib
+
+glew32.dll
+libcocos2d.dll
+libCocosDenshion.dll
+libtiff.dll
+lua51.dll
+pthreadVCE2.dll
+zlib1.dll
+</code></pre>
+
+<p>有点多，需要一个一个拷贝过去，如果缺了其中一个的话，会报错<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/libs.png" alt="libs" /><br/>
+第五步，在Demo/Demo目录下创建Libs目录，把cocos2dx目录下的cocos2dx;CocosDenshion;extensions;以及cocos2dx/scripting 目录下的lua 都拷贝到新建的Libs中来。<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/copylibs.png" alt="copylibs" /><br/>
+第六步，配置包含路径，项目上点右键 &ndash;> 属性 &ndash;> C/C++ &ndash;> 常规-> 附加包含目录 ，删除它原来的那些，将下面这些加入<br/>
+<img src="http://zhizhen.github.io/images/vs-cocos2d/fujiamulu.png" alt="fujiamulu" /><br/>
+再打开链接器的输入，加入lua51.lib
+<img src="http://zhizhen.github.io/images/vs-cocos2d/lianjieqi.png" alt="lianjieqi" />
+设置完后点击应用，然后就可以运行了，结果如下，瞧！一个小农场游戏：
+<img src="http://zhizhen.github.io/images/vs-cocos2d/Demo.png" alt="Demo" /></p>
+
+<p>当然，还没完，因为我们不仅仅是要运行第一个cocos2dx + lua项目，我们是要改它生成的不美观的目录结构：
+<img src="http://zhizhen.github.io/images/vs-cocos2d/demo_pic1.png" alt="" /><img src="http://zhizhen.github.io/images/vs-cocos2d/demo_pic2.png" alt="" />
+首先，删掉Demo目录下的proj.win32文件夹，因为里面什么东西都没有！<br/>
+然后在项目的资源管理器面板中，在Demo.rc;Demo.ico;Demo.png这三个文件上点击右键-> 移除-> 删除;
+再删除Demo/Demo/proj.win32下的res文件夹.<br/>
+将main.h;main.cpp这两个文件移动到Demo/Demo/Classes 文件夹中.退出vs2010.<br/>
+将Demo.win32.vcxproj;Demo.win32.vcxproj.filters;Demo.win32.vcxproj.user 三个文件移动到Demo目录下；删除Demo/Demo/proj.win32这个文件夹<br/>
+将Demo/Demo下的Classes;Libs;Resources三个文件夹移动到Demo目录下；并删除Demo/Demo这个目录.<br/>
+修改完之后，整个项目目录结构是这样子的：
+<img src="http://zhizhen.github.io/images/vs-cocos2d/final.png" alt="" /><br/>
+然而这时候是无法打开项目的，打开Demo.sln文件编辑,并删掉这一部分：
+<img src="http://zhizhen.github.io/images/vs-cocos2d/modifysln.png" alt="" /><br/>
+删除Demo.win32.vcxproj.filters这个文件，让我们来重新设置filters过滤器,删除之后打开Demo.sln。移除项目中的所有文件:
+然后依次按照我们项目中Classes;Libs;Resources这样的目录重新设置filters,分别用点击右键 &ndash;> 添加筛选器;右键 &ndash;> 添加现有项， 将我们的文件导入:
+<img src="http://zhizhen.github.io/images/vs-cocos2d/newfilter.png" alt="" /><br/>
+由于采用的是相对路径，所以附加目录这里得改一下啦：
+<img src="http://zhizhen.github.io/images/vs-cocos2d/newfujia.png" alt="" /><br/>
+还有这里，我习惯把中间目录跟Debug目录放到一块儿去
+<img src="http://zhizhen.github.io/images/vs-cocos2d/zhongjianmulu.png" alt="" /><br/>
+这时候改完之后发现跑不动了，因为找不到Resources目录
+<img src="http://zhizhen.github.io/images/vs-cocos2d/resourcebug.png" alt="" /><br/>
+看到没，在这里设置的
+<img src="http://zhizhen.github.io/images/vs-cocos2d/resourcefinal.png" alt="" /><br/>
+好了，修改完之后，又能够看到我们的农场游戏了：
+<img src="http://zhizhen.github.io/images/Demo.png" alt="" /><br/>
+这时候的项目组织方式，已经按照我自己的想法完全改了:
+<img src="http://zhizhen.github.io/images/vs-cocos2d/final.png" alt="" /><br/>
+按照这些方法，你完全可以以你自己的方式去组织项目结构</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux c (三) gdb]]></title>
+    <link href="http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb/"/>
+    <updated>2013-06-15T16:31:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb</id>
+    <content type="html"><![CDATA[<p>ubuntu上面是默认装了gdb的，输入</p>
+
+<pre><code>gdb -v
+</code></pre>
+
+<p>查看gdb的版本信息</p>
+
+<pre><code>zhang@note:~/test_make$ gdb -v
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
+</code></pre>
+
+<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
+
+<pre><code>CFLAGS = -g
+main:main.o test1.o test2.o
+    gcc -o $@ $^
+..c.o:
+    gcc $(CFLAGS) -c $&lt; 
+</code></pre>
+
+<p>然后先删了老的main<em> 和</em>.o文件</p>
+
+<pre><code>zhang@note:~/test_make$ rm main
+zhang@note:~/test_make$ rm *.o
+</code></pre>
+
+<p>好了，重新编译</p>
+
+<pre><code>zhang@note:~/test_make$ make
+cc -g   -c -o main.o main.c
+cc -g   -c -o test1.o test1.c
+cc -g   -c -o test2.o test2.c
+gcc -o main main.o test1.o test2.o
+zhang@note:~/test_make$
+</code></pre>
+
+<p>编译完后运行gdb</p>
+
+<pre><code>zhang@note:~/test_make$ gdb ./main
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
+Reading symbols from /home/zhang/test_make/main...done.
+(gdb)
+</code></pre>
+
+<p>输入命令</p>
+
+<pre><code>(gdb) list
+1   #include "test1.h"
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       test1_print("Hello ");
+7       test2_print("World !");
+8   }
+(gdb) 
+Line number 9 out of range; main.c has 8 lines.
+(gdb)
+</code></pre>
+
+<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
+
+<pre><code>(gdb) list
+No symbol table is loaded.  Use the "file" command.
+(gdb)
+</code></pre>
+
+<p>如果只想列出2-9行之间的代码</p>
+
+<pre><code>(gdb) list 2,9
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       test1_print("Hello ");
+7       test2_print("World !");
+8   }
+</code></pre>
+
+<p>如果只想列出某个函数</p>
+
+<pre><code>(gdb) list test1_print 
+1   #include "stdio.h"
+2   #include "test1.h"
+3   
+4   void test1_print(char *print_str)
+5   {
+6       printf("This is test1 print %s \n", print_str);
+7   }
+(gdb)
+</code></pre>
+
+<p>为了能够下断点查看变量值，我们改下main函数</p>
+
+<pre><code>void main(int argc, char **argv)
+   {
+       char msg1[128] = "Hello ";
+       char msg2[128] = "World !";
+       test1_print(msg1);
+       test2_print(msg2);
+   }
+</code></pre>
+
+<p>然后</p>
+
+<pre><code>zhang@note:~/test_make$ make        #编译
+cc -g   -c -o main.o main.c
+cc -g   -c -o test1.o test1.c
+cc -g   -c -o test2.o test2.c
+gcc -o main main.o test1.o test2.o
+zhang@note:~/test_make$ gdb ./main
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
+Reading symbols from /home/zhang/test_make/main...done.
+(gdb) list                          #列出代码
+1   #include "test1.h"
+2   #include "test2.h"
+3   
+4   void main(int argc, char **argv)
+5   {
+6       char msg1[128] = "Hello ";
+7       char msg2[128] = "World !";
+8       test1_print(msg1);
+9       test2_print(msg2);
+10  }
+(gdb) break 7                       #在第7行的位置下断点
+Breakpoint 1 at 0x804847c: file main.c, line 7.
+(gdb) run main                      #执行调试
+Starting program: /home/zhang/test_make/main main
+
+Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
+7       char msg2[128] = "World !";
+(gdb) print msg1                    #查看断点处变量msg1的值
+$1 = "Hello ", '\000' &lt;repeats 121 times&gt;
+(gdb) continue                      #继续往下执行
+Continuing.
+This is test1 print Hello  
+This is test2 print World ! 
+[Inferior 1 (process 3270) exited normally]
+(gdb)
+</code></pre>
+
+<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
+附上常用命令：</p>
+
+<pre><code>小结：常用的gdb命令
+backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
+breakpoint 在程序中设置一个断点
+cd 改变当前工作目录
+clear 删除刚才停止处的断点
+commands 命中断点时，列出将要执行的命令
+continue 从断点开始继续执行
+delete 删除一个断点或监测点；也可与其他命令一起使用
+display 程序停止时显示变量和表达时
+down 下移栈帧，使得另一个函数成为当前函数
+frame 选择下一条continue命令的帧
+info 显示与该程序有关的各种信息
+jump 在源程序中的另一点开始运行
+kill 异常终止在gdb 控制下运行的程序
+list 列出相应于正在执行的程序的原文件内容
+next 执行下一个源程序行，从而执行其整体中的一个函数
+print 显示变量或表达式的值
+pwd 显示当前工作目录
+pype 显示一个数据结构（如一个结构或C++类）的内容
+quit 退出gdb
+reverse-search 在源文件中反向搜索正规表达式
+run 执行该程序
+search 在源文件中搜索正规表达式
+set variable 给变量赋值
+signal 将一个信号发送到正在运行的进程
+step 执行下一个源程序行，必要时进入下一个函数
+undisplay display命令的反命令，不要显示表达式
+until 结束当前循环
+up 上移栈帧，使另一函数成为当前函数
+watch 在程序中设置一个监测点（即数据断点）
+whatis 显示变量或函数类型 
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>nginx中的try_files - 植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
+用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
+处理请求。利用它可以代替部分复杂的nginx rewrite语法 try_files file1 [file2 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Nginx中的try_files</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T00:32:00+08:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
+用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
+处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
+
+<hr />
+
+<pre><code>try_files file1 [file2...fileN] fallback
+</code></pre>
+
+<p>默认值：无
+作用域：location</p>
+
+<!--more-->
+
+
+<hr />
+
+<p>今天碰到一个问题，nginx 中这样写:</p>
+
+<pre><code>try_files $url $url/ /index.php
+</code></pre>
+
+<p>然后访问</p>
+
+<pre><code>localhost/guess/add/playWay/?pwid=3&amp;gpid=1&amp;inajax=1
+</code></pre>
+
+<p>这个访问被跳转到/index.php 之后，后面的参数</p>
+
+<pre><code>pwid=3&amp;gpid=1&amp;inajax=1
+</code></pre>
+
+<p>没有出现在$_GET变量中</p>
+
+<hr />
+
+<p>于是上网查了try_files 的写法，说是如果要带上参数的话，必须这样写</p>
+
+<pre><code>try_files $url $url/ /index.php?$args
+</code></pre>
+
+<p>这样子前面那些参数就被带到了index.php中的$_GET变量里</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">张植臻</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T00:32:00+08:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nginx/'>nginx</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/09/24/phpdelaystaticbind/" title="Previous Post: php5.3引入的延迟静态绑定">&laquo; php5.3引入的延迟静态绑定</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/09/one-billion-customers/" title="Next Post: one billion customers 部分摘录">one billion customers 部分摘录 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

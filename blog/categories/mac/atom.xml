@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mac | 植臻]]></title>
+  <link href="http://zhizhen.github.io/blog/categories/mac/atom.xml" rel="self"/>
+  <link href="http://zhizhen.github.io/"/>
+  <updated>2016-09-23T03:03:58+08:00</updated>
+  <id>http://zhizhen.github.io/</id>
+  <author>
+    <name><![CDATA[张植臻]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[PlistBuddy修改Xcode工程版本号]]></title>
+    <link href="http://zhizhen.github.io/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/"/>
+    <updated>2014-12-20T01:48:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao</id>
+    <content type="html"><![CDATA[<p>上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行：</p>
+
+<pre><code>&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt;
+</code></pre>
+
+<p>后来发现mac下直接有现成工具可用:</p>
+
+<pre><code>/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
+</code></pre>
+
+<!--more-->
+
+
+<p>最后准备把这东西用上去的时候，发现之前队友已经加过了，给力。</p>
+]]></content>
+  </entry>
+  
+</feed>
