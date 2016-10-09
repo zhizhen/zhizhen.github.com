@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2016-09-23T19:06:06+08:00</updated>
+  <updated>2016-10-09T22:52:02+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -20,7 +20,7 @@
     <id>http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji</id>
     <content type="html"><![CDATA[<hr />
 
-<h2>怎么样设计百万DAU的数据层？</h2>
+<h2>我们要做一个牛逼的产品！</h2>
 
 <p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
 
@@ -45,7 +45,7 @@
 erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
 <li>问题：<br/>
 mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
-n(n-1)/2，承载有限。</li>
+n(n-1)/2，一旦数据量大，节点多，IO通信压力巨大。</li>
 </ul>
 
 
@@ -133,21 +133,106 @@ db_sync:create_schema().
 <pre><code>db_sync:read_account(2).
 </code></pre>
 
-<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。比较简单.一旦DAU达到一定量级，全联通节点之间的数据同步，是肯定有性能压力的。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
+<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
 
-<h2>我们还是以mnesia为例，再来了解一下水平切分</h2>
+<h2>那么百万级DAU的数据库怎么设计呢？</h2>
+
+<p>  答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
 
 <ul>
 <li>适用范围：
-百万级甚至千万级大数据情况通用解决方案</li>
+百万级甚至千万级大数据情况通用解决方案
+表的查询方式单一简单，最好是有唯一主键查询
+不做联表事务查询</li>
 <li>问题：
-单点故障恢复难做</li>
+如果有事务的话，涉及到分布式事务，是非常复杂的</li>
 </ul>
 
 
 <h3>简单的水平切分，hash</h3>
 
-<p>未完待续。。。</p>
+<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。</p>
+
+<pre><code>simple_hash(Item) -&gt;
+    case Item rem 3 of
+        0 -&gt;
+            %insert data into user_table (ip:127.0.0.1)
+        1 -&gt;
+            %insert data into user_table (ip:127.0.0.2)
+        2 -&gt;
+            %insert data into user_table (ip:127.0.0.3)
+    end.
+</code></pre>
+
+<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br/>
+这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br/>
+那有没有一种更好的办法，降低增加分片的成本呢？</p>
+
+<h3>一致性hash</h3>
+
+<p>借用David Wheeler一句名言:</p>
+
+<blockquote><p>All problems in computer science can be solved by another level of indirection.</p></blockquote>
+
+<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br/>
+有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：</p>
+
+<pre><code>-module(hash).
+-compile(export_all).
+
+-define(PRINT(I, P), io:format(I, P)).
+
+start() -&gt;
+    Nodes = hash_ring:list_to_nodes([
+            '127.0.0.1', 
+            '127.0.0.2',
+            '127.0.0.3'
+        ]),
+    Ring0 = hash_ring:make(Nodes),
+    erlang:put(ring, Ring0).
+
+get_nodes() -&gt;
+    Ring = erlang:get(ring),
+    hash_ring:get_nodes(Ring).
+
+add_node(Name) -&gt;
+    Ring0 = erlang:get(ring),
+    Ring1 = hash_ring:add_node(hash_ring_node:make(Name), Ring0),
+    erlang:put(ring, Ring1),
+    %%新添加node时，对数据进行移动
+    Fun = fun(I) -&gt;
+            OldServer = hash_ring:collect_nodes(I, 1, Ring0),
+            NewServer = hash_ring:collect_nodes(I, 1, Ring1),
+            if OldServer =/= NewServer -&gt;
+                    %todo delete data from old server
+                    %todo insert data into new server
+                    todo;
+                true -&gt;
+                    todo
+            end
+    end,
+    lists:foreach(Fun, lists:seq(1, 5000)).
+
+insert(Item) -&gt;
+    Ring0 = erlang:get(ring),
+    [Node] = hash_ring:collect_nodes(Item, 1, Ring0),
+    ?PRINT("insert ~p into node ~p ~n", [Item, Node]).
+
+simple_hash(Item) -&gt;
+    case Item rem 3 of
+        0 -&gt; 
+            %insert data into user_table (user table 0 ip:127.0.0.1)
+            todo;
+        1 -&gt; 
+            %insert data into user_table (user table 1 ip:127.0.0.2)
+            todo;
+        2 -&gt;
+            %insert data into user_table (user table 2 ip:127.0.0.3)
+            todo
+    end.
+</code></pre>
+
+<p>这样的话，增加2个sharding之后，只需要移动2千万条数据到新的sharding上即可。</p>
 
 <h2>参考文章</h2>
 
@@ -496,7 +581,7 @@ nonode@nohost
 (mynode@127.0.0.1)2&gt;
 </code></pre>
 
-<p>You see? we got a node named &lsquo;<a href="&#109;&#97;&#105;&#108;&#116;&#x6f;&#58;&#109;&#121;&#x6e;&#111;&#100;&#101;&#64;&#49;&#x32;&#x37;&#46;&#x30;&#x2e;&#48;&#x2e;&#49;">&#109;&#x79;&#110;&#x6f;&#x64;&#101;&#x40;&#49;&#50;&#x37;&#x2e;&#48;&#x2e;&#48;&#x2e;&#49;</a>&rsquo;, then we can set_cookie</p>
+<p>You see? we got a node named &lsquo;<a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#109;&#121;&#110;&#x6f;&#x64;&#x65;&#x40;&#x31;&#50;&#x37;&#46;&#48;&#x2e;&#x30;&#x2e;&#x31;">&#109;&#121;&#110;&#111;&#100;&#101;&#x40;&#x31;&#x32;&#55;&#46;&#x30;&#46;&#x30;&#46;&#49;</a>&rsquo;, then we can set_cookie</p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
