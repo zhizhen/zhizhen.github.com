@@ -128,3 +128,5 @@ google_analytics_tracking_id: UA-41804716-1
 
 # Facebook Like
 facebook_like: false
+
+encoding: GBK
