@@ -13,7 +13,8 @@ categories:
 ***
 一句话总结，用于在线性空间运算出非线性空间中的插值。
 * * *
-相关文章：  
+相关文章：   
+
 * [龚大的Gamma传说](http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/)  
 * [聊聊Unity的Gamma校正以及线性工作流](https://www.cnblogs.com/murongxiaopifu/p/9001314.html)  
 * [以及乐乐的《 我理解的伽马校正（Gamma Correction）》](https://blog.csdn.net/candycat1992/article/details/46228771)  
