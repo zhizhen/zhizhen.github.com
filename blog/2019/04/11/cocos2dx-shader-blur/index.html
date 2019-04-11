@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>cocos2dx shader 模糊 - 植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。 先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Cocos2dx Shader 模糊</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-04-11T14:38:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2019</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p></blockquote>
+
+<p>先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值，要想让这个颜色变得模糊，就要让它与它周围的像素点的颜色稍微接近一点，那么我们就需要拿到这个像素点周围的像素点的颜色值，我们把这些个像素点的值加起来取平均值，就得到了一个区域内的平均颜色。</p>
+
+<p>如果直接使用这个颜色的话，最终的效果会变得很模糊，如果我们只是想稍微模糊一点的话，就要让这个平均值更接近于当前像素点原本的颜色，为此，我们取均值的时候对每个像素点增加了一个权重的定义，当前像素点的权重最高，依次向周围减弱，使得最后得到的均值的颜色更接近于当前像素点原始的颜色。</p>
+
+<p> 看代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
+</span><span class='line'>precision mediump float;
+</span><span class='line'>#endif
+</span><span class='line'>
+</span><span class='line'>varying vec4 v_fragmentColor;
+</span><span class='line'>varying vec2 v_texCoord;
+</span><span class='line'>
+</span><span class='line'>uniform vec2 resolution;//模糊对象的实际分辨率
+</span><span class='line'>uniform float blurRadius;//半径
+</span><span class='line'>uniform float sampleNum;//间隔的段数
+</span><span class='line'>
+</span><span class='line'>vec4 blur(vec2);
+</span><span class='line'>
+</span><span class='line'>void main(void){
+</span><span class='line'>vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
+</span><span class='line'>gl_FragColor = vec4(col) * v_fragmentColor;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>vec4 blur(vec2 p){
+</span><span class='line'>if (blurRadius &gt; 0.0 && sampleNum &gt; 1.0)
+</span><span class='line'>{
+</span><span class='line'>vec4 col = vec4(0);
+</span><span class='line'>vec2 unit = 1.0 / resolution.xy;//单位坐标
+</span><span class='line'>
+</span><span class='line'>float r = blurRadius;
+</span><span class='line'>float sampleStep = r / sampleNum;
+</span><span class='line'>
+</span><span class='line'>float count = 0.0;
+</span><span class='line'>//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
+</span><span class='line'>for(float x = -r; x &lt; r; x += sampleStep)
+</span><span class='line'>{
+</span><span class='line'>for(float y = -r; y &lt; r; y += sampleStep)
+</span><span class='line'>{
+</span><span class='line'>float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
+</span><span class='line'>col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
+</span><span class='line'>count += weight;
+</span><span class='line'>}
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>//得到实际模糊颜色的值
+</span><span class='line'>
+</span><span class='line'>return col / count;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>return texture2D(CC_Texture0, p);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
+
+<p>uniform变量是顶点着色器和片段着色器共享使用的变量，uniform的值不能被改变。</p>
+
+<p>uniform变量是由宿主程序设置的，代码如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> void EffectBlur::setTarget(EffectSprite *sprite)
+</span><span class='line'>{
+</span><span class='line'>Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
+</span><span class='line'>_glprogramstate-&gt;setUniformVec2("resolution", size);
+</span><span class='line'>#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+</span><span class='line'>_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
+</span><span class='line'>_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
+</span><span class='line'>#endif
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
+
+<p>resolution是当前渲染node的实际分辨率。</p>
+
+<p>blurRadius是像素点模糊处理的参考矩形的半径</p>
+
+<p>sampleNum选择像素点的间隔的数量，相邻像素点的间距等于blurRadius / sampleNum</p>
+
+<p>blur函数就是计算该像素点的最终颜色，参数p是当前像素点的坐标，我们以p点为中点以2r为边长得到一个矩形，这个矩形中每隔sampleStep长度的像素点是当前像素点的颜色参考像素。每个像素点会乘以一个weight权重，这个weight越靠近p点值越高，目的是为了让最终的值更接近于p点的像素颜色，然后各个像素点乘以权重后的颜色加起来，得到col，把各个权重也加起来得到count。最终的颜色值就是col/count。</p>
+
+<p>效果图如下：</p>
+
+<p>模糊前后：</p>
+
+<p><img src="/images/cocos2dxshader2.jpg" alt="" /><img src="/images/cocos2dxshader3.jpg" alt="" /></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">张植臻</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-04-11T14:38:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2019</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2019/04/11/cocos2dx-shader-gray/" title="Previous Post: cocos2dx shader 变灰">&laquo; cocos2dx shader 变灰</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2019/04/11/cocos2dx-shader-outline/" title="Next Post: cocos2dx shader 描边">cocos2dx shader 描边 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-blur/">Cocos2dx Shader 模糊</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-gray/">Cocos2dx Shader 变灰</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

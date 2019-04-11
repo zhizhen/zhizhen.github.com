@@ -9,10 +9,9 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="一直想抽时间把cocos2dx入门这自己的经历写一下，终于周末啦！
-首先说明，本人win7用户，IDE是vs2010，编译环境是win32，这篇文章是介绍如何在vs2010中开始你的第一个cocos2dx+lua项目的
-前提是你必须安装了vs2010哈！
-第一步，下载cocos2dx，下载后解压， &hellip;">
+  <meta name="description" content="是开端亦是转折 一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。 1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
+裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
+党加速了私有化和市场改革的进程， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +79,180 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/one-billion-customers/">One Billion Customers 部分摘录</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T11:46:00+08:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/09/one-billion-customers/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>是开端亦是转折</h2>
+
+<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。</p>
+
+<hr />
+
+<p>1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
+裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
+党加速了私有化和市场改革的进程，因为党的威信已经被打破，只能通过快速提高人民
+生活水平来重建。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/09/one-billion-customers/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/02/nginxzhong-de-try-files/">Nginx中的try_files</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T00:32:00+08:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/02/nginxzhong-de-try-files/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
+用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
+处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
+
+<hr />
+
+<pre><code>try_files file1 [file2...fileN] fallback
+</code></pre>
+
+<p>默认值：无
+作用域：location</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/02/nginxzhong-de-try-files/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/24/phpdelaystaticbind/">php5.3引入的延迟静态绑定</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-24T12:52:00+08:00" pubdate data-updated="true">Sep 24<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/24/phpdelaystaticbind/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先看这段代码：</p>
+
+<pre><code>&lt;?php
+class A{
+    public static funciton create(){
+        return new static();
+    }
+    public static function createself(){
+        return new self();
+    }
+}
+
+class B extends A{
+
+}
+
+class C extends A{
+
+}
+var_dump( B::create() );
+var_dump( C::createself() );
+?&gt;
+</code></pre>
+
+<p>得到结果如下</p>
+
+<pre><code>object(B)#1 (0) { } 
+object(A)#1 (0) { } 
+</code></pre>
+
+<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+static与self的区别就是它的执行环境是调用它的对象。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1037,23 +1210,23 @@ when we first save value into it.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-blur/">Cocos2dx Shader 模糊</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-gray/">Cocos2dx Shader 变灰</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
       </li>
     
       <li class="post">
         <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a>
       </li>
     
   </ul>

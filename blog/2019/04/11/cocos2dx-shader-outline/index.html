@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>cocos2dx shader 描边 - 植臻</title>
+  <meta name="author" content="张植臻">
+
+  
+  <meta name="description" content="Cocos2d-x 3.x的label使用了freetype字体引擎（http://www.freetype.org/），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。 官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">植臻</a></h1>
+  
+    <h2>谦虚、热情、简单、极致</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:zhizhen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Cocos2dx Shader 描边</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-04-11T14:47:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2019</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p> Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
+
+<p>官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。作者也没有怎么解释，直接丢了一个网址出来（<a href="http://www.idevgames.com/forums/thread-3010.html">http://www.idevgames.com/forums/thread-3010.html</a>），看样子是参考了这个帖子。</p>
+
+<p>后来从网上别人的博客中找到了一遍关于描边shader的文章，这篇文章用的方法跟我想的差不多，优点是很容易理解，缺点是相对于官方demo给的描边shader效率上差了点。原文地址：<a href="http://blog.csdn.net/u011281572/article/details/44999609">http://blog.csdn.net/u011281572/article/details/44999609</a>。</p>
+
+<p>原文的代码考虑了label的描边，这个对于现在的cocos3.x版本来说有点多余，我就对原文的代码做了些改动，去掉了label描边的那块儿代码，有些逻辑也做了一些改变，使得更容易理解一些。</p>
+
+<p>下面是我改动后的代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
+</span><span class='line'>varying vec2 v_texCoord; // 纹理坐标
+</span><span class='line'>uniform float outlineSize; // 描边宽度，以像素为单位
+</span><span class='line'>uniform vec3 outlineColor; // 描边颜色
+</span><span class='line'>uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
+</span><span class='line'>
+</span><span class='line'>// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
+</span><span class='line'>int stroke = 0;
+</span><span class='line'>float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
+</span><span class='line'>vec2 unit = 1.0 / textureSize.xy;//单位坐标
+</span><span class='line'>vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
+</span><span class='line'>float a = texture2D(CC_Texture0, v_texCoord + offset).a;
+</span><span class='line'>if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
+</span><span class='line'>{
+</span><span class='line'>stroke = 1;
+</span><span class='line'>}
+</span><span class='line'>return stroke;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>void main(){
+</span><span class='line'>vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
+</span><span class='line'>if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
+</span><span class='line'>{
+</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
+</span><span class='line'>return;
+</span><span class='line'>}
+</span><span class='line'>// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
+</span><span class='line'>int strokeCount = 0;
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(0.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(30.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(60.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(90.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(120.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(150.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(180.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(210.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(240.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(270.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(300.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(330.0);
+</span><span class='line'>
+</span><span class='line'>if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
+</span><span class='line'>{
+</span><span class='line'>myC.rgb = outlineColor;
+</span><span class='line'>myC.a = 1.0;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 大致的逻辑是：</p>
+
+<p>先判断当前像素是否透明，如果不透明则直接返回。如果是透明像素，就判断这个点周围12个方向，每个方向距离当前像素距离是outlineSize的像素点是否透明，只要有一个是非透明像素，就把当前像素点设为描边的颜色，并设置成非透明。</p>
+
+<p>效果如下：</p>
+
+<p><img src="/images/cocos2dxshader4.jpg" alt="" /></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">张植臻</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-04-11T14:47:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2019</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2019/04/11/cocos2dx-shader-blur/" title="Previous Post: cocos2dx shader 模糊">&laquo; cocos2dx shader 模糊</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>A little something about me.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-blur/">Cocos2dx Shader 模糊</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/cocos2dx-shader-gray/">Cocos2dx Shader 变灰</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - 张植臻 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zhizhen';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

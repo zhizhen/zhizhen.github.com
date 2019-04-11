@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-04-11T11:10:37+08:00</updated>
+  <updated>2019-04-11T14:52:10+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -12,6 +12,384 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2dx shader 描边]]></title>
+    <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline/"/>
+    <updated>2019-04-11T14:47:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline</id>
+    <content type="html"><![CDATA[<p> Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
+
+<p>官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。作者也没有怎么解释，直接丢了一个网址出来（<a href="http://www.idevgames.com/forums/thread-3010.html">http://www.idevgames.com/forums/thread-3010.html</a>），看样子是参考了这个帖子。</p>
+
+<p>后来从网上别人的博客中找到了一遍关于描边shader的文章，这篇文章用的方法跟我想的差不多，优点是很容易理解，缺点是相对于官方demo给的描边shader效率上差了点。原文地址：<a href="http://blog.csdn.net/u011281572/article/details/44999609">http://blog.csdn.net/u011281572/article/details/44999609</a>。</p>
+
+<p>原文的代码考虑了label的描边，这个对于现在的cocos3.x版本来说有点多余，我就对原文的代码做了些改动，去掉了label描边的那块儿代码，有些逻辑也做了一些改变，使得更容易理解一些。</p>
+
+<p>下面是我改动后的代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
+</span><span class='line'>varying vec2 v_texCoord; // 纹理坐标
+</span><span class='line'>uniform float outlineSize; // 描边宽度，以像素为单位
+</span><span class='line'>uniform vec3 outlineColor; // 描边颜色
+</span><span class='line'>uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
+</span><span class='line'>
+</span><span class='line'>// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
+</span><span class='line'>int stroke = 0;
+</span><span class='line'>float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
+</span><span class='line'>vec2 unit = 1.0 / textureSize.xy;//单位坐标
+</span><span class='line'>vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
+</span><span class='line'>float a = texture2D(CC_Texture0, v_texCoord + offset).a;
+</span><span class='line'>if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
+</span><span class='line'>{
+</span><span class='line'>stroke = 1;
+</span><span class='line'>}
+</span><span class='line'>return stroke;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>void main(){
+</span><span class='line'>vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
+</span><span class='line'>if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
+</span><span class='line'>{
+</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
+</span><span class='line'>return;
+</span><span class='line'>}
+</span><span class='line'>// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
+</span><span class='line'>int strokeCount = 0;
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(0.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(30.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(60.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(90.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(120.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(150.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(180.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(210.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(240.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(270.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(300.0);
+</span><span class='line'>strokeCount += getIsStrokeWithAngel(330.0);
+</span><span class='line'>
+</span><span class='line'>if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
+</span><span class='line'>{
+</span><span class='line'>myC.rgb = outlineColor;
+</span><span class='line'>myC.a = 1.0;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 大致的逻辑是：</p>
+
+<p>先判断当前像素是否透明，如果不透明则直接返回。如果是透明像素，就判断这个点周围12个方向，每个方向距离当前像素距离是outlineSize的像素点是否透明，只要有一个是非透明像素，就把当前像素点设为描边的颜色，并设置成非透明。</p>
+
+<p>效果如下：</p>
+
+<p><img src="http://zhizhen.github.io/images/cocos2dxshader4.jpg" alt="" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2dx shader 模糊]]></title>
+    <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur/"/>
+    <updated>2019-04-11T14:38:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur</id>
+    <content type="html"><![CDATA[<blockquote><p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p></blockquote>
+
+<p>先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值，要想让这个颜色变得模糊，就要让它与它周围的像素点的颜色稍微接近一点，那么我们就需要拿到这个像素点周围的像素点的颜色值，我们把这些个像素点的值加起来取平均值，就得到了一个区域内的平均颜色。</p>
+
+<p>如果直接使用这个颜色的话，最终的效果会变得很模糊，如果我们只是想稍微模糊一点的话，就要让这个平均值更接近于当前像素点原本的颜色，为此，我们取均值的时候对每个像素点增加了一个权重的定义，当前像素点的权重最高，依次向周围减弱，使得最后得到的均值的颜色更接近于当前像素点原始的颜色。</p>
+
+<p> 看代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
+</span><span class='line'>precision mediump float;
+</span><span class='line'>#endif
+</span><span class='line'>
+</span><span class='line'>varying vec4 v_fragmentColor;
+</span><span class='line'>varying vec2 v_texCoord;
+</span><span class='line'>
+</span><span class='line'>uniform vec2 resolution;//模糊对象的实际分辨率
+</span><span class='line'>uniform float blurRadius;//半径
+</span><span class='line'>uniform float sampleNum;//间隔的段数
+</span><span class='line'>
+</span><span class='line'>vec4 blur(vec2);
+</span><span class='line'>
+</span><span class='line'>void main(void){
+</span><span class='line'>vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
+</span><span class='line'>gl_FragColor = vec4(col) * v_fragmentColor;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>vec4 blur(vec2 p){
+</span><span class='line'>if (blurRadius &gt; 0.0 && sampleNum &gt; 1.0)
+</span><span class='line'>{
+</span><span class='line'>vec4 col = vec4(0);
+</span><span class='line'>vec2 unit = 1.0 / resolution.xy;//单位坐标
+</span><span class='line'>
+</span><span class='line'>float r = blurRadius;
+</span><span class='line'>float sampleStep = r / sampleNum;
+</span><span class='line'>
+</span><span class='line'>float count = 0.0;
+</span><span class='line'>//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
+</span><span class='line'>for(float x = -r; x &lt; r; x += sampleStep)
+</span><span class='line'>{
+</span><span class='line'>for(float y = -r; y &lt; r; y += sampleStep)
+</span><span class='line'>{
+</span><span class='line'>float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
+</span><span class='line'>col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
+</span><span class='line'>count += weight;
+</span><span class='line'>}
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>//得到实际模糊颜色的值
+</span><span class='line'>
+</span><span class='line'>return col / count;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>return texture2D(CC_Texture0, p);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
+
+<p>uniform变量是顶点着色器和片段着色器共享使用的变量，uniform的值不能被改变。</p>
+
+<p>uniform变量是由宿主程序设置的，代码如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> void EffectBlur::setTarget(EffectSprite *sprite)
+</span><span class='line'>{
+</span><span class='line'>Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
+</span><span class='line'>_glprogramstate-&gt;setUniformVec2("resolution", size);
+</span><span class='line'>#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+</span><span class='line'>_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
+</span><span class='line'>_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
+</span><span class='line'>#endif
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
+
+<p>resolution是当前渲染node的实际分辨率。</p>
+
+<p>blurRadius是像素点模糊处理的参考矩形的半径</p>
+
+<p>sampleNum选择像素点的间隔的数量，相邻像素点的间距等于blurRadius / sampleNum</p>
+
+<p>blur函数就是计算该像素点的最终颜色，参数p是当前像素点的坐标，我们以p点为中点以2r为边长得到一个矩形，这个矩形中每隔sampleStep长度的像素点是当前像素点的颜色参考像素。每个像素点会乘以一个weight权重，这个weight越靠近p点值越高，目的是为了让最终的值更接近于p点的像素颜色，然后各个像素点乘以权重后的颜色加起来，得到col，把各个权重也加起来得到count。最终的颜色值就是col/count。</p>
+
+<p>效果图如下：</p>
+
+<p>模糊前后：</p>
+
+<p><img src="http://zhizhen.github.io/images/cocos2dxshader2.jpg" alt="" /><img src="http://zhizhen.github.io/images/cocos2dxshader3.jpg" alt="" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2dx shader 变灰]]></title>
+    <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-gray/"/>
+    <updated>2019-04-11T14:33:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-gray</id>
+    <content type="html"><![CDATA[<p> ### 灰度shader</p>
+
+<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
+</span><span class='line'>precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
+</span><span class='line'>
+</span><span class='line'>varying vec4 v_fragmentColor;
+</span><span class='line'>varying vec2 v_texCoord;
+</span><span class='line'>
+</span><span class='line'>void main(void)
+</span><span class='line'>
+</span><span class='line'>vec4 c = texture2D(CC_Texture0, v_texCoord);
+</span><span class='line'>gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
+</span><span class='line'>gl_FragColor.w = c.w;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>代码分析</h3>
+
+<p>precision mediump float是open es特有的精度限定符，原本的浮点数精度是double，opengl es为了提高渲染效率，限定精度为float类型。</p>
+
+<p>v_fragmentColor是从顶点着色器设置的颜色经过光栅化阶段的线性插值后传给片段着色器的颜色。</p>
+
+<p>v_texCoord同样是经过线性插值而来的纹理坐标。</p>
+
+<p>CC_Texture0是一个采样器，在load shader的时候，引擎会预先把这些uniform变量给加载进来。</p>
+
+<p>下面这部分代码就是引擎预先加载进来的uniform变量：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>static const char * COCOS2D_SHADER_UNIFORMS =
+</span><span class='line'>"uniform mat4 CC_PMatrix;\n"
+</span><span class='line'>"uniform mat4 CC_MVMatrix;\n"
+</span><span class='line'>"uniform mat4 CC_MVPMatrix;\n"
+</span><span class='line'>"uniform mat3 CC_NormalMatrix;\n"
+</span><span class='line'>"uniform vec4 CC_Time;\n"
+</span><span class='line'>"uniform vec4 CC_SinTime;\n"
+</span><span class='line'>"uniform vec4 CC_CosTime;\n"
+</span><span class='line'>"uniform vec4 CC_Random01;\n"
+</span><span class='line'>"uniform sampler2D CC_Texture0;\n"
+</span><span class='line'>"uniform sampler2D CC_Texture1;\n"
+</span><span class='line'>"uniform sampler2D CC_Texture2;\n"
+</span><span class='line'>"uniform sampler2D CC_Texture3;\n"
+</span><span class='line'>"//CC INCLUDES END\n\n";
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这些变量在shader里面如果没有用到的话，会被引擎给优化掉。</p>
+
+<p>texture2D()是shader的内建方法，作用是从CC_Texture0采样器中进行纹理采样，得到当前片段的颜色值。</p>
+
+<p>gl_FragColor是shader的内建变量，表示当前片段的颜色，代码中是把从采样器中拿到的颜色值进行一个变灰处理后，最后得到的颜色值再赋值给gl_FragColor。gl_FragColor就是最终的颜色。</p>
+
+<p>这个shader很简单，就是改变了一下rgb的值。0.2126，0.7152，0.0722这几个系数据说是根据人眼对rgb这三种基本颜色识别的强弱算出来的。</p>
+
+<h3>使用示例</h3>
+
+<p>在cocos2dx 3.x版本中sprite变灰的代码例子：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>auto sprite = Sprite::create("HelloWorld.png");
+</span><span class='line'>sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code></pre></td></tr></table></div></figure>
+
+
+<p>效果如下图所示：</p>
+
+<p><img src="http://zhizhen.github.io/images/cocos2dxshader1.png" alt="" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[渲染流水线(render flow)]]></title>
@@ -706,7 +1084,7 @@ nonode@nohost
 (mynode@127.0.0.1)2&gt;
 </code></pre>
 
-<p>You see? we got a node named &lsquo;<a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#x6d;&#121;&#110;&#111;&#100;&#x65;&#x40;&#x31;&#50;&#x37;&#46;&#48;&#46;&#x30;&#x2e;&#x31;">&#109;&#x79;&#110;&#111;&#x64;&#x65;&#x40;&#49;&#50;&#x37;&#46;&#48;&#x2e;&#48;&#x2e;&#x31;</a>&rsquo;, then we can set_cookie</p>
+<p>You see? we got a node named &lsquo;<a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#58;&#109;&#121;&#x6e;&#111;&#x64;&#x65;&#64;&#x31;&#x32;&#55;&#46;&#48;&#46;&#48;&#x2e;&#x31;">&#109;&#121;&#110;&#x6f;&#100;&#x65;&#64;&#x31;&#50;&#55;&#x2e;&#48;&#x2e;&#48;&#x2e;&#49;</a>&rsquo;, then we can set_cookie</p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -1723,162 +2101,6 @@ find $TODIR -name '*.lua' -exec rm {} \;
 
 <!--more-->
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[one billion customers 部分摘录]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/10/09/one-billion-customers/"/>
-    <updated>2013-10-09T11:46:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/10/09/one-billion-customers</id>
-    <content type="html"><![CDATA[<h2>是开端亦是转折</h2>
-
-<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。</p>
-
-<hr />
-
-<p>1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
-裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
-党加速了私有化和市场改革的进程，因为党的威信已经被打破，只能通过快速提高人民
-生活水平来重建。</p>
-
-<!--more-->
-
-
-<hr />
-
-<p>看待中国这个全世界最宏大的开端和转折，同时思考外国公司和中国传统在这个过程中
-所扮演的角色时，我们应该记住清朝时出现，毛泽东经常引用的一句口号：古为今用，洋为中用。</p>
-
-<hr />
-
-<h2>庄严的谈判</h2>
-
-<p>中国在2001年加入世界贸易组织，而谈判早在1973年就开始了，那时候中国还是乾隆盛世。
-那一年，乔治.马格尔尼勋爵带领一支英国船队抵达中国的北部港口。作为乔治三世国王经验
-最丰富的外交官之一，马格尔尼意在为英国商人打开广阔的中国市场。这本来就是一场
-关于公平的讨论。中国出口丝绸，茶叶，家具和瓷器等产品，却很少甚至从来不进口任何东西。
-金钱流入中国，但是从来不外流。因此马格尔尼带来英国生产的最好的产品，其中有来福枪，
-加侬炮，堆成山的最好的毛纺织品，还有一个配备了驾驶员的热气球。受到了乾隆皇帝的冷待。
-最后&mdash;中国真正有资格被批准进入全球贸易团体，是在206年以后。</p>
-
-<hr />
-
-<p>我猜想大多数西方人都会怀疑从马格尔尼勋爵的中国之旅到中国最终被允许加入世界贸易组织之间
-的二百年对在中国做生意到底有多大的影响。你也许会说这是老皇历了。但是在中国做生意的外国人
-必须理解过去这二百年一点也不老，中国人在此期间所受的屈辱一点也不老。在中国人的
-灵魂中，深深埋藏着的信念就是在过去二百年中，外国人用武力开道进入中国，是为了掠夺这个国家
-的财富。他们从幼时起就被教导中国曾是全世界最强大的帝国，在各方面都是最优秀的，直到外国人
-在18世纪末来到门口，无情地剥削这个民族，而这个民族在对外国人一点伤害也不曾有过。
-所以即便在今天，仍有很多中国人，一旦谈到外国列强在中国的角色就会立刻变得愤怒。的确，谁也不能
-对鸦片贸易以及英国人强加给中国人的这种灾难的流行性瘾毒，抑或日本在30到40年代早期堆中国大片
-国土的占领以及随之而来的数百万人口的屠杀说出半句好话。</p>
-
-<hr />
-
-<p>&hellip;&hellip;</p>
-
-<hr />
-
-<h2>推动变革</h2>
-
-<p>89TM之后，1991年初，美中两国谈判代表们再次做到谈判桌前，中国的谈判代表们进退维谷。顽固的官僚们一点也不想为了讨好外国人而放弃自己的权利，
-但是谈判代表们也明白中国的经济增长严重依赖于占到中国总出口三分之一的对美出口业务。最终，
-谈判变成一场个人力量的较量。中国的谈判代表们只能通过李鹏总理的积极推进来击退来自各大部委和
-国有企业的一片反对。李总理，天安门广场中政府的强硬派人物，无论是在国内还是国外
-都受到广泛的鄙视。很多西方人都认为他是一个十足的顽固不化者。但他们没有意识到，
-李鹏在推动谈判达成协议的过程中起到了至关重要的作用，他深深地希望作为一名改革者而被载入史册。
-&hellip;..</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[nginx中的try_files]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files/"/>
-    <updated>2013-10-02T00:32:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/10/02/nginxzhong-de-try-files</id>
-    <content type="html"><![CDATA[<p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
-用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
-处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
-
-<hr />
-
-<pre><code>try_files file1 [file2...fileN] fallback
-</code></pre>
-
-<p>默认值：无
-作用域：location</p>
-
-<!--more-->
-
-
-<hr />
-
-<p>今天碰到一个问题，nginx 中这样写:</p>
-
-<pre><code>try_files $url $url/ /index.php
-</code></pre>
-
-<p>然后访问</p>
-
-<pre><code>localhost/guess/add/playWay/?pwid=3&amp;gpid=1&amp;inajax=1
-</code></pre>
-
-<p>这个访问被跳转到/index.php 之后，后面的参数</p>
-
-<pre><code>pwid=3&amp;gpid=1&amp;inajax=1
-</code></pre>
-
-<p>没有出现在$_GET变量中</p>
-
-<hr />
-
-<p>于是上网查了try_files 的写法，说是如果要带上参数的话，必须这样写</p>
-
-<pre><code>try_files $url $url/ /index.php?$args
-</code></pre>
-
-<p>这样子前面那些参数就被带到了index.php中的$_GET变量里</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[php5.3引入的延迟静态绑定]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind/"/>
-    <updated>2013-09-24T12:52:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind</id>
-    <content type="html"><![CDATA[<p>先看这段代码：</p>
-
-<pre><code>&lt;?php
-class A{
-    public static funciton create(){
-        return new static();
-    }
-    public static function createself(){
-        return new self();
-    }
-}
-
-class B extends A{
-
-}
-
-class C extends A{
-
-}
-var_dump( B::create() );
-var_dump( C::createself() );
-?&gt;
-</code></pre>
-
-<p>得到结果如下</p>
-
-<pre><code>object(B)#1 (0) { } 
-object(A)#1 (0) { } 
-</code></pre>
-
-<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
-static与self的区别就是它的执行环境是调用它的对象。</p>
 ]]></content>
   </entry>
   
