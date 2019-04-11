@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2016-10-09T22:52:02+08:00</updated>
+  <updated>2019-04-11T08:25:35+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -12,6 +12,34 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[伽马矫正 Gamma Correction]]></title>
+    <link href="http://zhizhen.github.io/blog/2019/04/10/gamma-correction/"/>
+    <updated>2019-04-10T17:29:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2019/04/10/gamma-correction</id>
+    <content type="html"><![CDATA[<p><img src="https://img-blog.csdn.net/20180507200340663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppemhpZGV4aWFvbWluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" /></p>
+
+<hr />
+
+<blockquote><p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p></blockquote>
+
+<hr />
+
+<p>一句话总结，用于在线性空间运算出非线性空间中的插值。</p>
+
+<hr />
+
+<p>相关文章：</p>
+
+<ul>
+<li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a></li>
+<li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a></li>
+<li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[全球同服游戏的数据库层怎么设计]]></title>
@@ -414,9 +442,9 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
   
   <entry>
     <title type="html"><![CDATA[mac sed 替换搜索到文本的下一行]]></title>
-    <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/"/>
+    <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing/"/>
     <updated>2014-12-18T22:15:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-[?]-xing</id>
+    <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing</id>
     <content type="html"><![CDATA[<p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
 举个例子，比如有一个test文件,内容是：</p>
 
@@ -581,7 +609,7 @@ nonode@nohost
 (mynode@127.0.0.1)2&gt;
 </code></pre>
 
-<p>You see? we got a node named &lsquo;<a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#109;&#121;&#110;&#x6f;&#x64;&#x65;&#x40;&#x31;&#50;&#x37;&#46;&#48;&#x2e;&#x30;&#x2e;&#x31;">&#109;&#121;&#110;&#111;&#100;&#101;&#x40;&#x31;&#x32;&#55;&#46;&#x30;&#46;&#x30;&#46;&#49;</a>&rsquo;, then we can set_cookie</p>
+<p>You see? we got a node named &lsquo;<a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#109;&#x79;&#x6e;&#x6f;&#100;&#101;&#64;&#x31;&#x32;&#x37;&#x2e;&#x30;&#46;&#x30;&#46;&#49;">&#x6d;&#x79;&#110;&#x6f;&#100;&#101;&#64;&#x31;&#x32;&#x37;&#46;&#48;&#x2e;&#x30;&#x2e;&#49;</a>&rsquo;, then we can set_cookie</p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -1065,9 +1093,9 @@ if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
   
   <entry>
     <title type="html"><![CDATA[haskell(一)]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/11/30/haskell-%5B%3F%5D/"/>
+    <link href="http://zhizhen.github.io/blog/2013/11/30/haskell-1/"/>
     <updated>2013-11-30T10:00:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/11/30/haskell-[?]</id>
+    <id>http://zhizhen.github.io/blog/2013/11/30/haskell-1</id>
     <content type="html"><![CDATA[<p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
 其中的列表跟erlang特别像。<br/>
 下面是基础语法：</p>
@@ -1839,214 +1867,6 @@ zlib1.dll
 这时候的项目组织方式，已经按照我自己的想法完全改了:
 <img src="http://zhizhen.github.io/images/vs-cocos2d/final.png" alt="" /><br/>
 按照这些方法，你完全可以以你自己的方式去组织项目结构</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Linux c (三) gdb]]></title>
-    <link href="http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb/"/>
-    <updated>2013-06-15T16:31:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb</id>
-    <content type="html"><![CDATA[<p>ubuntu上面是默认装了gdb的，输入</p>
-
-<pre><code>gdb -v
-</code></pre>
-
-<p>查看gdb的版本信息</p>
-
-<pre><code>zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
-</code></pre>
-
-<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
-
-<pre><code>CFLAGS = -g
-main:main.o test1.o test2.o
-    gcc -o $@ $^
-..c.o:
-    gcc $(CFLAGS) -c $&lt; 
-</code></pre>
-
-<p>然后先删了老的main<em> 和</em>.o文件</p>
-
-<pre><code>zhang@note:~/test_make$ rm main
-zhang@note:~/test_make$ rm *.o
-</code></pre>
-
-<p>好了，重新编译</p>
-
-<pre><code>zhang@note:~/test_make$ make
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$
-</code></pre>
-
-<p>编译完后运行gdb</p>
-
-<pre><code>zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb)
-</code></pre>
-
-<p>输入命令</p>
-
-<pre><code>(gdb) list
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-(gdb) 
-Line number 9 out of range; main.c has 8 lines.
-(gdb)
-</code></pre>
-
-<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
-
-<pre><code>(gdb) list
-No symbol table is loaded.  Use the "file" command.
-(gdb)
-</code></pre>
-
-<p>如果只想列出2-9行之间的代码</p>
-
-<pre><code>(gdb) list 2,9
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-</code></pre>
-
-<p>如果只想列出某个函数</p>
-
-<pre><code>(gdb) list test1_print 
-1   #include "stdio.h"
-2   #include "test1.h"
-3   
-4   void test1_print(char *print_str)
-5   {
-6       printf("This is test1 print %s \n", print_str);
-7   }
-(gdb)
-</code></pre>
-
-<p>为了能够下断点查看变量值，我们改下main函数</p>
-
-<pre><code>void main(int argc, char **argv)
-   {
-       char msg1[128] = "Hello ";
-       char msg2[128] = "World !";
-       test1_print(msg1);
-       test2_print(msg2);
-   }
-</code></pre>
-
-<p>然后</p>
-
-<pre><code>zhang@note:~/test_make$ make        #编译
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb) list                          #列出代码
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       char msg1[128] = "Hello ";
-7       char msg2[128] = "World !";
-8       test1_print(msg1);
-9       test2_print(msg2);
-10  }
-(gdb) break 7                       #在第7行的位置下断点
-Breakpoint 1 at 0x804847c: file main.c, line 7.
-(gdb) run main                      #执行调试
-Starting program: /home/zhang/test_make/main main
-
-Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
-7       char msg2[128] = "World !";
-(gdb) print msg1                    #查看断点处变量msg1的值
-$1 = "Hello ", '\000' &lt;repeats 121 times&gt;
-(gdb) continue                      #继续往下执行
-Continuing.
-This is test1 print Hello  
-This is test2 print World ! 
-[Inferior 1 (process 3270) exited normally]
-(gdb)
-</code></pre>
-
-<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
-附上常用命令：</p>
-
-<pre><code>小结：常用的gdb命令
-backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
-breakpoint 在程序中设置一个断点
-cd 改变当前工作目录
-clear 删除刚才停止处的断点
-commands 命中断点时，列出将要执行的命令
-continue 从断点开始继续执行
-delete 删除一个断点或监测点；也可与其他命令一起使用
-display 程序停止时显示变量和表达时
-down 下移栈帧，使得另一个函数成为当前函数
-frame 选择下一条continue命令的帧
-info 显示与该程序有关的各种信息
-jump 在源程序中的另一点开始运行
-kill 异常终止在gdb 控制下运行的程序
-list 列出相应于正在执行的程序的原文件内容
-next 执行下一个源程序行，从而执行其整体中的一个函数
-print 显示变量或表达式的值
-pwd 显示当前工作目录
-pype 显示一个数据结构（如一个结构或C++类）的内容
-quit 退出gdb
-reverse-search 在源文件中反向搜索正规表达式
-run 执行该程序
-search 在源文件中搜索正规表达式
-set variable 给变量赋值
-signal 将一个信号发送到正在运行的进程
-step 执行下一个源程序行，必要时进入下一个函数
-undisplay display命令的反命令，不要显示表达式
-until 结束当前循环
-up 上移栈帧，使另一函数成为当前函数
-watch 在程序中设置一个监测点（即数据断点）
-whatis 显示变量或函数类型 
-</code></pre>
 ]]></content>
   </entry>
   

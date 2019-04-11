@@ -9,9 +9,12 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
-在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行
-创建hello.hs文件 ">
+  <meta name="description" content="一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
+优化的博客了。
+云风关于skynet的介绍说了，skynet主要还是参照了erlang的
+服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
+关于设计思想方面的说明。
+不过c根基薄弱， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -85,6 +88,55 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/12/26/yue-du-skynet/">阅读skynet</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-26T09:57:00+08:00" pubdate data-updated="true">Dec 26<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/12/26/yue-du-skynet/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
+优化的博客了。<br/>
+云风关于skynet的介绍说了，skynet主要还是参照了erlang的
+服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
+关于设计思想方面的说明。<br/>
+不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/26/yue-du-skynet/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/12/03/haskell-er/">Haskell(二)</a></h1>
     
     
@@ -130,7 +182,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/11/30/haskell-%5B%3F%5D/">Haskell(一)</a></h1>
+      <h1 class="entry-title"><a href="/blog/2013/11/30/haskell-1/">Haskell(一)</a></h1>
     
     
       <p class="meta">
@@ -148,7 +200,7 @@
 
 <time datetime="2013-11-30T10:00:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2013</time>
         
-         | <a href="/blog/2013/11/30/haskell-%5B%3F%5D/#disqus_thread">Comments</a>
+         | <a href="/blog/2013/11/30/haskell-1/#disqus_thread">Comments</a>
         
       </p>
     
@@ -163,7 +215,7 @@
   
   
     <footer>
-      <a rel="full-article" href="/blog/2013/11/30/haskell-%5B%3F%5D/">阅读全文 &rarr;</a>
+      <a rel="full-article" href="/blog/2013/11/30/haskell-1/">阅读全文 &rarr;</a>
     </footer>
   
 
@@ -604,243 +656,6 @@ zlib1.dll
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/15/linux-c-gdb/">Linux C (三) Gdb</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-15T16:31:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/06/15/linux-c-gdb/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入</p>
-
-<pre><code>gdb -v
-</code></pre>
-
-<p>查看gdb的版本信息</p>
-
-<pre><code>zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
-</code></pre>
-
-<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
-
-<pre><code>CFLAGS = -g
-main:main.o test1.o test2.o
-    gcc -o $@ $^
-..c.o:
-    gcc $(CFLAGS) -c $&lt; 
-</code></pre>
-
-<p>然后先删了老的main<em> 和</em>.o文件</p>
-
-<pre><code>zhang@note:~/test_make$ rm main
-zhang@note:~/test_make$ rm *.o
-</code></pre>
-
-<p>好了，重新编译</p>
-
-<pre><code>zhang@note:~/test_make$ make
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$
-</code></pre>
-
-<p>编译完后运行gdb</p>
-
-<pre><code>zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb)
-</code></pre>
-
-<p>输入命令</p>
-
-<pre><code>(gdb) list
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-(gdb) 
-Line number 9 out of range; main.c has 8 lines.
-(gdb)
-</code></pre>
-
-<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
-
-<pre><code>(gdb) list
-No symbol table is loaded.  Use the "file" command.
-(gdb)
-</code></pre>
-
-<p>如果只想列出2-9行之间的代码</p>
-
-<pre><code>(gdb) list 2,9
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-</code></pre>
-
-<p>如果只想列出某个函数</p>
-
-<pre><code>(gdb) list test1_print 
-1   #include "stdio.h"
-2   #include "test1.h"
-3   
-4   void test1_print(char *print_str)
-5   {
-6       printf("This is test1 print %s \n", print_str);
-7   }
-(gdb)
-</code></pre>
-
-<p>为了能够下断点查看变量值，我们改下main函数</p>
-
-<pre><code>void main(int argc, char **argv)
-   {
-       char msg1[128] = "Hello ";
-       char msg2[128] = "World !";
-       test1_print(msg1);
-       test2_print(msg2);
-   }
-</code></pre>
-
-<p>然后</p>
-
-<pre><code>zhang@note:~/test_make$ make        #编译
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb) list                          #列出代码
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       char msg1[128] = "Hello ";
-7       char msg2[128] = "World !";
-8       test1_print(msg1);
-9       test2_print(msg2);
-10  }
-(gdb) break 7                       #在第7行的位置下断点
-Breakpoint 1 at 0x804847c: file main.c, line 7.
-(gdb) run main                      #执行调试
-Starting program: /home/zhang/test_make/main main
-
-Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
-7       char msg2[128] = "World !";
-(gdb) print msg1                    #查看断点处变量msg1的值
-$1 = "Hello ", '\000' &lt;repeats 121 times&gt;
-(gdb) continue                      #继续往下执行
-Continuing.
-This is test1 print Hello  
-This is test2 print World ! 
-[Inferior 1 (process 3270) exited normally]
-(gdb)
-</code></pre>
-
-<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
-附上常用命令：</p>
-
-<pre><code>小结：常用的gdb命令
-backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
-breakpoint 在程序中设置一个断点
-cd 改变当前工作目录
-clear 删除刚才停止处的断点
-commands 命中断点时，列出将要执行的命令
-continue 从断点开始继续执行
-delete 删除一个断点或监测点；也可与其他命令一起使用
-display 程序停止时显示变量和表达时
-down 下移栈帧，使得另一个函数成为当前函数
-frame 选择下一条continue命令的帧
-info 显示与该程序有关的各种信息
-jump 在源程序中的另一点开始运行
-kill 异常终止在gdb 控制下运行的程序
-list 列出相应于正在执行的程序的原文件内容
-next 执行下一个源程序行，从而执行其整体中的一个函数
-print 显示变量或表达式的值
-pwd 显示当前工作目录
-pype 显示一个数据结构（如一个结构或C++类）的内容
-quit 退出gdb
-reverse-search 在源文件中反向搜索正规表达式
-run 执行该程序
-search 在源文件中搜索正规表达式
-set variable 给变量赋值
-signal 将一个信号发送到正在运行的进程
-step 执行下一个源程序行，必要时进入下一个函数
-undisplay display命令的反命令，不要显示表达式
-until 结束当前循环
-up 上移栈帧，使另一函数成为当前函数
-watch 在程序中设置一个监测点（即数据断点）
-whatis 显示变量或函数类型 
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -862,6 +677,10 @@ whatis 显示变量或函数类型
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
       </li>
     
@@ -877,10 +696,6 @@ whatis 显示变量或函数类型
         <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -894,7 +709,7 @@ whatis 显示变量或函数类型
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - 张植臻 -
+  Copyright &copy; 2019 - 张植臻 -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

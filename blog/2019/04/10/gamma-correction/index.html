@@ -5,19 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>mac sed 替换搜索到文本的下一行 - 植臻</title>
+  <title>伽马矫正 Gamma Correction - 植臻</title>
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
-举个例子，比如有一个test文件,内容是： version
-1.0.1
-XXX
-version
-1.0.2
-XXX
-version
-1.0.3 &hellip;">
+  <meta name="description" content="做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理 一句话总结，用于在线性空间运算出非线性空间中的插值。 相关文章： 龚大的Gamma传说
+聊聊Unity的Gamma校正以及线性工作流
+以及乐乐的《 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -26,7 +20,7 @@ version
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing">
+  <link rel="canonical" href="http://zhizhen.github.io/blog/2019/04/10/gamma-correction">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
@@ -88,7 +82,7 @@ version
   
   <header>
     
-      <h1 class="entry-title">Mac Sed 替换搜索到文本的下一行</h1>
+      <h1 class="entry-title">伽马矫正 Gamma Correction</h1>
     
     
       <p class="meta">
@@ -104,7 +98,7 @@ version
   
 
 
-<time datetime="2014-12-18T22:15:00+08:00" pubdate data-updated="true">Dec 18<span>th</span>, 2014</time>
+<time datetime="2019-04-10T17:29:00+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2019</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -113,54 +107,26 @@ version
   </header>
 
 
-<div class="entry-content"><p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
-举个例子，比如有一个test文件,内容是：</p>
+<div class="entry-content"><p><img src="https://img-blog.csdn.net/20180507200340663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppemhpZGV4aWFvbWluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" /></p>
 
-<pre><code>version
-1.0.1
-XXX
-version
-1.0.2
-XXX
-version
-1.0.3
-</code></pre>
+<hr />
 
-<!--more-->
+<blockquote><p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p></blockquote>
 
+<hr />
 
-<p>现在我要将所有version的下一行，也就是1.0.1, 1.0.2, 1.0.3全部都替换成我想要的值，比如1.0.4,在linux中，我们这样用</p>
+<p>一句话总结，用于在线性空间运算出非线性空间中的插值。</p>
 
-<pre><code>sed -i '/version/{n;s/.*/1.0.4/g;}' test
-</code></pre>
+<hr />
 
-<p>不过在mac上，则得这样：</p>
+<p>相关文章：</p>
 
-<pre><code>sed -i '' '/version/{n;s/.*/1.0.4/g;}' test
-</code></pre>
+<ul>
+<li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a></li>
+<li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a></li>
+<li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a></li>
+</ul>
 
-<p>多了个&#8217;&lsquo;,这是mac上sed用来存备份文件的，为空则不将修改前的文件备份。<br/>
-sed 基本语法：</p>
-
-<pre><code>sed [options] { sed-commands } { input-file }
-</code></pre>
-
-<p>每次sed从{ input-file }读取一行，然后在这行上执行{ sed-commands }.<br/>
-n是sed命令之一，表示多读取一行，并从第二行开始操作，而后面的</p>
-
-<pre><code>s/.*/1.0.4/g
-</code></pre>
-
-<p>就是将这一行内容替换成1.0.4。s/old/new/g 是sed命令，跟vim里一样，表示替换，
-而这里的old是一个正则, &lsquo;.&#8217;在正则里表示匹配任意字符，而 &rsquo; * &lsquo; 在正则里表示重复，
-&rsquo; . * &lsquo; 组合起来表示替换这一行。</p>
-
-<p>只要你还是一个程序员，你就永远免不了要跟正则表达式打交道。<br/>
-最后，向大家推荐Steve Mansour的这本《正则表达式之道》:</p>
-
-<p><img src="/images/regex-rules.png" alt="" /></p>
-
-<p>全书只有11页，为数不多的案头必备书籍之一。</p>
 </div>
 
 
@@ -183,14 +149,8 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
   
 
 
-<time datetime="2014-12-18T22:15:00+08:00" pubdate data-updated="true">Dec 18<span>th</span>, 2014</time>
+<time datetime="2019-04-10T17:29:00+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2019</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/linux/'>Linux</a>
-  
-</span>
 
 
     </p>
@@ -204,10 +164,8 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang/" title="Previous Post: 一个人要经历3次成长">&laquo; 一个人要经历3次成长</a>
+        <a class="basic-alignment left" href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/" title="Previous Post: 全球同服游戏的数据库层怎么设计">&laquo; 全球同服游戏的数据库层怎么设计</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/" title="Next Post: PlistBuddy修改Xcode工程版本号">PlistBuddy修改Xcode工程版本号 &raquo;</a>
       
     </p>
   </footer>
@@ -232,6 +190,10 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a>
       </li>
     
@@ -245,10 +207,6 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
     
       <li class="post">
         <a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a>
       </li>
     
   </ul>
@@ -265,7 +223,7 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - 张植臻 -
+  Copyright &copy; 2019 - 张植臻 -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -277,8 +235,8 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/';
-        var disqus_url = 'http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/';
+        var disqus_identifier = 'http://zhizhen.github.io/blog/2019/04/10/gamma-correction/';
+        var disqus_url = 'http://zhizhen.github.io/blog/2019/04/10/gamma-correction/';
         var disqus_script = 'embed.js';
       
     (function () {

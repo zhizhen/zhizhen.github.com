@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | 植臻]]></title>
   <link href="http://zhizhen.github.io/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2016-10-09T22:52:05+08:00</updated>
+  <updated>2019-04-11T08:25:35+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[mac sed 替换搜索到文本的下一行]]></title>
-    <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-%5B%3F%5D-xing/"/>
+    <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing/"/>
     <updated>2014-12-18T22:15:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-[?]-xing</id>
+    <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing</id>
     <content type="html"><![CDATA[<p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
 举个例子，比如有一个test文件,内容是：</p>
 
