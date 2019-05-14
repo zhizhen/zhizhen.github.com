@@ -9,9 +9,7 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="是开端亦是转折 一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。 1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
-裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
-党加速了私有化和市场改革的进程， &hellip;">
+  <meta name="description" content="问题描述 在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub 问题原因 相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom 解决办法 改reboot为shutdown -h now， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +77,63 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/10/init18-boot-failure/">INIT18 BOOT FAILURE</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-10T11:40:00+08:00" pubdate data-updated="true">Oct 10<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/10/init18-boot-failure/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>问题描述</h2>
+
+<p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
+
+<hr />
+
+<h2>问题原因</h2>
+
+<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+
+<hr />
+
+<h2>解决办法</h2>
+
+<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/10/init18-boot-failure/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -1099,99 +1154,9 @@ true
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/12/simple-introduce-of-mongodb/">Simple Introduction of Mongodb</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-12T16:12:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/03/12/simple-introduce-of-mongodb/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>suppose you have correctly installed the mongodb, and opened a shell like this:</p>
-
-<pre><code>zhang@linux:~$ mongo
-MongoDB shell version: 2.0.4
-connecting to: test
-&gt;
-</code></pre>
-
-<p>first of all, let&rsquo;s show all the dbs:</p>
-
-<pre><code>zhang@linux:~$ mongo
-MongoDB shell version: 2.0.4
-connecting to: test
-&gt; show dbs
-local   (empty)
-&gt;
-</code></pre>
-
-<p>then let&rsquo;s use one of it, we can switch between dbs use:</p>
-
-<pre><code>&gt; show dbs
-local   (empty)
-&gt; use local
-switched to db local
-&gt;
-</code></pre>
-
-<p>someone may ask, how to create a database then ? yeah, good question !<br/>
-In Mysql we can use &ldquo;create database Name;&rdquo; to create a database, but,
-MongoDB didn&rsquo;t provides any command to create database, Actually, we don&rsquo;t need to do it !
-Look ! we just defined a database by command &ldquo;use mydatabase&rdquo;, which is not created yet</p>
-
-<pre><code>&gt; use mydatabase
-switched to db mydatabase
-&gt; show dbs
-local   (empty)
-&gt;
-</code></pre>
-
-<p>MongoDB create it when we first save value into it</p>
-
-<pre><code>&gt; db.colcase.save( {testcase:"hello"} )
-&gt; show dbs
-local   (empty)
-mydatabase  0.0625GB
-&gt; show collections
-colcase
-system.indexes
-&gt; db.colcase.find()
-{ "_id" : ObjectId("513fe233aac1372ab215f350"), "testcase" : "hello" }
-&gt;
-</code></pre>
-
-<p>P.S MongoDB created the &ldquo;colcase&rdquo; collection and the &ldquo;mydatabase&rdquo; database automatically
-when we first save value into it.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1210,6 +1175,10 @@ when we first save value into it.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/05/14/fast-inverse-square-root/">平方根倒数速算法</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
       </li>
     
@@ -1223,10 +1192,6 @@ when we first save value into it.</p>
     
       <li class="post">
         <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
       </li>
     
   </ul>

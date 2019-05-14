@@ -9,15 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
-举个例子，比如有一个test文件,内容是： version
-1.0.1
-XXX
-version
-1.0.2
-XXX
-version
-1.0.3 ">
+  <meta name="description" content="上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行： &lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt; 后来发现mac下直接有现成工具可用: / &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -85,6 +78,58 @@ version
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-20T01:48:00+08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行：</p>
+
+<pre><code>&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt;
+</code></pre>
+
+<p>后来发现mac下直接有现成工具可用:</p>
+
+<pre><code>/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
+</code></pre>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -512,63 +557,6 @@ version
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/10/init18-boot-failure/">INIT18 BOOT FAILURE</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-10T11:40:00+08:00" pubdate data-updated="true">Oct 10<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/10/10/init18-boot-failure/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>问题描述</h2>
-
-<p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
-
-<hr />
-
-<h2>问题原因</h2>
-
-<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
-
-<hr />
-
-<h2>解决办法</h2>
-
-<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/10/10/init18-boot-failure/">阅读全文 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -590,6 +578,10 @@ version
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/05/14/fast-inverse-square-root/">平方根倒数速算法</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
       </li>
     
@@ -603,10 +595,6 @@ version
     
       <li class="post">
         <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
       </li>
     
   </ul>

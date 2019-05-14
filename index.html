@@ -9,7 +9,7 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="Cocos2d-x 3.x的label使用了freetype字体引擎（http://www.freetype.org/），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。 官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。 &hellip;">
+  <meta name="description" content="在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。 此算法最早被认为是由约翰·卡马克所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,95 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2019/05/14/fast-inverse-square-root/">平方根倒数速算法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-05-14T20:28:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2019</time>
+        
+         | <a href="/blog/2019/05/14/fast-inverse-square-root/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><blockquote><p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p></blockquote>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/OpenArena-Rocket.jpg/300px-OpenArena-Rocket.jpg" alt="" /></p>
+
+<p>此算法最早被认为是由<a href="https://zh.wikipedia.org/wiki/%E7%B4%84%E7%BF%B0%C2%B7%E5%8D%A1%E9%A6%AC%E5%85%8B" title="约翰·卡马克">约翰·卡马克</a>所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知，此算法最早由加里·塔罗利（Gary Tarolli）在SGI Indigo的开发中使用。虽说随后的相关研究也提出了一些可能的来源，但至今为止仍未能确切知晓算法中所使用的特殊常数的起源。</p>
+
+<p>下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>                       <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
+</span><span class='line'>  <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>               <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
+</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>   <span class="c1">// 1st iteration （第一次迭代）</span>
+</span><span class='line'><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Float_w_significand.svg/590px-Float_w_significand.svg.png" alt="Float w significand.svg" />
+将上述结构表示成公式即为</p>
+
+<p>$$
+x = (-1)^{Si}\cdot(1+m)\cdot^{E-B}
+$$</p>
+
+<p>其中偏移量\(B=127\)，\(m\)表示有效数字的尾数（\(0&lt;m&lt;1\))，而指数\(E-B\)的值决定了有效数字（在Lomont和McEniry的论文中称为“尾数”（<em>mantissa</em>））代表的是小数还是整数。以上图为例，将描述代入有\(m=1\times2^{-2}=0.250\)），且\(E-B=124-127=-3\)，则可得其表示的浮点数为\(x=(1+0.250)\cdot2^{-3}=0.15625\)。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1136,58 +1225,6 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">PlistBuddy修改Xcode工程版本号</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-20T01:48:00+08:00" pubdate data-updated="true">Dec 20<span>th</span>, 2014</time>
-        
-         | <a href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>上一篇博客整得那么蛋疼，其实是想修改xcode工程的版本号，也就是plist文件里的这行：</p>
-
-<pre><code>&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
-&lt;string&gt;1.0&lt;/string&gt;
-</code></pre>
-
-<p>后来发现mac下直接有现成工具可用:</p>
-
-<pre><code>/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.0.4' Info.plist
-</code></pre>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/12/20/plistbuddyxiu-gai-xcodegong-cheng-ban-ben-hao/">阅读全文 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1207,6 +1244,10 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2019/05/14/fast-inverse-square-root/">平方根倒数速算法</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a>
       </li>
     
@@ -1220,10 +1261,6 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
     
       <li class="post">
         <a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a>
       </li>
     
   </ul>
