@@ -1,6 +1,6 @@
 ﻿---
 layout: post
-title: "平方根倒数速算法"
+title: "fast inverse square root"
 date: 2019-05-14 20:28
 comments: true
 categories: 
