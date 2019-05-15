@@ -63,8 +63,8 @@ category_tag_cloud: true
 
 category_dir: blog/categories
 
-markdown: rdiscount
-rdiscount:
+markdown: kramdown
+kramdown:
   extensions:
     - autolink
     - footnotes
