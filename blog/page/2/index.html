@@ -30,6 +30,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -161,7 +177,7 @@
   </header>
 
 
-  <div class="entry-content"><p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
+  <div class="entry-content"><p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行…
 举个例子，比如有一个test文件,内容是：</p>
 
 <pre><code>version
@@ -216,11 +232,16 @@ version
 
 
   <div class="entry-content"><ul>
-<li><p>第一次在，发现自己不是世界中心的时候</p></li>
-<li><p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候</p></li>
-<li><p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候</p></li>
+  <li>
+    <p>第一次在，发现自己不是世界中心的时候  </p>
+  </li>
+  <li>
+    <p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候  </p>
+  </li>
+  <li>
+    <p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候  </p>
+  </li>
 </ul>
-
 
 </div>
   
@@ -263,12 +284,9 @@ version
   </header>
 
 
-  <div class="entry-content"><h3>Question</h3>
-
-<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.</p>
-
-<hr />
-
+  <div class="entry-content"><h3 id="question">Question</h3>
+<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.<br />
+* * *
 </div>
   
   
@@ -311,13 +329,10 @@ version
 
 
   <div class="entry-content"><hr />
-
-<h3>第一步 搭建环境</h3>
-
-<p>verilog有两个比较常用的编译器：<br/>
-1. Icarus Verilog<br/>
-2. VeriWell Verilog Simulator</p>
-
+<p>### 第一步 搭建环境<br />
+verilog有两个比较常用的编译器：<br />
+1. Icarus Verilog<br />
+2. VeriWell Verilog Simulator<br />
 </div>
   
   
@@ -360,13 +375,12 @@ version
 
 
   <div class="entry-content"><p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
-优化的博客了。<br/>
+优化的博客了。<br />
 云风关于skynet的介绍说了，skynet主要还是参照了erlang的
 服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
-关于设计思想方面的说明。<br/>
+关于设计思想方面的说明。<br />
 不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
-代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
-
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。
 </div>
   
   
@@ -409,9 +423,8 @@ version
 
 
   <div class="entry-content"><p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
-在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
-创建hello.hs文件</p>
-
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br />
+创建hello.hs文件
 </div>
   
   
@@ -454,9 +467,8 @@ version
 
 
   <div class="entry-content"><p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
-其中的列表跟erlang特别像。<br/>
-下面是基础语法：</p>
-
+其中的列表跟erlang特别像。<br />
+下面是基础语法：
 </div>
   
   
@@ -499,7 +511,7 @@ version
 
 
   <div class="entry-content"><p>前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
-解密后的lua代码了</p>
+解密后的lua代码了  </p>
 
 </div>
   

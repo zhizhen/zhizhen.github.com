@@ -9,7 +9,9 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="Question As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript. As you &hellip;">
+  <meta name="description" content="Question
+As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.
+* * * As &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +31,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -105,16 +123,11 @@
   </header>
 
 
-<div class="entry-content"><h3>Question</h3>
-
-<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.</p>
-
-<hr />
-
+<div class="entry-content"><h3 id="question">Question</h3>
+<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.<br />
+* * *
 <!--more-->
-
-
-<p>As you know, I need to keep my escript&rsquo;s cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)</p>
+As you know, I need to keep my escript’s cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)  </p>
 
 <pre><code>#!/usr/bin/env escript
 
@@ -133,22 +146,18 @@ io:format("~p~n", [Resp]).
 2&gt; 
 </code></pre>
 
-<p>Wait a minute, what&rsquo;s nonode@nohost?</p>
+<p>Wait a minute, what’s nonode@nohost?
+    Eshell V5.10.4  (abort with ^G)
+    1&gt; erlang:set_cookie(node(), mycookie).
+    ** exception error: no function clause matching 
+                        erlang:set_cookie(nonode@nohost,mycookie) 
+    2&gt; node().
+    nonode@nohost
+    3&gt; </p>
 
-<pre><code>Eshell V5.10.4  (abort with ^G)
-1&gt; erlang:set_cookie(node(), mycookie).
-** exception error: no function clause matching 
-                    erlang:set_cookie(nonode@nohost,mycookie) 
-2&gt; node().
-nonode@nohost
-3&gt; 
-</code></pre>
-
-<p>So we need to start a erlang node, Oh! the escript didn&rsquo;t start one for us! when I searching in google, found someone who noticed erlang:setnode() , But there&rsquo;s no manual about how the specs we need? Somebody who knows? please contact me, thanks!</p>
-
-<hr />
-
-<p>So how could we solve this?</p>
+<p>So we need to start a erlang node, Oh! the escript didn’t start one for us! when I searching in google, found someone who noticed erlang:setnode() , But there’s no manual about how the specs we need? Somebody who knows? please contact me, thanks!
+* * *
+So how could we solve this?  </p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -156,7 +165,7 @@ nonode@nohost
 (mynode@127.0.0.1)2&gt;
 </code></pre>
 
-<p>You see? we got a node named &lsquo;<a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#109;&#x79;&#110;&#111;&#x64;&#x65;&#64;&#x31;&#x32;&#55;&#x2e;&#x30;&#46;&#x30;&#x2e;&#x31;">&#109;&#121;&#110;&#x6f;&#x64;&#101;&#64;&#49;&#50;&#x37;&#46;&#x30;&#46;&#x30;&#x2e;&#49;</a>&rsquo;, then we can set_cookie</p>
+<p>You see? we got a node named ‘mynode@127.0.0.1’, then we can set_cookie </p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -171,8 +180,7 @@ mycookie
 </code></pre>
 
 <hr />
-
-<p>So, we can write our escript like this:</p>
+<p>So, we can write our escript like this:  </p>
 
 <pre><code>#!/usr/bin/env escript
 
@@ -183,8 +191,7 @@ Resp = net_adm:ping(list_to_atom(Node)),
 io:format("~p~n", [Resp]).
 </code></pre>
 
-<h3>Notice</h3>
-
+<h3 id="notice">Notice</h3>
 <p>If you want to use this escript in nagios, better to add try catch for all:</p>
 
 <pre><code>#!/usr/bin/env escript
@@ -202,6 +209,7 @@ catch _:Reason
     halt(3)
 end.
 </code></pre>
+
 </div>
 
 

@@ -9,7 +9,10 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="问题描述 在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub 问题原因 相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom 解决办法 改reboot为shutdown -h now， &hellip;">
+  <meta name="description" content="问题描述
+在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub ## 问题原因
+相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom ## 解决办法
+改reboot为shutdown -h now， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +32,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -108,22 +127,16 @@
   </header>
 
 
-  <div class="entry-content"><h2>问题描述</h2>
-
+  <div class="entry-content"><h2 id="section">问题描述</h2>
 <p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
 
 <hr />
-
-<h2>问题原因</h2>
-
-<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+<p>## 问题原因
+相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
 
 <hr />
-
-<h2>解决办法</h2>
-
-<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
-
+<p>## 解决办法
+改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo
 </div>
   
   
@@ -165,17 +178,13 @@
   </header>
 
 
-  <div class="entry-content"><h2>是开端亦是转折</h2>
-
-<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。</p>
-
-<hr />
-
-<p>1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
+  <div class="entry-content"><h2 id="section">是开端亦是转折</h2>
+<p>一只脚尚驻在过去，一只脚已踏入未来，中国是全世界最盛大的开端，也是最伟大的转折。
+* * *
+1989年TM是一场悲剧，但也是一次转折点。它是由党内的保守分子和改革人士之间的巨大
 裂痕所导致的。保守分子赢得了这场战役，但是却输掉了整场战争。作为TM事件的后果，
 党加速了私有化和市场改革的进程，因为党的威信已经被打破，只能通过快速提高人民
-生活水平来重建。</p>
-
+生活水平来重建。
 </div>
   
   
@@ -219,16 +228,11 @@
 
   <div class="entry-content"><p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
 用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
-处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
-
-<hr />
-
-<pre><code>try_files file1 [file2...fileN] fallback
-</code></pre>
-
-<p>默认值：无
-作用域：location</p>
-
+处理请求。利用它可以代替部分复杂的nginx rewrite语法
+* * *
+    try_files file1 [file2…fileN] fallback
+默认值：无
+作用域：location
 </div>
   
   
@@ -270,19 +274,18 @@
   </header>
 
 
-  <div class="entry-content"><p>先看这段代码：</p>
+  <div class="entry-content"><p>先看这段代码：
+    &lt;?php
+    class A{
+        public static funciton create(){
+            return new static();
+        }
+        public static function createself(){
+            return new self();
+        }
+    }</p>
 
-<pre><code>&lt;?php
-class A{
-    public static funciton create(){
-        return new static();
-    }
-    public static function createself(){
-        return new self();
-    }
-}
-
-class B extends A{
+<pre><code>class B extends A{
 
 }
 
@@ -294,13 +297,10 @@ var_dump( C::createself() );
 ?&gt;
 </code></pre>
 
-<p>得到结果如下</p>
-
-<pre><code>object(B)#1 (0) { } 
-object(A)#1 (0) { } 
-</code></pre>
-
-<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+<p>得到结果如下
+    object(B)#1 (0) { } 
+    object(A)#1 (0) { } 
+原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
 static与self的区别就是它的执行环境是调用它的对象。</p>
 </div>
   
@@ -339,82 +339,70 @@ static与self的区别就是它的执行环境是调用它的对象。</p>
   </header>
 
 
-  <div class="entry-content"><p>一直想抽时间把cocos2dx入门这自己的经历写一下，终于周末啦！<br/>
+  <div class="entry-content"><p>一直想抽时间把cocos2dx入门这自己的经历写一下，终于周末啦！<br />
 首先说明，本人win7用户，IDE是vs2010，编译环境是win32，这篇文章是介绍如何在vs2010中开始你的第一个cocos2dx+lua项目的
-前提是你必须安装了vs2010哈！<br/>
-第一步，下载<a href="www.cocos2d-x.org/projects/cocos2d-x/wiki/Download">cocos2dx</a>，下载后解压，这个放在哪个目录都没关系。<br/>
-第二步，安装cocos2dx工程模板，双击解压后目录下的 install-templates-msvc.bat 这个文件，如下图<br/>
-<img src="/images/vs-cocos2d/anzhuangmuban.png" alt="" /><br/>
-第三步，打开你的vs2010,文件-> 新建项目，这时候你会看到，已安装的模板一栏里有Cocos2d-win32 Application 这个模板，并且有cocos2dx的经典图标在那！<br/>
-<img src="/images/vs-cocos2d/xinjianxiangmu.png" alt="" /><br/>
-这时候，你需要输入名称，然后点确认.<br/>
-<img src="/images/vs-cocos2d/Wizard.png" alt="" /><br/>
-点击下一步<br/>
-<img src="/images/vs-cocos2d/selectengine.png" alt="Select engile" /><br/>
-选择引擎，这里选择audio和lua引擎<br/>
-然后就能看到刚刚创建的项目了:<br/>
-<img src="/images/vs-cocos2d/initproject.png" alt="init project" /><br/>
-这时候如果我们点debug按钮，项目是不能运行起来的，因为它缺少一些库<br/>
+前提是你必须安装了vs2010哈！<br />
+第一步，下载<a href="www.cocos2d-x.org/projects/cocos2d-x/wiki/Download">cocos2dx</a>，下载后解压，这个放在哪个目录都没关系。<br />
+第二步，安装cocos2dx工程模板，双击解压后目录下的 install-templates-msvc.bat 这个文件，如下图<br />
+![](/images/vs-cocos2d/anzhuangmuban.png “”)<br />
+第三步，打开你的vs2010,文件-&gt; 新建项目，这时候你会看到，已安装的模板一栏里有Cocos2d-win32 Application 这个模板，并且有cocos2dx的经典图标在那！<br />
+<img src="/images/vs-cocos2d/xinjianxiangmu.png" alt="" /><br />
+这时候，你需要输入名称，然后点确认.<br />
+<img src="/images/vs-cocos2d/Wizard.png" alt="" /><br />
+点击下一步<br />
+<img src="/images/vs-cocos2d/selectengine.png" alt="Select engile" /><br />
+选择引擎，这里选择audio和lua引擎<br />
+然后就能看到刚刚创建的项目了:<br />
+<img src="/images/vs-cocos2d/initproject.png" alt="init project" /><br />
+这时候如果我们点debug按钮，项目是不能运行起来的，因为它缺少一些库<br />
 第四步，运行cocos2dx目录下，也就是之前解压的目录下的build-win32.bat，等运行完后，会在当前目录下生成Debug.win32这个目录
 <img src="/images/vs-cocos2d/buildcocos2d.png" alt="build cocos2dx" />
 然后找到Demo项目下的Debug.win32,如果没有这个目录的话，执行一下Demo项目的Debug就有了（尽管执行报错），但是会生成这个目录:
 <img src="/images/vs-cocos2d/demodebugdir.png" alt="" />
-然后我们把cocos2dx/Debug.win32 这个目录下的这些文件拷贝到 Demo/Debug.win32 下</p>
+然后我们把cocos2dx/Debug.win32 这个目录下的这些文件拷贝到 Demo/Debug.win32 下
+    glew32.lib
+    libcocos2d.lib
+    libCocosDenshion.lib
+    liblua.lib
+    lua51.lib
+    pthreadVCE2.lib</p>
 
-<pre><code>glew32.lib
-libcocos2d.lib
-libCocosDenshion.lib
-liblua.lib
-lua51.lib
-pthreadVCE2.lib
-
-glew32.dll
+<pre><code>glew32.dll
 libcocos2d.dll
 libCocosDenshion.dll
 libtiff.dll
 lua51.dll
 pthreadVCE2.dll
-zlib1.dll
+zlib1.dll 有点多，需要一个一个拷贝过去，如果缺了其中一个的话，会报错   ![libs](/images/vs-cocos2d/libs.png)   第五步，在Demo/Demo目录下创建Libs目录，把cocos2dx目录下的cocos2dx;CocosDenshion;extensions;以及cocos2dx/scripting 目录下的lua 都拷贝到新建的Libs中来。   ![copylibs](/images/vs-cocos2d/copylibs.png)   第六步，配置包含路径，项目上点右键 -&gt; 属性 -&gt; C/C++ -&gt; 常规-&gt; 附加包含目录 ，删除它原来的那些，将下面这些加入   ![fujiamulu](/images/vs-cocos2d/fujiamulu.png)   再打开链接器的输入，加入lua51.lib ![lianjieqi](/images/vs-cocos2d/lianjieqi.png) 设置完后点击应用，然后就可以运行了，结果如下，瞧！一个小农场游戏： ![Demo](/images/vs-cocos2d/Demo.png)
 </code></pre>
-
-<p>有点多，需要一个一个拷贝过去，如果缺了其中一个的话，会报错<br/>
-<img src="/images/vs-cocos2d/libs.png" alt="libs" /><br/>
-第五步，在Demo/Demo目录下创建Libs目录，把cocos2dx目录下的cocos2dx;CocosDenshion;extensions;以及cocos2dx/scripting 目录下的lua 都拷贝到新建的Libs中来。<br/>
-<img src="/images/vs-cocos2d/copylibs.png" alt="copylibs" /><br/>
-第六步，配置包含路径，项目上点右键 &ndash;> 属性 &ndash;> C/C++ &ndash;> 常规-> 附加包含目录 ，删除它原来的那些，将下面这些加入<br/>
-<img src="/images/vs-cocos2d/fujiamulu.png" alt="fujiamulu" /><br/>
-再打开链接器的输入，加入lua51.lib
-<img src="/images/vs-cocos2d/lianjieqi.png" alt="lianjieqi" />
-设置完后点击应用，然后就可以运行了，结果如下，瞧！一个小农场游戏：
-<img src="/images/vs-cocos2d/Demo.png" alt="Demo" /></p>
 
 <p>当然，还没完，因为我们不仅仅是要运行第一个cocos2dx + lua项目，我们是要改它生成的不美观的目录结构：
 <img src="/images/vs-cocos2d/demo_pic1.png" alt="" /><img src="/images/vs-cocos2d/demo_pic2.png" alt="" />
-首先，删掉Demo目录下的proj.win32文件夹，因为里面什么东西都没有！<br/>
-然后在项目的资源管理器面板中，在Demo.rc;Demo.ico;Demo.png这三个文件上点击右键-> 移除-> 删除;
-再删除Demo/Demo/proj.win32下的res文件夹.<br/>
-将main.h;main.cpp这两个文件移动到Demo/Demo/Classes 文件夹中.退出vs2010.<br/>
-将Demo.win32.vcxproj;Demo.win32.vcxproj.filters;Demo.win32.vcxproj.user 三个文件移动到Demo目录下；删除Demo/Demo/proj.win32这个文件夹<br/>
-将Demo/Demo下的Classes;Libs;Resources三个文件夹移动到Demo目录下；并删除Demo/Demo这个目录.<br/>
+首先，删掉Demo目录下的proj.win32文件夹，因为里面什么东西都没有！<br />
+然后在项目的资源管理器面板中，在Demo.rc;Demo.ico;Demo.png这三个文件上点击右键-&gt; 移除-&gt; 删除; 
+再删除Demo/Demo/proj.win32下的res文件夹.<br />
+将main.h;main.cpp这两个文件移动到Demo/Demo/Classes 文件夹中.退出vs2010.<br />
+将Demo.win32.vcxproj;Demo.win32.vcxproj.filters;Demo.win32.vcxproj.user 三个文件移动到Demo目录下；删除Demo/Demo/proj.win32这个文件夹<br />
+将Demo/Demo下的Classes;Libs;Resources三个文件夹移动到Demo目录下；并删除Demo/Demo这个目录.<br />
 修改完之后，整个项目目录结构是这样子的：
-<img src="/images/vs-cocos2d/final.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/final.png" alt="" /><br />
 然而这时候是无法打开项目的，打开Demo.sln文件编辑,并删掉这一部分：
-<img src="/images/vs-cocos2d/modifysln.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/modifysln.png" alt="" /><br />
 删除Demo.win32.vcxproj.filters这个文件，让我们来重新设置filters过滤器,删除之后打开Demo.sln。移除项目中的所有文件:
-然后依次按照我们项目中Classes;Libs;Resources这样的目录重新设置filters,分别用点击右键 &ndash;> 添加筛选器;右键 &ndash;> 添加现有项， 将我们的文件导入:
-<img src="/images/vs-cocos2d/newfilter.png" alt="" /><br/>
+然后依次按照我们项目中Classes;Libs;Resources这样的目录重新设置filters,分别用点击右键 -&gt; 添加筛选器;右键 -&gt; 添加现有项， 将我们的文件导入:
+<img src="/images/vs-cocos2d/newfilter.png" alt="" /><br />
 由于采用的是相对路径，所以附加目录这里得改一下啦：
-<img src="/images/vs-cocos2d/newfujia.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/newfujia.png" alt="" /><br />
 还有这里，我习惯把中间目录跟Debug目录放到一块儿去
-<img src="/images/vs-cocos2d/zhongjianmulu.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/zhongjianmulu.png" alt="" /><br />
 这时候改完之后发现跑不动了，因为找不到Resources目录
-<img src="/images/vs-cocos2d/resourcebug.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/resourcebug.png" alt="" /><br />
 看到没，在这里设置的
-<img src="/images/vs-cocos2d/resourcefinal.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/resourcefinal.png" alt="" /><br />
 好了，修改完之后，又能够看到我们的农场游戏了：
-<img src="/images/Demo.png" alt="" /><br/>
+<img src="/images/Demo.png" alt="" /><br />
 这时候的项目组织方式，已经按照我自己的想法完全改了:
-<img src="/images/vs-cocos2d/final.png" alt="" /><br/>
+<img src="/images/vs-cocos2d/final.png" alt="" /><br />
 按照这些方法，你完全可以以你自己的方式去组织项目结构</p>
 </div>
   
@@ -453,160 +441,126 @@ zlib1.dll
   </header>
 
 
-  <div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入</p>
+  <div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入
+    gdb -v
+查看gdb的版本信息
+    zhang@note:~/test_make$ gdb -v
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>.
+上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：
+    CFLAGS = -g
+    main:main.o test1.o test2.o
+	    gcc -o $@ $^
+    ..c.o:
+	    gcc $(CFLAGS) -c $&lt; 
+然后先删了老的main* 和*.o文件
+    zhang@note:~/test_make$ rm main
+    zhang@note:~/test_make$ rm *.o
+好了，重新编译
+    zhang@note:~/test_make$ make
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$
+编译完后运行gdb
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb)
+输入命令
+    (gdb) list
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+    (gdb) 
+    Line number 9 out of range; main.c has 8 lines.
+    (gdb)
+注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：
+    (gdb) list
+    No symbol table is loaded.  Use the “file” command.
+    (gdb)
+如果只想列出2-9行之间的代码
+    (gdb) list 2,9
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+如果只想列出某个函数
+    (gdb) list test1_print 
+    1   #include “stdio.h”
+    2   #include “test1.h”
+    3 <br />
+    4   void test1_print(char *print_str)
+    5   {
+    6       printf(“This is test1 print %s \n”, print_str);
+    7   }
+    (gdb)
+为了能够下断点查看变量值，我们改下main函数
+    void main(int argc, char **argv)
+       {
+           char msg1[128] = “Hello “;
+           char msg2[128] = “World !”;
+           test1_print(msg1);
+           test2_print(msg2);
+       }
+然后
+    zhang@note:~/test_make$ make        #编译
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb) list                          #列出代码
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       char msg1[128] = “Hello “;
+    7       char msg2[128] = “World !”;
+    8       test1_print(msg1);
+    9       test2_print(msg2);
+    10  }
+    (gdb) break 7                       #在第7行的位置下断点
+    Breakpoint 1 at 0x804847c: file main.c, line 7.
+    (gdb) run main                      #执行调试
+    Starting program: /home/zhang/test_make/main main</p>
 
-<pre><code>gdb -v
-</code></pre>
-
-<p>查看gdb的版本信息</p>
-
-<pre><code>zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
-</code></pre>
-
-<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
-
-<pre><code>CFLAGS = -g
-main:main.o test1.o test2.o
-    gcc -o $@ $^
-..c.o:
-    gcc $(CFLAGS) -c $&lt; 
-</code></pre>
-
-<p>然后先删了老的main<em> 和</em>.o文件</p>
-
-<pre><code>zhang@note:~/test_make$ rm main
-zhang@note:~/test_make$ rm *.o
-</code></pre>
-
-<p>好了，重新编译</p>
-
-<pre><code>zhang@note:~/test_make$ make
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$
-</code></pre>
-
-<p>编译完后运行gdb</p>
-
-<pre><code>zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb)
-</code></pre>
-
-<p>输入命令</p>
-
-<pre><code>(gdb) list
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-(gdb) 
-Line number 9 out of range; main.c has 8 lines.
-(gdb)
-</code></pre>
-
-<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
-
-<pre><code>(gdb) list
-No symbol table is loaded.  Use the "file" command.
-(gdb)
-</code></pre>
-
-<p>如果只想列出2-9行之间的代码</p>
-
-<pre><code>(gdb) list 2,9
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-</code></pre>
-
-<p>如果只想列出某个函数</p>
-
-<pre><code>(gdb) list test1_print 
-1   #include "stdio.h"
-2   #include "test1.h"
-3   
-4   void test1_print(char *print_str)
-5   {
-6       printf("This is test1 print %s \n", print_str);
-7   }
-(gdb)
-</code></pre>
-
-<p>为了能够下断点查看变量值，我们改下main函数</p>
-
-<pre><code>void main(int argc, char **argv)
-   {
-       char msg1[128] = "Hello ";
-       char msg2[128] = "World !";
-       test1_print(msg1);
-       test2_print(msg2);
-   }
-</code></pre>
-
-<p>然后</p>
-
-<pre><code>zhang@note:~/test_make$ make        #编译
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb) list                          #列出代码
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       char msg1[128] = "Hello ";
-7       char msg2[128] = "World !";
-8       test1_print(msg1);
-9       test2_print(msg2);
-10  }
-(gdb) break 7                       #在第7行的位置下断点
-Breakpoint 1 at 0x804847c: file main.c, line 7.
-(gdb) run main                      #执行调试
-Starting program: /home/zhang/test_make/main main
-
-Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
+<pre><code>Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
 7       char msg2[128] = "World !";
 (gdb) print msg1                    #查看断点处变量msg1的值
 $1 = "Hello ", '\000' &lt;repeats 121 times&gt;
@@ -615,13 +569,8 @@ Continuing.
 This is test1 print Hello  
 This is test2 print World ! 
 [Inferior 1 (process 3270) exited normally]
-(gdb)
-</code></pre>
-
-<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
-附上常用命令：</p>
-
-<pre><code>小结：常用的gdb命令
+(gdb) 看吧，这就是用gdb调试一个程序的完整过程，简单吧？:-) 附上常用命令：
+小结：常用的gdb命令
 backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
 breakpoint 在程序中设置一个断点
 cd 改变当前工作目录
@@ -653,6 +602,7 @@ up 上移栈帧，使另一函数成为当前函数
 watch 在程序中设置一个监测点（即数据断点）
 whatis 显示变量或函数类型 
 </code></pre>
+
 </div>
   
   
@@ -690,78 +640,52 @@ whatis 显示变量或函数类型
   </header>
 
 
-  <div class="entry-content"><p>关于Makefile的介绍，不多说，详情见百度百科：<br/>
-<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br/>
+  <div class="entry-content"><p>关于Makefile的介绍，不多说，详情见百度百科：<br />
+<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br />
 下面就来看看Makefile的作用
-假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br/>
-main.c</p>
+假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br />
+main.c
+    /* main.c */
+    #include “test1.h”
+    #include “test2.h”</p>
 
-<pre><code>/* main.c */
-#include "test1.h"
-#include "test2.h"
-
-int main(int argc, char **argv)
+<pre><code>int main(int argc, char **argv)
 {
     test1_print("hello ");
     test2_print("world !");
-}
-</code></pre>
-
-<p>test1.h</p>
-
-<pre><code>/* test1.h */
+} test1.h
+/* test1.h */
 #ifndef _TEST_1_H
 #define _TEST_1_H
 
 void test1_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test1.c</p>
-
-<pre><code>/* test1.c */
+#endif test1.c
+/* test1.c */
 #include "test1.h"
 
 void test1_print(char *print_str)
 {
     printf("This is test1 print %s \n", print_str);
-}
-</code></pre>
-
-<p>test2.h</p>
-
-<pre><code>/* test2.h */
+} test2.h
+/* test2.h */
 #ifndef _TEST_2_H
 
 void test2_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test2.c</p>
-
-<pre><code>/* test2.c */
+#endif test2.c
+/* test2.c */
 #include "test2.h"
 
 void test2_print(char *print_str)
 {
     printf("This is test2 print %s \n", print_str);
-}
-</code></pre>
-
-<p>在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main</p>
-
-<pre><code>gcc -c main.c   # 生成main.o 目标代码
+} 在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main
+gcc -c main.c   # 生成main.o 目标代码
 gcc -c test1.c  # 生成test1.o 目标代码
 gcc -c test2.c  # 生成test2.o 目标代码
 gcc -o main main.o test1.o test2.o  # 生成名为main的可执行文件
 
-./main  # 执行就能看到输出结果了
-</code></pre>
-
-<p>而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果：
-Makefile</p>
-
-<pre><code>main:main.o test1.o test2.o
+./main  # 执行就能看到输出结果了 而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果： Makefile
+main:main.o test1.o test2.o
 gcc -o main main.o test1.o test2.o
 
 main.o:main.c test1.h test2.h
@@ -771,29 +695,13 @@ test1.o:test1.c test1.h
 gcc -c test1.c
 
 test2.o:test2.c test2.h
-gcc -c test2.c
-</code></pre>
-
-<p>有了这个Makefile之后，我们只需要在目录下执行</p>
-
-<pre><code>make
-</code></pre>
-
-<p>就生成了名为main的可执行文件</p>
-
-<pre><code>./main
-</code></pre>
-
-<p>Makefile有三个非常有用的变量，$@; $^; $&lt; ：</p>
-
-<pre><code>$@ ：目标文件
+gcc -c test2.c 有了这个Makefile之后，我们只需要在目录下执行
+make 就生成了名为main的可执行文件
+./main Makefile有三个非常有用的变量，$@; $^; $&lt; ：
+$@ ：目标文件
 $^ ：所有的依赖文件
-$&lt; ：第一个依赖文件
-</code></pre>
-
-<p>于是简化后的Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+$&lt; ：第一个依赖文件 于是简化后的Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 main.o:main.c test1.h test2.h
@@ -803,26 +711,15 @@ test1.o:test1.c test1.h
 gcc -c $&lt;
 
 test2.o:test2.c test2.h
-gcc -c $&lt;
-</code></pre>
-
-<p>经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：</p>
-
-<pre><code>..c.o:
-gcc -c $&lt;
-</code></pre>
-
-<p>这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c
-于是Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+gcc -c $&lt; 经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：
+..c.o:
+gcc -c $&lt; 这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c 于是Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 ..c.o:
-gcc -c $&lt;
+gcc -c $&lt; 然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档
 </code></pre>
-
-<p>然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档</p>
 </div>
   
   
@@ -860,33 +757,21 @@ gcc -c $&lt;
   </header>
 
 
-  <div class="entry-content"><p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：</p>
-
-<pre><code>man gcc
-</code></pre>
-
-<p>下面就编写一个hello world吧，新建hello.c 内容如下：</p>
-
-<pre><code>int main(int argc, char ** argv)
-{
-    printf("Hello world ! \n");
-}
-</code></pre>
-
-<p>要编译这个程序，我们在命令行下执行:</p>
-
-<pre><code>gcc -o hello hello.c
-</code></pre>
-
-<p>-o  表示输出可执行文件
+  <div class="entry-content"><p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：
+    man gcc
+下面就编写一个hello world吧，新建hello.c 内容如下：
+    int main(int argc, char ** argv)
+    {
+        printf(“Hello world ! \n”);
+    }
+要编译这个程序，我们在命令行下执行:
+    gcc -o hello hello.c
+-o  表示输出可执行文件
 -c  表示输出目标代码
 -g  表示加入调试信息
-gcc编译器就会为我们生成一个名叫hello 的可执行文件</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>执行就能看到程序输出的hello world 了</p>
+gcc编译器就会为我们生成一个名叫hello 的可执行文件
+    ./hello
+执行就能看到程序输出的hello world 了</p>
 </div>
   
   
@@ -924,8 +809,7 @@ gcc编译器就会为我们生成一个名叫hello 的可执行文件</p>
   </header>
 
 
-  <div class="entry-content"><h2>Git配置</h2>
-
+  <div class="entry-content"><h2 id="git">Git配置</h2>
 <pre><code>git config --global user.name "robbin"   
 git config --global user.email "fankai@gmail.com"
 git config --global color.ui true
@@ -937,11 +821,11 @@ git config --global core.editor "mate -w"    # 设置Editor使用textmate
 git config -l  # 列举所有配置
 </code></pre>
 
-<p>用户的git配置文件<code>~/.gitconfig</code></p>
+<p>用户的git配置文件<code>~/.gitconfig</code>  </p>
 
-<h2>Git常用命令</h2>
+<h2 id="git-1">Git常用命令</h2>
 
-<h3>查看、添加、提交、删除、找回，重置修改文件</h3>
+<h3 id="section">查看、添加、提交、删除、找回，重置修改文件</h3>
 
 <pre><code>git help &lt;command&gt;  # 显示command的help
 git show            # 显示某次提交的内容
@@ -970,7 +854,7 @@ git revert &lt;$id&gt;    # 恢复某次提交的状态，恢复动作本身也�
 git revert HEAD     # 恢复最后一次提交的状态
 </code></pre>
 
-<h3>查看文件diff</h3>
+<h3 id="diff">查看文件diff</h3>
 
 <pre><code>git diff &lt;file&gt;     # 比较当前文件和暂存区文件差异
 git diff
@@ -981,7 +865,7 @@ git diff --cached   # 比较暂存区和版本库差异
 git diff --stat     # 仅仅比较统计信息
 </code></pre>
 
-<h3>查看提交记录</h3>
+<h3 id="section-1">查看提交记录</h3>
 
 <pre><code>git log
 git log &lt;file&gt;      # 查看该文件每次提交记录
@@ -990,13 +874,13 @@ git log -p -2       # 查看最近两次详细修改内容的diff
 git log --stat      # 查看提交统计信息
 </code></pre>
 
-<h3>tig</h3>
+<h3 id="tig">tig</h3>
 
 <p>Mac上可以使用tig代替diff和log，<code>brew install tig</code></p>
 
-<h2>Git 本地分支管理</h2>
+<h2 id="git-">Git 本地分支管理</h2>
 
-<h3>查看、切换、创建和删除分支</h3>
+<h3 id="section-2">查看、切换、创建和删除分支</h3>
 
 <pre><code>git br -r           # 查看远程分支
 git br &lt;new_branch&gt; # 创建新的分支
@@ -1015,7 +899,7 @@ git br -d &lt;branch&gt;  # 删除某个分支
 git br -D &lt;branch&gt;  # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)
 </code></pre>
 
-<h3>分支合并和rebase</h3>
+<h3 id="rebase">分支合并和rebase</h3>
 
 <pre><code>git merge &lt;branch&gt;               # 将branch分支合并到当前分支
 git merge origin/master --no-ff  # 不要Fast-Foward合并，这样可以生成merge提交
@@ -1024,23 +908,20 @@ git rebase master &lt;branch&gt;       # 将master rebase到branch，相当于�
 git co &lt;branch&gt; &amp;&amp; git rebase master &amp;&amp; git co master &amp;&amp; git merge &lt;branch&gt;
 </code></pre>
 
-<h2>Git补丁管理(方便在多台机器上开发同步时用)</h2>
-
+<h2 id="git-2">Git补丁管理(方便在多台机器上开发同步时用)</h2>
 <pre><code>git diff &gt; ../sync.patch         # 生成补丁
 git apply ../sync.patch          # 打补丁
 git apply --check ../sync.patch  # 测试补丁能否成功
 </code></pre>
 
-<h2>Git暂存管理</h2>
-
+<h2 id="git-3">Git暂存管理</h2>
 <pre><code>git stash                        # 暂存
 git stash list                   # 列所有stash
 git stash apply                  # 恢复暂存的内容
 git stash drop                   # 删除暂存区
 </code></pre>
 
-<h2>Git远程分支管理</h2>
-
+<h2 id="git-4">Git远程分支管理</h2>
 <pre><code>git pull                         # 抓取远程仓库所有分支更新并合并到本地
 git pull --no-ff                 # 抓取远程仓库所有分支更新并合并到本地，不要快进合并
 git fetch origin                 # 抓取远程仓库更新
@@ -1056,7 +937,7 @@ git push origin &lt;local_branch&gt;:&lt;remote_branch&gt;  # 创建远程分支
 git push origin :&lt;remote_branch&gt;  #先删除本地分支(git br -d &lt;branch&gt;)，然后再push删除远程分支
 </code></pre>
 
-<h2>Git远程仓库管理</h2>
+<h2 id="git-5">Git远程仓库管理</h2>
 
 <pre><code>git remote -v                    # 查看远程服务器地址和仓库名称
 git remote show origin           # 查看远程服务器仓库状态
@@ -1065,8 +946,7 @@ git remote set-url origin git@github.com:robbin/robbin_site.git # 设置远程�
 git remote rm &lt;repository&gt;       # 删除远程仓库
 </code></pre>
 
-<h3>创建远程仓库</h3>
-
+<h3 id="section-3">创建远程仓库</h3>
 <pre><code>git clone --bare robbin_site robbin_site.git  # 用带版本的项目创建纯版本仓库
 scp -r my_project.git git@git.csdn.net:~      # 将纯仓库上传到服务器上
 
@@ -1083,6 +963,7 @@ git remote set-head origin master   # 设置远程仓库的HEAD指向master分�
 <pre><code>git branch --set-upstream master origin/master
 git branch --set-upstream develop origin/develop
 </code></pre>
+
 </div>
   
   
@@ -1120,33 +1001,27 @@ git branch --set-upstream develop origin/develop
   </header>
 
 
-  <div class="entry-content"><p>we create a collection with limited size 100000:</p>
+  <div class="entry-content"><p>we create a collection with limited size 100000:
+    &gt; db.createCollection(“colcase1”, {capped:true, size:100000})
+    { “ok” : 1 }
+    &gt; show collections
+    colcase
+    colcase1
+    system.indexes
+    &gt;
+and, we can convert a exist collection to a limited one:
+    &gt; db.colcase.isCapped()
+    false
+    &gt; db.runCommand({“convertToCapped”:”colcase”,size:100000})
+    { “ok” : 1 }
+    &gt; db.colcase.isCapped()
+    true
+    &gt;
+Look ! we did it</p>
 
-<pre><code>&gt; db.createCollection("colcase1", {capped:true, size:100000})
-{ "ok" : 1 }
-&gt; show collections
-colcase
-colcase1
-system.indexes
-&gt;
-</code></pre>
+<p>unload a picture:  </p>
 
-<p>and, we can convert a exist collection to a limited one:</p>
-
-<pre><code>&gt; db.colcase.isCapped()
-false
-&gt; db.runCommand({"convertToCapped":"colcase",size:100000})
-{ "ok" : 1 }
-&gt; db.colcase.isCapped()
-true
-&gt;
-</code></pre>
-
-<p>Look ! we did it</p>
-
-<p>unload a picture:</p>
-
-<p><img src="/images/qiaofeng.jpg" title="qiaofeng" alt="" /></p>
+<p><img src="/images/qiaofeng.jpg" alt="" title="qiaofeng" /></p>
 </div>
   
   

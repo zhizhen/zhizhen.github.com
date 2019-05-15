@@ -9,7 +9,10 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="问题描述 在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub 问题原因 相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom 解决办法 改reboot为shutdown -h now， &hellip;">
+  <meta name="description" content="问题描述
+在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub ## 问题原因
+相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom ## 解决办法
+改reboot为shutdown -h now， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +32,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -105,24 +124,17 @@
   </header>
 
 
-<div class="entry-content"><h2>问题描述</h2>
-
+<div class="entry-content"><h2 id="section">问题描述</h2>
 <p>在安装gentoo的时候，一切都安装完，在执行reboot这一步之后，无法正常启动grub</p>
 
 <hr />
-
-<h2>问题原因</h2>
-
-<p>相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
+<p>## 问题原因
+相信你在执行reboot的时候，关机信息中看到了，系统无法umount cdrom</p>
 
 <hr />
-
-<h2>解决办法</h2>
-
-<p>改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo</p>
-
-<!--more-->
-
+<p>## 解决办法
+改reboot为shutdown -h now，然后手工将安装光驱从virtualbox中删掉，再重新启动gentoo
+<!--more--></p>
 </div>
 
 

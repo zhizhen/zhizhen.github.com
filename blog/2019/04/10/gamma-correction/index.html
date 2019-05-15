@@ -9,9 +9,9 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理 一句话总结，用于在线性空间运算出非线性空间中的插值。 相关文章： 龚大的Gamma传说
-聊聊Unity的Gamma校正以及线性工作流
-以及乐乐的《 &hellip;">
+  <meta name="description" content="做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理 一句话总结，用于在线性空间运算出非线性空间中的插值。
+* * *
+相关文章： 龚大的Gamma传说 聊聊Unity的Gamma校正以及线性工作流 以及乐乐的 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +31,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -110,23 +126,20 @@
 <div class="entry-content"><p><img src="https://img-blog.csdn.net/20180507200340663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppemhpZGV4aWFvbWluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" /></p>
 
 <hr />
-
-<blockquote><p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p></blockquote>
-
-<hr />
-
-<p>一句话总结，用于在线性空间运算出非线性空间中的插值。</p>
+<blockquote>
+  <p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p>
+</blockquote>
 
 <hr />
-
-<p>相关文章：</p>
+<p>一句话总结，用于在线性空间运算出非线性空间中的插值。
+* * *
+相关文章：   </p>
 
 <ul>
-<li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a></li>
-<li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a></li>
-<li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a></li>
+  <li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a>  </li>
+  <li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a>  </li>
+  <li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a>  </li>
 </ul>
-
 </div>
 
 

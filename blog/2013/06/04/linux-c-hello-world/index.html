@@ -9,8 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看： man gcc 下面就编写一个hello world吧，新建hello.c 内容如下： int main(int argc, char ** argv)
-{ printf("Hello world ! \n &hellip;">
+  <meta name="description" content="在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看： man gcc
+下面就编写一个hello world吧，新建hello.c 内容如下： int main(int argc, char ** argv) { printf(“Hello world ! \n &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -30,6 +30,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -106,33 +122,21 @@
   </header>
 
 
-<div class="entry-content"><p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：</p>
-
-<pre><code>man gcc
-</code></pre>
-
-<p>下面就编写一个hello world吧，新建hello.c 内容如下：</p>
-
-<pre><code>int main(int argc, char ** argv)
-{
-    printf("Hello world ! \n");
-}
-</code></pre>
-
-<p>要编译这个程序，我们在命令行下执行:</p>
-
-<pre><code>gcc -o hello hello.c
-</code></pre>
-
-<p>-o  表示输出可执行文件
+<div class="entry-content"><p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：
+    man gcc
+下面就编写一个hello world吧，新建hello.c 内容如下：
+    int main(int argc, char ** argv)
+    {
+        printf(“Hello world ! \n”);
+    }
+要编译这个程序，我们在命令行下执行:
+    gcc -o hello hello.c
+-o  表示输出可执行文件
 -c  表示输出目标代码
 -g  表示加入调试信息
-gcc编译器就会为我们生成一个名叫hello 的可执行文件</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>执行就能看到程序输出的hello world 了</p>
+gcc编译器就会为我们生成一个名叫hello 的可执行文件
+    ./hello
+执行就能看到程序输出的hello world 了</p>
 </div>
 
 

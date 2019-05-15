@@ -9,20 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="### 灰度shader 最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-#ifdef GL_ES
-precision mediump float; // ES版本的精度限定符， &hellip;">
+  <meta name="description" content="### 灰度shader 最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;&lt;div class=&#8221;highlight&# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -42,6 +30,22 @@ precision mediump float; // ES版本的精度限定符， &hellip;">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -118,37 +122,34 @@ precision mediump float; // ES版本的精度限定符， &hellip;">
   </header>
 
 
-<div class="entry-content"><p> ### 灰度shader</p>
+<div class="entry-content"><p>### 灰度shader</p>
 
-<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>void main(void)
-</span><span class='line'>
-</span><span class='line'>vec4 c = texture2D(CC_Texture0, v_texCoord);
-</span><span class='line'>gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
-</span><span class='line'>gl_FragColor.w = c.w;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>代码分析</h3>
+<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">void main(void)
+</span><span class="line">
+</span><span class="line">vec4 c = texture2D(CC_Texture0, v_texCoord);
+</span><span class="line">gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
+</span><span class="line">gl_FragColor.w = c.w;
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+### 代码分析</p>
 
 <p>precision mediump float是open es特有的精度限定符，原本的浮点数精度是double，opengl es为了提高渲染效率，限定精度为float类型。</p>
 
@@ -158,38 +159,36 @@ precision mediump float; // ES版本的精度限定符， &hellip;">
 
 <p>CC_Texture0是一个采样器，在load shader的时候，引擎会预先把这些uniform变量给加载进来。</p>
 
-<p>下面这部分代码就是引擎预先加载进来的uniform变量：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>static const char * COCOS2D_SHADER_UNIFORMS =
-</span><span class='line'>"uniform mat4 CC_PMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVPMatrix;\n"
-</span><span class='line'>"uniform mat3 CC_NormalMatrix;\n"
-</span><span class='line'>"uniform vec4 CC_Time;\n"
-</span><span class='line'>"uniform vec4 CC_SinTime;\n"
-</span><span class='line'>"uniform vec4 CC_CosTime;\n"
-</span><span class='line'>"uniform vec4 CC_Random01;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture0;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture1;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture2;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture3;\n"
-</span><span class='line'>"//CC INCLUDES END\n\n";
-</span></code></pre></td></tr></table></div></figure>
-
+<p>下面这部分代码就是引擎预先加载进来的uniform变量：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">static const char * COCOS2D_SHADER_UNIFORMS =
+</span><span class="line">"uniform mat4 CC_PMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVPMatrix;\n"
+</span><span class="line">"uniform mat3 CC_NormalMatrix;\n"
+</span><span class="line">"uniform vec4 CC_Time;\n"
+</span><span class="line">"uniform vec4 CC_SinTime;\n"
+</span><span class="line">"uniform vec4 CC_CosTime;\n"
+</span><span class="line">"uniform vec4 CC_Random01;\n"
+</span><span class="line">"uniform sampler2D CC_Texture0;\n"
+</span><span class="line">"uniform sampler2D CC_Texture1;\n"
+</span><span class="line">"uniform sampler2D CC_Texture2;\n"
+</span><span class="line">"uniform sampler2D CC_Texture3;\n"
+</span><span class="line">"//CC INCLUDES END\n\n";
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>这些变量在shader里面如果没有用到的话，会被引擎给优化掉。</p>
 
@@ -199,19 +198,17 @@ precision mediump float; // ES版本的精度限定符， &hellip;">
 
 <p>这个shader很简单，就是改变了一下rgb的值。0.2126，0.7152，0.0722这几个系数据说是根据人眼对rgb这三种基本颜色识别的强弱算出来的。</p>
 
-<h3>使用示例</h3>
+<h3 id="section">使用示例</h3>
 
-<p>在cocos2dx 3.x版本中sprite变灰的代码例子：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>auto sprite = Sprite::create("HelloWorld.png");
-</span><span class='line'>sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code></pre></td></tr></table></div></figure>
-
-
-<p>效果如下图所示：</p>
+<p>在cocos2dx 3.x版本中sprite变灰的代码例子：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">auto sprite = Sprite::create("HelloWorld.png");
+</span><span class="line">sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+效果如下图所示：</p>
 
 <p><img src="/images/cocos2dxshader1.png" alt="" /></p>
+
 </div>
 
 

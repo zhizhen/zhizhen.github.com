@@ -9,7 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="Git配置 git config --global user.name "robbin" git config --global user.email "fankai@gmail.com"
+  <meta name="description" content="Git配置
+git config --global user.name "robbin" git config --global user.email "fankai@gmail.com"
 git config --global color.ui true
 git config --global &hellip;">
   
@@ -31,6 +32,22 @@ git config --global &hellip;">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -107,8 +124,7 @@ git config --global &hellip;">
   </header>
 
 
-<div class="entry-content"><h2>Git配置</h2>
-
+<div class="entry-content"><h2 id="git">Git配置</h2>
 <pre><code>git config --global user.name "robbin"   
 git config --global user.email "fankai@gmail.com"
 git config --global color.ui true
@@ -120,11 +136,11 @@ git config --global core.editor "mate -w"    # 设置Editor使用textmate
 git config -l  # 列举所有配置
 </code></pre>
 
-<p>用户的git配置文件<code>~/.gitconfig</code></p>
+<p>用户的git配置文件<code>~/.gitconfig</code>  </p>
 
-<h2>Git常用命令</h2>
+<h2 id="git-1">Git常用命令</h2>
 
-<h3>查看、添加、提交、删除、找回，重置修改文件</h3>
+<h3 id="section">查看、添加、提交、删除、找回，重置修改文件</h3>
 
 <pre><code>git help &lt;command&gt;  # 显示command的help
 git show            # 显示某次提交的内容
@@ -153,7 +169,7 @@ git revert &lt;$id&gt;    # 恢复某次提交的状态，恢复动作本身也�
 git revert HEAD     # 恢复最后一次提交的状态
 </code></pre>
 
-<h3>查看文件diff</h3>
+<h3 id="diff">查看文件diff</h3>
 
 <pre><code>git diff &lt;file&gt;     # 比较当前文件和暂存区文件差异
 git diff
@@ -164,7 +180,7 @@ git diff --cached   # 比较暂存区和版本库差异
 git diff --stat     # 仅仅比较统计信息
 </code></pre>
 
-<h3>查看提交记录</h3>
+<h3 id="section-1">查看提交记录</h3>
 
 <pre><code>git log
 git log &lt;file&gt;      # 查看该文件每次提交记录
@@ -173,13 +189,13 @@ git log -p -2       # 查看最近两次详细修改内容的diff
 git log --stat      # 查看提交统计信息
 </code></pre>
 
-<h3>tig</h3>
+<h3 id="tig">tig</h3>
 
 <p>Mac上可以使用tig代替diff和log，<code>brew install tig</code></p>
 
-<h2>Git 本地分支管理</h2>
+<h2 id="git-">Git 本地分支管理</h2>
 
-<h3>查看、切换、创建和删除分支</h3>
+<h3 id="section-2">查看、切换、创建和删除分支</h3>
 
 <pre><code>git br -r           # 查看远程分支
 git br &lt;new_branch&gt; # 创建新的分支
@@ -198,7 +214,7 @@ git br -d &lt;branch&gt;  # 删除某个分支
 git br -D &lt;branch&gt;  # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)
 </code></pre>
 
-<h3>分支合并和rebase</h3>
+<h3 id="rebase">分支合并和rebase</h3>
 
 <pre><code>git merge &lt;branch&gt;               # 将branch分支合并到当前分支
 git merge origin/master --no-ff  # 不要Fast-Foward合并，这样可以生成merge提交
@@ -207,23 +223,20 @@ git rebase master &lt;branch&gt;       # 将master rebase到branch，相当于�
 git co &lt;branch&gt; &amp;&amp; git rebase master &amp;&amp; git co master &amp;&amp; git merge &lt;branch&gt;
 </code></pre>
 
-<h2>Git补丁管理(方便在多台机器上开发同步时用)</h2>
-
+<h2 id="git-2">Git补丁管理(方便在多台机器上开发同步时用)</h2>
 <pre><code>git diff &gt; ../sync.patch         # 生成补丁
 git apply ../sync.patch          # 打补丁
 git apply --check ../sync.patch  # 测试补丁能否成功
 </code></pre>
 
-<h2>Git暂存管理</h2>
-
+<h2 id="git-3">Git暂存管理</h2>
 <pre><code>git stash                        # 暂存
 git stash list                   # 列所有stash
 git stash apply                  # 恢复暂存的内容
 git stash drop                   # 删除暂存区
 </code></pre>
 
-<h2>Git远程分支管理</h2>
-
+<h2 id="git-4">Git远程分支管理</h2>
 <pre><code>git pull                         # 抓取远程仓库所有分支更新并合并到本地
 git pull --no-ff                 # 抓取远程仓库所有分支更新并合并到本地，不要快进合并
 git fetch origin                 # 抓取远程仓库更新
@@ -239,7 +252,7 @@ git push origin &lt;local_branch&gt;:&lt;remote_branch&gt;  # 创建远程分支
 git push origin :&lt;remote_branch&gt;  #先删除本地分支(git br -d &lt;branch&gt;)，然后再push删除远程分支
 </code></pre>
 
-<h2>Git远程仓库管理</h2>
+<h2 id="git-5">Git远程仓库管理</h2>
 
 <pre><code>git remote -v                    # 查看远程服务器地址和仓库名称
 git remote show origin           # 查看远程服务器仓库状态
@@ -248,8 +261,7 @@ git remote set-url origin git@github.com:robbin/robbin_site.git # 设置远程�
 git remote rm &lt;repository&gt;       # 删除远程仓库
 </code></pre>
 
-<h3>创建远程仓库</h3>
-
+<h3 id="section-3">创建远程仓库</h3>
 <pre><code>git clone --bare robbin_site robbin_site.git  # 用带版本的项目创建纯版本仓库
 scp -r my_project.git git@git.csdn.net:~      # 将纯仓库上传到服务器上
 
@@ -266,6 +278,7 @@ git remote set-head origin master   # 设置远程仓库的HEAD指向master分�
 <pre><code>git branch --set-upstream master origin/master
 git branch --set-upstream develop origin/develop
 </code></pre>
+
 </div>
 
 

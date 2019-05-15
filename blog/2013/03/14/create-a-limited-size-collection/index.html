@@ -9,9 +9,7 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="we create a collection with limited size 100000: &gt; db.createCollection("colcase1", {capped:true, size:100000})
-{ "ok" : 1 }
-&gt; show collections &hellip;">
+  <meta name="description" content="we create a collection with limited size 100000: &gt; db.createCollection(“colcase1”, {capped:true, size:100000}) { “ok” : 1 } &gt; show collections &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +29,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -107,33 +121,27 @@
   </header>
 
 
-<div class="entry-content"><p>we create a collection with limited size 100000:</p>
+<div class="entry-content"><p>we create a collection with limited size 100000:
+    &gt; db.createCollection(“colcase1”, {capped:true, size:100000})
+    { “ok” : 1 }
+    &gt; show collections
+    colcase
+    colcase1
+    system.indexes
+    &gt;
+and, we can convert a exist collection to a limited one:
+    &gt; db.colcase.isCapped()
+    false
+    &gt; db.runCommand({“convertToCapped”:”colcase”,size:100000})
+    { “ok” : 1 }
+    &gt; db.colcase.isCapped()
+    true
+    &gt;
+Look ! we did it</p>
 
-<pre><code>&gt; db.createCollection("colcase1", {capped:true, size:100000})
-{ "ok" : 1 }
-&gt; show collections
-colcase
-colcase1
-system.indexes
-&gt;
-</code></pre>
+<p>unload a picture:  </p>
 
-<p>and, we can convert a exist collection to a limited one:</p>
-
-<pre><code>&gt; db.colcase.isCapped()
-false
-&gt; db.runCommand({"convertToCapped":"colcase",size:100000})
-{ "ok" : 1 }
-&gt; db.colcase.isCapped()
-true
-&gt;
-</code></pre>
-
-<p>Look ! we did it</p>
-
-<p>unload a picture:</p>
-
-<p><img src="/images/qiaofeng.jpg" title="qiaofeng" alt="" /></p>
+<p><img src="/images/qiaofeng.jpg" alt="" title="qiaofeng" /></p>
 </div>
 
 

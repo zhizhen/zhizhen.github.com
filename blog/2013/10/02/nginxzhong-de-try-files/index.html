@@ -11,7 +11,8 @@
   
   <meta name="description" content="在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
 用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
-处理请求。利用它可以代替部分复杂的nginx rewrite语法 try_files file1 [file2 &hellip;">
+处理请求。利用它可以代替部分复杂的nginx rewrite语法
+* * * try_files file1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +32,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -109,46 +126,24 @@
 
 <div class="entry-content"><p>在nginx的配置项里有try_files这一项，查了一下，是nginx0.6.36后增加的功能，
 用于搜索指定目录下的N文件，如果找不到fileN，则调用fallback中指定的位置来
-处理请求。利用它可以代替部分复杂的nginx rewrite语法</p>
-
-<hr />
-
-<pre><code>try_files file1 [file2...fileN] fallback
-</code></pre>
-
-<p>默认值：无
-作用域：location</p>
-
+处理请求。利用它可以代替部分复杂的nginx rewrite语法
+* * *
+    try_files file1 [file2…fileN] fallback
+默认值：无
+作用域：location
 <!--more-->
-
-
-<hr />
-
-<p>今天碰到一个问题，nginx 中这样写:</p>
-
-<pre><code>try_files $url $url/ /index.php
-</code></pre>
-
-<p>然后访问</p>
-
-<pre><code>localhost/guess/add/playWay/?pwid=3&amp;gpid=1&amp;inajax=1
-</code></pre>
-
-<p>这个访问被跳转到/index.php 之后，后面的参数</p>
-
-<pre><code>pwid=3&amp;gpid=1&amp;inajax=1
-</code></pre>
-
-<p>没有出现在$_GET变量中</p>
-
-<hr />
-
-<p>于是上网查了try_files 的写法，说是如果要带上参数的话，必须这样写</p>
-
-<pre><code>try_files $url $url/ /index.php?$args
-</code></pre>
-
-<p>这样子前面那些参数就被带到了index.php中的$_GET变量里</p>
+* * *
+今天碰到一个问题，nginx 中这样写:
+    try_files $url $url/ /index.php
+然后访问
+    localhost/guess/add/playWay/?pwid=3&amp;gpid=1&amp;inajax=1
+这个访问被跳转到/index.php 之后，后面的参数
+    pwid=3&amp;gpid=1&amp;inajax=1
+没有出现在$_GET变量中
+* * *
+于是上网查了try_files 的写法，说是如果要带上参数的话，必须这样写
+    try_files $url $url/ /index.php?$args
+这样子前面那些参数就被带到了index.php中的$_GET变量里</p>
 </div>
 
 

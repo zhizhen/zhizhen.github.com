@@ -31,6 +31,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -112,19 +128,15 @@
 执行.</p>
 
 <!--more-->
-
-
 <hr />
+<p>加密工具我用c写了一个,代码放在github上了：https://github.com/zhizhen/cocos2dx-lua-crypto.git<br />
+关键代码如下
+    FILE <em>file;
+    char</em> inPath = argv[1];     //源文件路径
+    char* outPath = argv[2];    //目标文件路径
+    unsigned char* fileData = malloc(FILE_LEN);</p>
 
-<p>加密工具我用c写了一个,代码放在github上了：<a href="https://github.com/zhizhen/cocos2dx-lua-crypto.git  ">https://github.com/zhizhen/cocos2dx-lua-crypto.git  </a>
-关键代码如下</p>
-
-<pre><code>FILE *file;
-char* inPath = argv[1];     //源文件路径
-char* outPath = argv[2];    //目标文件路径
-unsigned char* fileData = malloc(FILE_LEN);
-
-file = fopen(inPath, "rb");
+<pre><code>file = fopen(inPath, "rb");
 unsigned long num = fread(fileData, 1, FILE_LEN, file);
 fclose(file);
 
@@ -133,12 +145,8 @@ unsigned char* data = xxtea_encrypt(fileData, num, (unsigned char*)KEY, 32, &amp
 
 file = fopen(outPath, "web+");
 fwrite(data, 1, dataLen, file);
-fclose(file);
-</code></pre>
-
-<p>在sh代码中遍历文件夹，调用c生成的工具对单个文件进行加密</p>
-
-<pre><code>#!/bin/sh
+fclose(file); 在sh代码中遍历文件夹，调用c生成的工具对单个文件进行加密
+#!/bin/sh
 EXDIR=`cd $(dirname $0); pwd`
 cd "$EXDIR/$1"
 
@@ -170,11 +178,8 @@ deepls(){
 
 deepls $FROMDIR $TODIR
 
-find $TODIR -name '*.lua' -exec rm {} \;
+find $TODIR -name '*.lua' -exec rm {} \; 执行./build.sh 就能将lua文件夹中的lua脚本全部加密后放到out目录下，然后就剩下 怎么在cocos2dx里面修改代码读取加密后的脚本问题了
 </code></pre>
-
-<p>执行./build.sh 就能将lua文件夹中的lua脚本全部加密后放到out目录下，然后就剩下
-怎么在cocos2dx里面修改代码读取加密后的脚本问题了</p>
 </div>
 
 

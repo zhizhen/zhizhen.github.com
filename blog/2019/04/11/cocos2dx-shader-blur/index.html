@@ -29,6 +29,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -105,135 +121,134 @@
   </header>
 
 
-<div class="entry-content"><blockquote><p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p></blockquote>
+<div class="entry-content"><blockquote>
+  <p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p>
+</blockquote>
 
 <p>先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值，要想让这个颜色变得模糊，就要让它与它周围的像素点的颜色稍微接近一点，那么我们就需要拿到这个像素点周围的像素点的颜色值，我们把这些个像素点的值加起来取平均值，就得到了一个区域内的平均颜色。</p>
 
 <p>如果直接使用这个颜色的话，最终的效果会变得很模糊，如果我们只是想稍微模糊一点的话，就要让这个平均值更接近于当前像素点原本的颜色，为此，我们取均值的时候对每个像素点增加了一个权重的定义，当前像素点的权重最高，依次向周围减弱，使得最后得到的均值的颜色更接近于当前像素点原始的颜色。</p>
 
-<p> 看代码：</p>
+<p>看代码：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float;
+</span><span class="line">#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">uniform vec2 resolution;//模糊对象的实际分辨率
+</span><span class="line">uniform float blurRadius;//半径
+</span><span class="line">uniform float sampleNum;//间隔的段数
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2);
+</span><span class="line">
+</span><span class="line">void main(void){
+</span><span class="line">vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
+</span><span class="line">gl_FragColor = vec4(col) * v_fragmentColor;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2 p){
+</span><span class="line">if (blurRadius &gt; 0.0 &amp;&amp; sampleNum &gt; 1.0)
+</span><span class="line">{
+</span><span class="line">vec4 col = vec4(0);
+</span><span class="line">vec2 unit = 1.0 / resolution.xy;//单位坐标
+</span><span class="line">
+</span><span class="line">float r = blurRadius;
+</span><span class="line">float sampleStep = r / sampleNum;
+</span><span class="line">
+</span><span class="line">float count = 0.0;
+</span><span class="line">//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
+</span><span class="line">for(float x = -r; x &lt; r; x += sampleStep)
+</span><span class="line">{
+</span><span class="line">for(float y = -r; y &lt; r; y += sampleStep)
+</span><span class="line">{
+</span><span class="line">float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
+</span><span class="line">col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
+</span><span class="line">count += weight;
+</span><span class="line">}
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">//得到实际模糊颜色的值
+</span><span class="line">
+</span><span class="line">return col / count;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">return texture2D(CC_Texture0, p);
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float;
-</span><span class='line'>#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>uniform vec2 resolution;//模糊对象的实际分辨率
-</span><span class='line'>uniform float blurRadius;//半径
-</span><span class='line'>uniform float sampleNum;//间隔的段数
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2);
-</span><span class='line'>
-</span><span class='line'>void main(void){
-</span><span class='line'>vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
-</span><span class='line'>gl_FragColor = vec4(col) * v_fragmentColor;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2 p){
-</span><span class='line'>if (blurRadius &gt; 0.0 && sampleNum &gt; 1.0)
-</span><span class='line'>{
-</span><span class='line'>vec4 col = vec4(0);
-</span><span class='line'>vec2 unit = 1.0 / resolution.xy;//单位坐标
-</span><span class='line'>
-</span><span class='line'>float r = blurRadius;
-</span><span class='line'>float sampleStep = r / sampleNum;
-</span><span class='line'>
-</span><span class='line'>float count = 0.0;
-</span><span class='line'>//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
-</span><span class='line'>for(float x = -r; x &lt; r; x += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>for(float y = -r; y &lt; r; y += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
-</span><span class='line'>col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
-</span><span class='line'>count += weight;
-</span><span class='line'>}
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>//得到实际模糊颜色的值
-</span><span class='line'>
-</span><span class='line'>return col / count;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>return texture2D(CC_Texture0, p);
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p> 精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
+<p>精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
 
 <p>uniform变量是顶点着色器和片段着色器共享使用的变量，uniform的值不能被改变。</p>
 
 <p>uniform变量是由宿主程序设置的，代码如下：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> void EffectBlur::setTarget(EffectSprite *sprite)
-</span><span class='line'>{
-</span><span class='line'>Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
-</span><span class='line'>_glprogramstate-&gt;setUniformVec2("resolution", size);
-</span><span class='line'>#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
-</span><span class='line'>#endif
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"> void EffectBlur::setTarget(EffectSprite *sprite)
+</span><span class="line">{
+</span><span class="line">Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
+</span><span class="line">_glprogramstate-&gt;setUniformVec2("resolution", size);
+</span><span class="line">#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
+</span><span class="line">#endif
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p> 这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
+<p>这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
 
 <p>resolution是当前渲染node的实际分辨率。</p>
 

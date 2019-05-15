@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mongo | 植臻]]></title>
   <link href="http://zhizhen.github.io/blog/categories/mongo/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T09:47:00+08:00</updated>
+  <updated>2019-05-15T10:20:16+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -18,33 +18,27 @@
     <link href="http://zhizhen.github.io/blog/2013/03/14/create-a-limited-size-collection/"/>
     <updated>2013-03-14T15:17:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/03/14/create-a-limited-size-collection</id>
-    <content type="html"><![CDATA[<p>we create a collection with limited size 100000:</p>
+    <content type="html"><![CDATA[<p>we create a collection with limited size 100000:
+    &gt; db.createCollection(“colcase1”, {capped:true, size:100000})
+    { “ok” : 1 }
+    &gt; show collections
+    colcase
+    colcase1
+    system.indexes
+    &gt;
+and, we can convert a exist collection to a limited one:
+    &gt; db.colcase.isCapped()
+    false
+    &gt; db.runCommand({“convertToCapped”:”colcase”,size:100000})
+    { “ok” : 1 }
+    &gt; db.colcase.isCapped()
+    true
+    &gt;
+Look ! we did it</p>
 
-<pre><code>&gt; db.createCollection("colcase1", {capped:true, size:100000})
-{ "ok" : 1 }
-&gt; show collections
-colcase
-colcase1
-system.indexes
-&gt;
-</code></pre>
+<p>unload a picture:  </p>
 
-<p>and, we can convert a exist collection to a limited one:</p>
-
-<pre><code>&gt; db.colcase.isCapped()
-false
-&gt; db.runCommand({"convertToCapped":"colcase",size:100000})
-{ "ok" : 1 }
-&gt; db.colcase.isCapped()
-true
-&gt;
-</code></pre>
-
-<p>Look ! we did it</p>
-
-<p>unload a picture:</p>
-
-<p><img src="/images/qiaofeng.jpg" title="qiaofeng" alt="" /></p>
+<p><img src="/images/qiaofeng.jpg" alt="" title="qiaofeng" /></p>
 ]]></content>
   </entry>
   
@@ -53,60 +47,45 @@ true
     <link href="http://zhizhen.github.io/blog/2013/03/12/simple-introduce-of-mongodb/"/>
     <updated>2013-03-12T16:12:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/03/12/simple-introduce-of-mongodb</id>
-    <content type="html"><![CDATA[<p>suppose you have correctly installed the mongodb, and opened a shell like this:</p>
-
-<pre><code>zhang@linux:~$ mongo
-MongoDB shell version: 2.0.4
-connecting to: test
-&gt;
-</code></pre>
-
-<p>first of all, let&rsquo;s show all the dbs:</p>
-
-<pre><code>zhang@linux:~$ mongo
-MongoDB shell version: 2.0.4
-connecting to: test
-&gt; show dbs
-local   (empty)
-&gt;
-</code></pre>
-
-<p>then let&rsquo;s use one of it, we can switch between dbs use:</p>
-
-<pre><code>&gt; show dbs
-local   (empty)
-&gt; use local
-switched to db local
-&gt;
-</code></pre>
-
-<p>someone may ask, how to create a database then ? yeah, good question !<br/>
-In Mysql we can use &ldquo;create database Name;&rdquo; to create a database, but,
-MongoDB didn&rsquo;t provides any command to create database, Actually, we don&rsquo;t need to do it !
-Look ! we just defined a database by command &ldquo;use mydatabase&rdquo;, which is not created yet</p>
-
-<pre><code>&gt; use mydatabase
-switched to db mydatabase
-&gt; show dbs
-local   (empty)
-&gt;
-</code></pre>
-
-<p>MongoDB create it when we first save value into it</p>
-
-<pre><code>&gt; db.colcase.save( {testcase:"hello"} )
-&gt; show dbs
-local   (empty)
-mydatabase  0.0625GB
-&gt; show collections
-colcase
-system.indexes
-&gt; db.colcase.find()
-{ "_id" : ObjectId("513fe233aac1372ab215f350"), "testcase" : "hello" }
-&gt;
-</code></pre>
-
-<p>P.S MongoDB created the &ldquo;colcase&rdquo; collection and the &ldquo;mydatabase&rdquo; database automatically
+    <content type="html"><![CDATA[<p>suppose you have correctly installed the mongodb, and opened a shell like this:
+    zhang@linux:~$ mongo
+    MongoDB shell version: 2.0.4
+    connecting to: test
+    &gt;
+first of all, let’s show all the dbs:
+    zhang@linux:~$ mongo
+    MongoDB shell version: 2.0.4
+    connecting to: test
+    &gt; show dbs
+    local   (empty)
+    &gt;
+then let’s use one of it, we can switch between dbs use:
+    &gt; show dbs
+    local   (empty)
+    &gt; use local
+    switched to db local
+    &gt;
+someone may ask, how to create a database then ? yeah, good question !<br />
+In Mysql we can use “create database Name;” to create a database, but, 
+MongoDB didn’t provides any command to create database, Actually, we don’t need to do it !
+Look ! we just defined a database by command “use mydatabase”, which is not created yet
+    &gt; use mydatabase
+    switched to db mydatabase
+    &gt; show dbs
+    local   (empty)
+    &gt;
+MongoDB create it when we first save value into it
+    &gt; db.colcase.save( {testcase:”hello”} )
+    &gt; show dbs
+    local   (empty)
+    mydatabase  0.0625GB
+    &gt; show collections
+    colcase
+    system.indexes
+    &gt; db.colcase.find()
+    { “_id” : ObjectId(“513fe233aac1372ab215f350”), “testcase” : “hello” }
+    &gt;
+P.S MongoDB created the “colcase” collection and the “mydatabase” database automatically 
 when we first save value into it.</p>
 ]]></content>
   </entry>

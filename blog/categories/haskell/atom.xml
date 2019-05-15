@@ -4,7 +4,7 @@
   <title><![CDATA[Category: haskell | 植臻]]></title>
   <link href="http://zhizhen.github.io/blog/categories/haskell/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T09:47:00+08:00</updated>
+  <updated>2019-05-15T10:20:16+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -19,29 +19,17 @@
     <updated>2013-12-03T11:50:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/12/03/haskell-er</id>
     <content type="html"><![CDATA[<p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
-在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
-创建hello.hs文件</p>
-
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br />
+创建hello.hs文件
 <!--more-->
+    main = putStrLn “Hello world !”
+保存之后，编译
+    ghc -o hello hello.hs
+编译之后执行
+    ./hello
+便能够看到
+    Hello world !</p>
 
-
-<pre><code>main = putStrLn "Hello world !"
-</code></pre>
-
-<p>保存之后，编译</p>
-
-<pre><code>ghc -o hello hello.hs
-</code></pre>
-
-<p>编译之后执行</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>便能够看到</p>
-
-<pre><code>Hello world !
-</code></pre>
 ]]></content>
   </entry>
   
@@ -51,11 +39,9 @@
     <updated>2013-11-30T10:00:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/11/30/haskell-1</id>
     <content type="html"><![CDATA[<p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
-其中的列表跟erlang特别像。<br/>
-下面是基础语法：</p>
-
-<!--more-->
-
+其中的列表跟erlang特别像。<br />
+下面是基础语法：
+<!--more--></p>
 
 <pre><code>-- 单行注释以两个破折号开头
 {-  多行注释被
@@ -88,7 +74,7 @@ not False
 -----------------------------------------------
 -- 列表和元组 
 -----------------------------------------------
-
+ 
 -- 一个列表中得每一个元素都必须是相同类型
 [1, 2, 3, 4, 5] == [1..5] -- True
 
@@ -397,6 +383,7 @@ What is your name?
 Friend!
 Hello, Friend!
 </code></pre>
+
 ]]></content>
   </entry>
   

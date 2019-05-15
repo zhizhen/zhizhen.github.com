@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T09:47:00+08:00</updated>
+  <updated>2019-05-15T10:20:16+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -18,134 +18,237 @@
     <link href="http://zhizhen.github.io/blog/2019/05/14/fast-inverse-square-root/"/>
     <updated>2019-05-14T00:00:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2019/05/14/fast-inverse-square-root</id>
-    <content type="html"><![CDATA[<p>﻿&mdash;&ndash;
+    <content type="html"><![CDATA[<p>﻿—
 layout: post
-title: &ldquo;平方根倒数速算法&rdquo;
+title: “平方根倒数速算法”
 date: 2019-05-14 20:28
-comments: true</p>
+comments: true
+categories: 
+—</p>
 
-<h2>categories: </h2>
-
-<blockquote><p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p></blockquote>
+<blockquote>
+  <p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p>
+</blockquote>
 
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/OpenArena-Rocket.jpg/300px-OpenArena-Rocket.jpg" alt="第一人称射击游戏　OpenArena" /></p>
 
-<h1>起源</h1>
+<h1 id="section">起源</h1>
 
 <p>此算法最早被认为是由约翰·卡马克所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知，此算法最早由加里·塔罗利（Gary Tarolli）在SGI Indigo的开发中使用。虽说随后的相关研究也提出了一些可能的来源，但至今为止仍未能确切知晓算法中所使用的特殊常数的起源。</p>
 
 <p>下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
-</span><span class='line'>    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>
-</span><span class='line'><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) );</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+</span><span class="line">    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span><span class="line">    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
+</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>                  <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
+</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>               <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>   <span class="c1">// 1st iteration （第一次迭代）</span>
+</span><span class="line"><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：  </p>
 
-<p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Float_w_significand.svg/590px-Float_w_significand.svg.png" alt="Float w significand.svg" />
-将上述结构表示成公式即为</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Float_w_significand.svg/590px-Float_w_significand.svg.png" alt="Float w significand.svg" />    </p>
 
-<p>$$
+<p>将上述结构表示成公式即为</p>
+
+<script type="math/tex; mode=display">
 x = (-1)^{Si}\cdot(1+m)\cdot^{E-B}
-$$</p>
+</script>
 
-<p>其中偏移量\(B=127\)，\(m\)表示有效数字的尾数（\(0&lt;m&lt;1\))，而指数\(E-B\)的值决定了有效数字（在Lomont和McEniry的论文中称为“尾数”（<em>mantissa</em>））代表的是小数还是整数。以上图为例，将描述代入有\(m=1\times2^{-2}=0.250\)），且\(E-B=124-127=-3\)，则可得其表示的浮点数为\(x=(1+0.250)\cdot2^{-3}=0.15625\)。</p>
+<p>其中偏移量$B=127$，$m$表示有效数字的尾数（$0&lt;m&lt;1$)，而指数$E-B$的值决定了有效数字（在Lomont和McEniry的论文中称为“尾数”（<em>mantissa</em>））代表的是小数还是整数。以上图为例，将描述代入有$m=1\times2^{-2}=0.250$），且$E-B=124-127=-3$，则可得其表示的浮点数为$x=(1+0.250)\cdot2^{-3}=0.15625$。</p>
 
-<p>| 符号位 |  |
-| 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | = | 127 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | = | 2 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | = | 1 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | = | 0 |
-| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | = | −1 |
-| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | = | −2 |
-| 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | = | −127 |
-| 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | = | −128 |</p>
+<table>
+  <tbody>
+    <tr>
+      <td>符号位</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>=</td>
+      <td>127</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>=</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>=</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>=</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>=</td>
+      <td>−1</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>=</td>
+      <td>−2</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>=</td>
+      <td>−127</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>=</td>
+      <td>−128</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>8位二进制整数补码示例</p>
+<p>8位二进制整数补码示例<br />
+如上所述，一个有符号正整数在二进制补码系统中的表示中首位为0，而后面的各位则用于表示其数值。将浮点数取别名存储为整数时，该整数的数值即为$I=E\times 2^{23}+M$，其中E表示指数，M表示有效数字；若以上图为例，图中样例若作为浮点数看待有$E=124$，$M=1\cdot 2^{21}$，则易知其转化而得的整数型号数值为$I=124\times 2^{23} + 2^{21}$。由于平方根倒数函数仅能处理正数，因此浮点数的符号位（即如上的Si）必为0，而这就保证了转换所得的有符号整数也必为正数。以上转换就为后面的计算带来了可行性，之后的第一步操作（逻辑右移一位）即是使该数的长整形式被2所除。</p>
 
-<p>如上所述，一个有符号正整数在二进制补码系统中的表示中首位为0，而后面的各位则用于表示其数值。将浮点数取别名存储为整数时，该整数的数值即为\(I=E\times 2^{23}+M\)，其中E表示指数，M表示有效数字；若以上图为例，图中样例若作为浮点数看待有\(E=124\)，\(M=1\cdot 2^{21}\)，则易知其转化而得的整数型号数值为\(I=124\times 2^{23} + 2^{21}\)。由于平方根倒数函数仅能处理正数，因此浮点数的符号位（即如上的Si）必为0，而这就保证了转换所得的有符号整数也必为正数。以上转换就为后面的计算带来了可行性，之后的第一步操作（逻辑右移一位）即是使该数的长整形式被2所除。</p>
+<h1 id="section-1">魔术数字</h1>
 
-<h1>魔术数字</h1>
+<p>对猜测平方根倒数速算法的最初构想来说，计算首次近似值所使用的常数<strong>0x5f3759df</strong>也是重要的线索。为确定程序员最初选此常数以近似求取平方根倒数的方法，Charles McEniry首先检验了在代码中选择任意常数R所求取出的首次近似值的精度。回想上一节关于整数和浮点数表示的比较：对于同样的32位二进制数字，若为浮点数表示时实际数值为$x=(1+m_x)2^{e_x}$，而若为整数表示时实际数值则为$I_x=E_xL+M_x$，其中$L=2^{n-1-b}$。以下等式引入了一些由指数和有效数字导出的新元素：</p>
 
-<p>对猜测平方根倒数速算法的最初构想来说，计算首次近似值所使用的常数<strong>0x5f3759df</strong>也是重要的线索。为确定程序员最初选此常数以近似求取平方根倒数的方法，Charles McEniry首先检验了在代码中选择任意常数R所求取出的首次近似值的精度。回想上一节关于整数和浮点数表示的比较：对于同样的32位二进制数字，若为浮点数表示时实际数值为\(x=(1+m_x)2^{e_x}\)，而若为整数表示时实际数值则为\(I_x=E_xL+M_x\)，其中\(L=2^{n-1-b}\)。以下等式引入了一些由指数和有效数字导出的新元素：</p>
+<script type="math/tex; mode=display">m_x = \frac{M_x}{L}</script>
 
-<p>$$
-m_x = \frac{M_x}{L}
-$$</p>
-
-<p>$$
-e_x=E_x &ndash; B,其中B=2^{b-1} &ndash; 1
-$$</p>
+<script type="math/tex; mode=display">e_x=E_x - B,其中B=2^{b-1} - 1</script>
 
 <p>再继续看McEniry 2007里的进一步说明：
 $$
 y=\frac{1}{\sqrt{x}}
 $$</p>
 
-<p>对等式的两边取二进制对数（\(\log _{2}\)，即函数\(f(n)=2^{n}\)的反函数，有</p>
+<p>对等式的两边取二进制对数（$\log _{2}$，即函数$f(n)=2^{n}$的反函数，有</p>
 
-<p>$$
-\log_2(y) = &ndash;\frac{1}{2}log_2(x)
-$$</p>
+<script type="math/tex; mode=display">
+\log_2(y) = -\frac{1}{2}log_2(x)
+</script>
 
-<p>$$
-\log_2(1+m_y) + e_y = &ndash;\frac{1}{2}\log_2(1+m_x) &ndash; \frac{1}{2}e_x
-$$</p>
+<script type="math/tex; mode=display">
+\log_2(1+m_y) + e_y = -\frac{1}{2}\log_2(1+m_x) - \frac{1}{2}e_x
+</script>
 
-<p>以如上方法，就能将浮点数x和y的相关指数消去，从而将乘方运算化为加法运算。而由于\(\log <em>{2}{(x)}\)与\(\log </em>{2}{(x^{-&frac12;})}\)线性相关，因此在\(x\)与\(y<em>{0}\)（即输入值与首次近似值）间就可以线性组合的方式创建方程。在此McEniry再度引入新数\(\sigma\)描述//(\log </em>{2}{(1+x)}\)与近似值R间的误差：由于\(0\leq x&lt;1\)，有\(\log<em>{2}(1+x)\approx x\)，则在此可定义\(\sigma \)与x的关系为\(\log </em>{2}{(1+x)}\cong x+\sigma \)，这一定义就能提供二进制对数的首次精度值（此处\(0\leq \sigma \leq {\tfrac {1}{3}}\)；当R为0x5f3759df时，有\(\sigma =0.0450461875791687011756\)。由此将\(\log _{2}{(1+x)}=x+\sigma\)代入上式，有：
+<p>以如上方法，就能将浮点数x和y的相关指数消去，从而将乘方运算化为加法运算。而由于$\log_{2}{x}$
+与$\log2(x^{-1/2})$线性相关，因此在$x$与$y{0}$（即输入值与首次近似值）间就可以线性组合的方式创建方程。在此McEniry再度引入新数$\sigma$描述$\log {2}{(1+x)}$与近似值R间的误差：由于$0\leq x&lt;1$，有$\log{2}(1+x)\approx x$，则在此可定义$\sigma $与x的关系为$\log {2}{(1+x)}\cong x+\sigma $，这一定义就能提供二进制对数的首次精度值（此处$0\leq \sigma \leq {\tfrac {1}{3}}$；当R为0x5f3759df时，有$\sigma =0.0450461875791687011756$。由此将$\log {2}{(1+x)}=x+\sigma$代入上式，有：
 $$
-m_y+\sigma+e_y=&ndash;\frac{1}{2}m_x-\frac{1}{2}\sigma-\frac{1}{2}e_x
+m_y+\sigma+e_y=-\frac{1}{2}m_x-\frac{1}{2}\sigma-\frac{1}{2}e_x
 $$</p>
 
-<p>参照首段等式代入\(M<em>{x}\)，\(E</em>{x}\)，\(B\)与\(L\)，有：</p>
+<p>参照首段等式代入$M{x}$，$E{x}$，$B$与$L$，有：</p>
 
-<p>$$
-M_y+(E_y-B)L=&ndash;\frac{3}{2}\sigma{L}&ndash;\frac{1}{2}M_x-\frac{1}{2}(E_x-B)L
-$$</p>
+<script type="math/tex; mode=display">
+M_y+(E_y-B)L=-\frac{3}{2}\sigma{L}-\frac{1}{2}M_x-\frac{1}{2}(E_x-B)L
+</script>
 
 <p>移项整理得：
 $$
 E_yL+M_y=\frac{3}{2}(B-\sigma)L-\frac{1}{2}(E_xL+M_x)
 $$</p>
 
-<p>如上所述，对于以浮点规格存储的正浮点数x，若将其作为长整型表示则示值为\(I<em>{x}=E</em>{x}L+M_{x}\)，由此即可根据x的整数表示导出y（在此\(y={\frac {1}{\sqrt {x}}}\)，亦即x的平方根倒数的首次近似值）的整数表示值，也即：
+<p>如上所述，对于以浮点规格存储的正浮点数x，若将其作为长整型表示则示值为$I{x}=E{x}L+M_{x}$，由此即可根据x的整数表示导出y（在此$y={\frac {1}{\sqrt {x}}}$，亦即x的平方根倒数的首次近似值）的整数表示值，也即：
 $$
 I_y=E_yL+M_y=R-\frac{1}{2}(E_xL+M_x)=R-\frac{1}{2}I_x
 $$</p>
 
-<p>最后导出的等式\(I<em>{y}=R-{\frac {1}{2}}I</em>{x}\)即与上节代码中i = 0x5f3759df &ndash; (i>>1);一行相契合，由此可见，在平方根倒数速算法中，对浮点数进行一次移位操作与整数减法，就可以可靠地输出一个浮点数的对应近似值。到此为止，McEniry只证明了，在常数R的辅助下，可近似求取浮点数的平方根倒数，但仍未能确定代码中的R值的选取方法。</p>
+<p>最后导出的等式$I{y}=R-{\frac {1}{2}}I{x}$即与上节代码中i = 0x5f3759df - (i»1);一行相契合，由此可见，在平方根倒数速算法中，对浮点数进行一次移位操作与整数减法，就可以可靠地输出一个浮点数的对应近似值。到此为止，McEniry只证明了，在常数R的辅助下，可近似求取浮点数的平方根倒数，但仍未能确定代码中的R值的选取方法。</p>
 
-<p>关于作一次移位与减法操作以使浮点数的指数被-2除的原理，Chris Lomont的论文中亦有个相对简单的解释：以\(10000=10^{4}\)为例，将其指数除-2可得\(10000^{-&frac12;}=10^{-2}=1/100\)；而由于浮点表示的指数有进行过偏移处理，所以指数的真实值e应为\(e=E-127\)，因此可知除法操作的实际结果为\(-e/2+127\)，这时用R（在此即为“魔术数字”0x5f3759df）减之即可使指数的最低有效数字转入有效数字域，之后重新转换为浮点数时，就能得到相当精确的平方根倒数近似值。在这里对常数R的选取亦有所讲究，若能选取一个好的R值，便可减少对指数进行除法与对有效数字域进行移位时可能产生的错误。基于这一标准，0xbe即是最合适的R值，而0xbe右移一位即可得到0x5f，这恰是魔术数字R的第一个字节。</p>
+<p>关于作一次移位与减法操作以使浮点数的指数被-2除的原理，Chris Lomont的论文中亦有个相对简单的解释：以$10000=10^{4}$为例，将其指数除-2可得$10000^{-1/2}=10^{-2}=1/100$；而由于浮点表示的指数有进行过偏移处理，所以指数的真实值e应为$e=E-127$，因此可知除法操作的实际结果为$-e/2+127$，这时用R（在此即为“魔术数字”0x5f3759df）减之即可使指数的最低有效数字转入有效数字域，之后重新转换为浮点数时，就能得到相当精确的平方根倒数近似值。在这里对常数R的选取亦有所讲究，若能选取一个好的R值，便可减少对指数进行除法与对有效数字域进行移位时可能产生的错误。基于这一标准，0xbe即是最合适的R值，而0xbe右移一位即可得到0x5f，这恰是魔术数字R的第一个字节。</p>
+
 ]]></content>
   </entry>
   
@@ -154,7 +257,7 @@ $$</p>
     <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline/"/>
     <updated>2019-04-11T14:47:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-outline</id>
-    <content type="html"><![CDATA[<p> Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
+    <content type="html"><![CDATA[<p>Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
 
 <p>官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。作者也没有怎么解释，直接丢了一个网址出来（<a href="http://www.idevgames.com/forums/thread-3010.html">http://www.idevgames.com/forums/thread-3010.html</a>），看样子是参考了这个帖子。</p>
 
@@ -164,107 +267,106 @@ $$</p>
 
 <p>下面是我改动后的代码：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
-</span><span class='line'>varying vec2 v_texCoord; // 纹理坐标
-</span><span class='line'>uniform float outlineSize; // 描边宽度，以像素为单位
-</span><span class='line'>uniform vec3 outlineColor; // 描边颜色
-</span><span class='line'>uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
-</span><span class='line'>
-</span><span class='line'>// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
-</span><span class='line'>int stroke = 0;
-</span><span class='line'>float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
-</span><span class='line'>vec2 unit = 1.0 / textureSize.xy;//单位坐标
-</span><span class='line'>vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
-</span><span class='line'>float a = texture2D(CC_Texture0, v_texCoord + offset).a;
-</span><span class='line'>if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
-</span><span class='line'>{
-</span><span class='line'>stroke = 1;
-</span><span class='line'>}
-</span><span class='line'>return stroke;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>void main(){
-</span><span class='line'>vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
-</span><span class='line'>if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
-</span><span class='line'>{
-</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
-</span><span class='line'>return;
-</span><span class='line'>}
-</span><span class='line'>// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
-</span><span class='line'>int strokeCount = 0;
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(0.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(30.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(60.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(90.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(120.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(150.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(180.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(210.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(240.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(270.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(300.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(330.0);
-</span><span class='line'>
-</span><span class='line'>if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
-</span><span class='line'>{
-</span><span class='line'>myC.rgb = outlineColor;
-</span><span class='line'>myC.a = 1.0;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
+</span><span class="line">varying vec2 v_texCoord; // 纹理坐标
+</span><span class="line">uniform float outlineSize; // 描边宽度，以像素为单位
+</span><span class="line">uniform vec3 outlineColor; // 描边颜色
+</span><span class="line">uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
+</span><span class="line">
+</span><span class="line">// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
+</span><span class="line">int stroke = 0;
+</span><span class="line">float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
+</span><span class="line">vec2 unit = 1.0 / textureSize.xy;//单位坐标
+</span><span class="line">vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
+</span><span class="line">float a = texture2D(CC_Texture0, v_texCoord + offset).a;
+</span><span class="line">if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
+</span><span class="line">{
+</span><span class="line">stroke = 1;
+</span><span class="line">}
+</span><span class="line">return stroke;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">void main(){
+</span><span class="line">vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
+</span><span class="line">if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
+</span><span class="line">{
+</span><span class="line">gl_FragColor = v_fragmentColor * myC;
+</span><span class="line">return;
+</span><span class="line">}
+</span><span class="line">// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
+</span><span class="line">int strokeCount = 0;
+</span><span class="line">strokeCount += getIsStrokeWithAngel(0.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(30.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(60.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(90.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(120.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(150.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(180.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(210.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(240.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(270.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(300.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(330.0);
+</span><span class="line">
+</span><span class="line">if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
+</span><span class="line">{
+</span><span class="line">myC.rgb = outlineColor;
+</span><span class="line">myC.a = 1.0;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">gl_FragColor = v_fragmentColor * myC;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p> 大致的逻辑是：</p>
+<p>大致的逻辑是：</p>
 
 <p>先判断当前像素是否透明，如果不透明则直接返回。如果是透明像素，就判断这个点周围12个方向，每个方向距离当前像素距离是outlineSize的像素点是否透明，只要有一个是非透明像素，就把当前像素点设为描边的颜色，并设置成非透明。</p>
 
@@ -279,135 +381,134 @@ $$</p>
     <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur/"/>
     <updated>2019-04-11T14:38:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-blur</id>
-    <content type="html"><![CDATA[<blockquote><p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p></blockquote>
+    <content type="html"><![CDATA[<blockquote>
+  <p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p>
+</blockquote>
 
 <p>先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值，要想让这个颜色变得模糊，就要让它与它周围的像素点的颜色稍微接近一点，那么我们就需要拿到这个像素点周围的像素点的颜色值，我们把这些个像素点的值加起来取平均值，就得到了一个区域内的平均颜色。</p>
 
 <p>如果直接使用这个颜色的话，最终的效果会变得很模糊，如果我们只是想稍微模糊一点的话，就要让这个平均值更接近于当前像素点原本的颜色，为此，我们取均值的时候对每个像素点增加了一个权重的定义，当前像素点的权重最高，依次向周围减弱，使得最后得到的均值的颜色更接近于当前像素点原始的颜色。</p>
 
-<p> 看代码：</p>
+<p>看代码：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float;
+</span><span class="line">#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">uniform vec2 resolution;//模糊对象的实际分辨率
+</span><span class="line">uniform float blurRadius;//半径
+</span><span class="line">uniform float sampleNum;//间隔的段数
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2);
+</span><span class="line">
+</span><span class="line">void main(void){
+</span><span class="line">vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
+</span><span class="line">gl_FragColor = vec4(col) * v_fragmentColor;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2 p){
+</span><span class="line">if (blurRadius &gt; 0.0 &amp;&amp; sampleNum &gt; 1.0)
+</span><span class="line">{
+</span><span class="line">vec4 col = vec4(0);
+</span><span class="line">vec2 unit = 1.0 / resolution.xy;//单位坐标
+</span><span class="line">
+</span><span class="line">float r = blurRadius;
+</span><span class="line">float sampleStep = r / sampleNum;
+</span><span class="line">
+</span><span class="line">float count = 0.0;
+</span><span class="line">//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
+</span><span class="line">for(float x = -r; x &lt; r; x += sampleStep)
+</span><span class="line">{
+</span><span class="line">for(float y = -r; y &lt; r; y += sampleStep)
+</span><span class="line">{
+</span><span class="line">float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
+</span><span class="line">col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
+</span><span class="line">count += weight;
+</span><span class="line">}
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">//得到实际模糊颜色的值
+</span><span class="line">
+</span><span class="line">return col / count;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">return texture2D(CC_Texture0, p);
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float;
-</span><span class='line'>#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>uniform vec2 resolution;//模糊对象的实际分辨率
-</span><span class='line'>uniform float blurRadius;//半径
-</span><span class='line'>uniform float sampleNum;//间隔的段数
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2);
-</span><span class='line'>
-</span><span class='line'>void main(void){
-</span><span class='line'>vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
-</span><span class='line'>gl_FragColor = vec4(col) * v_fragmentColor;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2 p){
-</span><span class='line'>if (blurRadius &gt; 0.0 && sampleNum &gt; 1.0)
-</span><span class='line'>{
-</span><span class='line'>vec4 col = vec4(0);
-</span><span class='line'>vec2 unit = 1.0 / resolution.xy;//单位坐标
-</span><span class='line'>
-</span><span class='line'>float r = blurRadius;
-</span><span class='line'>float sampleStep = r / sampleNum;
-</span><span class='line'>
-</span><span class='line'>float count = 0.0;
-</span><span class='line'>//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
-</span><span class='line'>for(float x = -r; x &lt; r; x += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>for(float y = -r; y &lt; r; y += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
-</span><span class='line'>col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
-</span><span class='line'>count += weight;
-</span><span class='line'>}
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>//得到实际模糊颜色的值
-</span><span class='line'>
-</span><span class='line'>return col / count;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>return texture2D(CC_Texture0, p);
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p> 精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
+<p>精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
 
 <p>uniform变量是顶点着色器和片段着色器共享使用的变量，uniform的值不能被改变。</p>
 
 <p>uniform变量是由宿主程序设置的，代码如下：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> void EffectBlur::setTarget(EffectSprite *sprite)
-</span><span class='line'>{
-</span><span class='line'>Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
-</span><span class='line'>_glprogramstate-&gt;setUniformVec2("resolution", size);
-</span><span class='line'>#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
-</span><span class='line'>#endif
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"> void EffectBlur::setTarget(EffectSprite *sprite)
+</span><span class="line">{
+</span><span class="line">Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
+</span><span class="line">_glprogramstate-&gt;setUniformVec2("resolution", size);
+</span><span class="line">#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
+</span><span class="line">#endif
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p> 这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
+<p>这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
 
 <p>resolution是当前渲染node的实际分辨率。</p>
 
@@ -430,37 +531,34 @@ $$</p>
     <link href="http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-gray/"/>
     <updated>2019-04-11T14:33:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2019/04/11/cocos2dx-shader-gray</id>
-    <content type="html"><![CDATA[<p> ### 灰度shader</p>
+    <content type="html"><![CDATA[<p>### 灰度shader</p>
 
-<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>void main(void)
-</span><span class='line'>
-</span><span class='line'>vec4 c = texture2D(CC_Texture0, v_texCoord);
-</span><span class='line'>gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
-</span><span class='line'>gl_FragColor.w = c.w;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>代码分析</h3>
+<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">void main(void)
+</span><span class="line">
+</span><span class="line">vec4 c = texture2D(CC_Texture0, v_texCoord);
+</span><span class="line">gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
+</span><span class="line">gl_FragColor.w = c.w;
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+### 代码分析</p>
 
 <p>precision mediump float是open es特有的精度限定符，原本的浮点数精度是double，opengl es为了提高渲染效率，限定精度为float类型。</p>
 
@@ -470,38 +568,36 @@ $$</p>
 
 <p>CC_Texture0是一个采样器，在load shader的时候，引擎会预先把这些uniform变量给加载进来。</p>
 
-<p>下面这部分代码就是引擎预先加载进来的uniform变量：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>static const char * COCOS2D_SHADER_UNIFORMS =
-</span><span class='line'>"uniform mat4 CC_PMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVPMatrix;\n"
-</span><span class='line'>"uniform mat3 CC_NormalMatrix;\n"
-</span><span class='line'>"uniform vec4 CC_Time;\n"
-</span><span class='line'>"uniform vec4 CC_SinTime;\n"
-</span><span class='line'>"uniform vec4 CC_CosTime;\n"
-</span><span class='line'>"uniform vec4 CC_Random01;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture0;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture1;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture2;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture3;\n"
-</span><span class='line'>"//CC INCLUDES END\n\n";
-</span></code></pre></td></tr></table></div></figure>
-
+<p>下面这部分代码就是引擎预先加载进来的uniform变量：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">static const char * COCOS2D_SHADER_UNIFORMS =
+</span><span class="line">"uniform mat4 CC_PMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVPMatrix;\n"
+</span><span class="line">"uniform mat3 CC_NormalMatrix;\n"
+</span><span class="line">"uniform vec4 CC_Time;\n"
+</span><span class="line">"uniform vec4 CC_SinTime;\n"
+</span><span class="line">"uniform vec4 CC_CosTime;\n"
+</span><span class="line">"uniform vec4 CC_Random01;\n"
+</span><span class="line">"uniform sampler2D CC_Texture0;\n"
+</span><span class="line">"uniform sampler2D CC_Texture1;\n"
+</span><span class="line">"uniform sampler2D CC_Texture2;\n"
+</span><span class="line">"uniform sampler2D CC_Texture3;\n"
+</span><span class="line">"//CC INCLUDES END\n\n";
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>这些变量在shader里面如果没有用到的话，会被引擎给优化掉。</p>
 
@@ -511,19 +607,17 @@ $$</p>
 
 <p>这个shader很简单，就是改变了一下rgb的值。0.2126，0.7152，0.0722这几个系数据说是根据人眼对rgb这三种基本颜色识别的强弱算出来的。</p>
 
-<h3>使用示例</h3>
+<h3 id="section">使用示例</h3>
 
-<p>在cocos2dx 3.x版本中sprite变灰的代码例子：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>auto sprite = Sprite::create("HelloWorld.png");
-</span><span class='line'>sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code></pre></td></tr></table></div></figure>
-
-
-<p>效果如下图所示：</p>
+<p>在cocos2dx 3.x版本中sprite变灰的代码例子：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">auto sprite = Sprite::create("HelloWorld.png");
+</span><span class="line">sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+效果如下图所示：</p>
 
 <p><img src="http://zhizhen.github.io/images/cocos2dxshader1.png" alt="" /></p>
+
 ]]></content>
   </entry>
   
@@ -532,61 +626,63 @@ $$</p>
     <link href="http://zhizhen.github.io/blog/2019/04/11/render-flow/"/>
     <updated>2019-04-11T09:41:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2019/04/11/render-flow</id>
-    <content type="html"><![CDATA[<h2>概念</h2>
+    <content type="html"><![CDATA[<h2 id="section">概念</h2>
 
-<blockquote><p>渲染流水线的工作任务是由一个三维场景出发、生成（或者说渲染）一张二维图像。 &mdash;冯乐乐《unity3d shader 入门精要》</p></blockquote>
+<blockquote>
+  <p>渲染流水线的工作任务是由一个三维场景出发、生成（或者说渲染）一张二维图像。 –冯乐乐《unity3d shader 入门精要》  </p>
+</blockquote>
 
 <p>这是一个比较标准的说法，因为不一定是渲染到显示器上，也有可能把渲染结果保存到一个Texture中，就是我们常说的RenderTarget。</p>
 
-<h2>阶段</h2>
-
+<h2 id="section-1">阶段</h2>
 <p>渲染流水线可以分为三个阶段：应用阶段、几何阶段、光栅化阶段
 <img src="https://upload-images.jianshu.io/upload_images/2203079-2fc4e265479f03c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540/format/webp" alt="" /></p>
 
 <ul>
-<li><p>应用阶段（CPU处理）</p>
+  <li>
+    <p>应用阶段（CPU处理）</p>
 
-<p>  这一阶段开发者需要准备好场景数据，如摄相机位置、视锥体、模型和光源等，接着，还需要做粗粒度的剔除工作（把看不见的物体剔除）
+    <p>这一阶段开发者需要准备好场景数据，如摄相机位置、视锥体、模型和光源等，接着，还需要做粗粒度的剔除工作（把看不见的物体剔除）
   最后，需要设置好每个模型的渲染状态（使用的材质、使用的纹理、使用的Shader等）
-  这一阶段最重要的输出是渲染所需的几何信息，即渲染图元（rendering primitives），渲染图元可以是点、线、三角面等。</p></li>
+  这一阶段最重要的输出是渲染所需的几何信息，即渲染图元（rendering primitives），渲染图元可以是点、线、三角面等。  </p>
+  </li>
 </ul>
-
 
 <p><img src="http://zhizhen.github.io/images/render_flow_1.png" alt="" /></p>
 
 <p><img src="http://zhizhen.github.io/images/render_flow_2.png" alt="" /></p>
 
 <ul>
-<li><p>几何阶段（GPU处理）</p>
+  <li>
+    <p>几何阶段（GPU处理）</p>
 
-<p>  几何阶段主要用于处理所有和我们绘制的几何相关的事情。几何阶段负责和每个渲染图元打交道，进行逐顶点、逐多边形的操作。这个阶段可以进一步分成更小的流水线阶段。
+    <p>几何阶段主要用于处理所有和我们绘制的几何相关的事情。几何阶段负责和每个渲染图元打交道，进行逐顶点、逐多边形的操作。这个阶段可以进一步分成更小的流水线阶段。
   几何阶段的一个重要任务就是把顶点坐标变换到屏幕空间中，再交给光栅器进行处理。
-  总结：输入的渲染图元->屏幕空间的二维顶点坐标、每个顶点对应深度、着色等信息</p></li>
+  总结：输入的渲染图元-&gt;屏幕空间的二维顶点坐标、每个顶点对应深度、着色等信息</p>
+  </li>
 </ul>
-
 
 <p><img src="http://zhizhen.github.io/images/render_flow_4.png" alt="" /></p>
 
 <p><img src="http://zhizhen.github.io/images/render_flow_3.png" alt="" /></p>
 
-<p><strong>注意，这里是裁剪(clipping)，CPU里面有做剔除(culling)  </strong></p>
+<p>**注意，这里是裁剪(clipping)，CPU里面有做剔除(culling)  **  </p>
 
 <ul>
-<li><p>光栅化阶段（GPU处理）</p>
+  <li>
+    <p>光栅化阶段（GPU处理）</p>
 
-<p>  将会使用上一个阶段传递的数据来产生屏幕上的像素，并渲染出最终的图像。主要任务是决定每个渲染图元中的哪些像素应该被绘制在屏幕上。</p></li>
+    <p>将会使用上一个阶段传递的数据来产生屏幕上的像素，并渲染出最终的图像。主要任务是决定每个渲染图元中的哪些像素应该被绘制在屏幕上。  </p>
+  </li>
 </ul>
 
-
-<h2>总结</h2>
-
-<h3>1.OpenGL和DirectX</h3>
+<h2 id="section-2">总结</h2>
+<p>### 1.OpenGL和DirectX</p>
 
 <p>开发者直接访问GPU是一件非常麻烦的事情，可能需要与各种寄存器、显存打交道，而图像编程接口在这些硬件的基础上实现了一层抽象。</p>
 
-<p>而OpenGL和DirectX就是这些图像应用编程接口，他们之间江湖恩怨，可以去看<a href="https://link.jianshu.com?t=http://blog.csdn.net/poem_qianmo/article/details/7522960">这篇文章</a>。这些接口架起了上层应用程序与底层GPU的沟通桥梁。上层应用程序向这些接口渲染命令，而这些接口会依次向显示驱动发送渲染命令，而显卡驱动会把这些命令翻译成GPU能听懂的语言来让他们进行工作。</p>
-
-<h3>2.HLSL、GLSL和CG</h3>
+<p>而OpenGL和DirectX就是这些图像应用编程接口，他们之间江湖恩怨，可以去看<a href="https://link.jianshu.com?t=http://blog.csdn.net/poem_qianmo/article/details/7522960">这篇文章</a>。这些接口架起了上层应用程序与底层GPU的沟通桥梁。上层应用程序向这些接口渲染命令，而这些接口会依次向显示驱动发送渲染命令，而显卡驱动会把这些命令翻译成GPU能听懂的语言来让他们进行工作。<br />
+### 2.HLSL、GLSL和CG</p>
 
 <p>这三个指的都是着色器的编程语言。</p>
 
@@ -594,21 +690,21 @@ $$</p>
 
 <p>GLSL：OpenGL Shading Language，OpenGL的着色器语言，优点在于其跨平台性，可以在Windows、Mac、Linux甚至移动平台使用，这种跨平台性是由于OpenGL没有提供着色器编译器，而是由显卡驱动来完成着色器的编译工作的。即只要显示驱动支持对GLSL的编译它就可以运行。</p>
 
-<p>CG：C for Graphics，NVIDIA的着色器语言，实现了真正意义上的跨平台，它会根据平台不同，编译成相应的中间语言。</p>
+<p>CG：C for Graphics，NVIDIA的着色器语言，实现了真正意义上的跨平台，它会根据平台不同，编译成相应的中间语言。  </p>
 
-<h3>3.Draw Call</h3>
+<h3 id="draw-call">3.Draw Call</h3>
 
 <p>Draw Call本身的意义很简单，就是CPU调用图像编程接口。</p>
 
-<h4>1.CPU和GPU是如何实现并行工作的？</h4>
+<h4 id="cpugpu">1.CPU和GPU是如何实现并行工作的？</h4>
 
 <p>主要的解决方案是<strong>命令缓冲区</strong>，命令缓冲区包含了一个命令队列，由CPU向其中添加命令，而由GPU从中读取命令，添加和读取的过程是独立的。这样使得CPU和GPU可以相互独立工作。当CPU需要渲染对象时，则向命令缓冲区中添加命令，而当GPU完成上一次渲染任务后，它就可以从命令队列中取出一个命令并执行它。</p>
 
-<h4>2.为什么Draw Call多了会影响帧率？</h4>
+<h4 id="draw-call-1">2.为什么Draw Call多了会影响帧率？</h4>
 
 <p>在每次调用Draw Call之间，CPU需要向GPU发送很多内容，包括数据、状态和命令。CPU需要完成很多工作，例如检查渲染状态等。而一旦CPU完成了这些准备工作，GPU就可以开始本次的渲染。GPU渲染的速度是比较CPU提交指令的速度要快很多的。所以性能的瓶颈会出现在CPU身上，如果Draw Call的数量太多，CPU就会把大量的时间花费在提交Draw Call上，造成CPU过载。</p>
 
-<h4>3.如何减少Draw Call？</h4>
+<h4 id="draw-call-2">3.如何减少Draw Call？</h4>
 
 <p>主要的解决方案是<strong>批处理（Batch）</strong>，把众多小的合并Draw Call合并成一个Draw Call，当然不是所有情况都能合并的。我们可以对网格进行合并，但是合并的过程是比较消耗时间的，因此批处理技术更适合于静态的网格。</p>
 
@@ -618,9 +714,10 @@ $$</p>
 
 <p>避免使用过多的材质，因为相同的材质会方便我们进行合并</p>
 
-<h4>4.什么是固定函数的流水线？</h4>
+<h4 id="section-3">4.什么是固定函数的流水线？</h4>
 
 <p>简称固定管线，通常是指在旧GPU上实现的渲染流水线。开发者没有对流水线完全控制权，只有一些配置操作，配置操作只有开和关</p>
+
 ]]></content>
   </entry>
   
@@ -632,23 +729,20 @@ $$</p>
     <content type="html"><![CDATA[<p><img src="https://img-blog.csdn.net/20180507200340663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppemhpZGV4aWFvbWluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" /></p>
 
 <hr />
-
-<blockquote><p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p></blockquote>
-
-<hr />
-
-<p>一句话总结，用于在线性空间运算出非线性空间中的插值。</p>
+<blockquote>
+  <p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p>
+</blockquote>
 
 <hr />
-
-<p>相关文章：</p>
+<p>一句话总结，用于在线性空间运算出非线性空间中的插值。
+* * *
+相关文章：   </p>
 
 <ul>
-<li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a></li>
-<li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a></li>
-<li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a></li>
+  <li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a>  </li>
+  <li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a>  </li>
+  <li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a>  </li>
 </ul>
-
 ]]></content>
   </entry>
   
@@ -659,37 +753,38 @@ $$</p>
     <id>http://zhizhen.github.io/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji</id>
     <content type="html"><![CDATA[<hr />
 
-<h2>我们要做一个牛逼的产品！</h2>
+<h2 id="section">我们要做一个牛逼的产品！</h2>
 
 <p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
 
-<h3>数据库集群解决什么问题</h3>
+<h3 id="section-1">数据库集群解决什么问题</h3>
 
-<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+<blockquote>
+  <p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。  </p>
+</blockquote>
 
-<h3>分布式数据库解决什么问题</h3>
+<h3 id="section-2">分布式数据库解决什么问题</h3>
 
-<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+<blockquote>
+  <p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。  </p>
+</blockquote>
 
 <hr />
-
 <p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并不适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
 
-<h2>简单了解一下mnesia的分布式</h2>
+<h2 id="mnesia">简单了解一下mnesia的分布式</h2>
 
 <ul>
-<li>适用范围：<br/>
+  <li>适用范围：<br />
 较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
-<li>优势：<br/>
+  <li>优势：<br />
 erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
-<li>问题：<br/>
-mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+  <li>问题：<br />
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br />
 n(n-1)/2，一旦数据量大，节点多，IO通信压力巨大。</li>
 </ul>
 
-
-<h3>实例：</h3>
-
+<h3 id="section-3">实例：</h3>
 <pre><code>-module(db_sync).
 
 -export([create_schema/0, create_table/0, i/0]).
@@ -737,84 +832,51 @@ read_account(ID) -&gt;
             -&gt;
             mnesia:read({account,
                 ID})
-            end).
-</code></pre>
-
-<p>xterm1中</p>
-
-<pre><code>erl -pa ebin -sname two -mnesia dir "two"
-</code></pre>
-
-<p>xterm2中</p>
-
-<pre><code>erl -pa
+            end). xterm1中  
+erl -pa ebin -sname two -mnesia dir "two" xterm2中
+erl -pa
 ebin -sname one -mnesia dir "one"
-db_sync:create_schema().
+db_sync:create_schema(). xterm1,xterm2中分别：
+mnesia:start(). 任意节点创建表:
+db_sync:create_table(). one节点插入数据:
+db_sync:add_account(2, "zhizhen", 18588748984). two节点查找数据:
+db_sync:read_account(2). 这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。
 </code></pre>
 
-<p>xterm1,xterm2中分别：</p>
-
-<pre><code>mnesia:start().
-</code></pre>
-
-<p>任意节点创建表:</p>
-
-<pre><code>db_sync:create_table().
-</code></pre>
-
-<p>one节点插入数据:</p>
-
-<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
-</code></pre>
-
-<p>two节点查找数据:</p>
-
-<pre><code>db_sync:read_account(2).
-</code></pre>
-
-<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
-
-<h2>那么百万级DAU的数据库怎么设计呢？</h2>
-
-<p>  答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
+<h2 id="dau">那么百万级DAU的数据库怎么设计呢？</h2>
+<p>答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
 
 <ul>
-<li>适用范围：
+  <li>适用范围：
 百万级甚至千万级大数据情况通用解决方案
 表的查询方式单一简单，最好是有唯一主键查询
 不做联表事务查询</li>
-<li>问题：
+  <li>问题：
 如果有事务的话，涉及到分布式事务，是非常复杂的</li>
 </ul>
 
+<h3 id="hash">简单的水平切分，hash</h3>
+<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。
+    simple_hash(Item) -&gt;
+        case Item rem 3 of
+            0 -&gt;
+                %insert data into user_table (ip:127.0.0.1)
+            1 -&gt;
+                %insert data into user_table (ip:127.0.0.2)
+            2 -&gt;
+                %insert data into user_table (ip:127.0.0.3)
+        end.</p>
 
-<h3>简单的水平切分，hash</h3>
-
-<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。</p>
-
-<pre><code>simple_hash(Item) -&gt;
-    case Item rem 3 of
-        0 -&gt;
-            %insert data into user_table (ip:127.0.0.1)
-        1 -&gt;
-            %insert data into user_table (ip:127.0.0.2)
-        2 -&gt;
-            %insert data into user_table (ip:127.0.0.3)
-    end.
-</code></pre>
-
-<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br/>
-这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br/>
+<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br />
+这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br />
 那有没有一种更好的办法，降低增加分片的成本呢？</p>
 
-<h3>一致性hash</h3>
+<h3 id="hash-1">一致性hash</h3>
+<p>借用David Wheeler一句名言:<br />
+&gt;All problems in computer science can be solved by another level of indirection.  </p>
 
-<p>借用David Wheeler一句名言:</p>
-
-<blockquote><p>All problems in computer science can be solved by another level of indirection.</p></blockquote>
-
-<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br/>
-有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：</p>
+<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br />
+有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：  </p>
 
 <pre><code>-module(hash).
 -compile(export_all).
@@ -873,10 +935,10 @@ simple_hash(Item) -&gt;
 
 <p>这样的话，增加2个sharding之后，只需要移动2千万条数据到新的sharding上即可。</p>
 
-<h2>参考文章</h2>
+<h2 id="section-4">参考文章</h2>
 
 <ul>
-<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+  <li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a> </li>
 </ul>
 
 ]]></content>
@@ -888,34 +950,29 @@ simple_hash(Item) -&gt;
     <updated>2016-05-07T00:50:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2016/05/07/yi-ci-wei-qi-dian</id>
     <content type="html"><![CDATA[<hr />
-
-<blockquote><p>There are some birds that you can&rsquo;t lock,their every feather on their body is
-sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
+<blockquote>
+  <p>There are some birds that you can’t lock,their every feather on their body is
+sparkling with freedom  –《The Shawshank Redemption》</p>
+</blockquote>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/2016/1.pic_hd.jpg" alt="" /></p>
 
-<p>来自《创游记》。</p>
-
+<p>来自《创游记》。
 <!--more-->
-
-
-<hr />
-
-<p>独立游戏<br/>
-独立游戏，真的独立？<br/>
-我并不认为，世界上存在商业游戏与独立游戏的划分。混迹在独立游戏圈子也有一段时间，渐渐感觉自己似乎是个过于理智的人，跟不少人的执念、偏见,格格不入。他们似乎讨厌一切商业游戏，反感一切PVP联网，还有高粘度游戏。他们的偏见曾让我很困惑。<br/>
-大学时候老师曾说过，独立之思想，自由之灵魂.独立，不应该等同于带有偏见的特立独行。<br/>
-如果独立开发者大多都不明白其中深意，做出来的产品，又何来独立一说？</p>
+* * *
+独立游戏<br />
+独立游戏，真的独立？<br />
+我并不认为，世界上存在商业游戏与独立游戏的划分。混迹在独立游戏圈子也有一段时间，渐渐感觉自己似乎是个过于理智的人，跟不少人的执念、偏见,格格不入。他们似乎讨厌一切商业游戏，反感一切PVP联网，还有高粘度游戏。他们的偏见曾让我很困惑。<br />
+大学时候老师曾说过，独立之思想，自由之灵魂.独立，不应该等同于带有偏见的特立独行。<br />
+如果独立开发者大多都不明白其中深意，做出来的产品，又何来独立一说？  </p>
 
 <hr />
-
-<p>自由职业<br/>
-自由职业者，并不自由<br/>
-这不是一句博人眼球的说道，在国外，自由工作者由于拥有非常好的社会保障福利。可以没有后顾之忧。而在国内呢？辞掉工作做一个自由职业者，意味着没了工资，社保，以及一切，还有人说要为了自由而辞掉工作做一个自由职业者？<br/>
-那么你很快就会发现，为了一日三餐，为了生活，你马上不得不投入到紧张的工作中去，当你完成手头的工作准备睡觉之前，还必须得担忧明天有没有活接。这种吃者这顿要思考下一顿的生活，自由？为了追求自由而反而失去了自由。在国内要成为自由职业者，需要强大的知识技能储备，和优秀的自律，以及科学的时间分配。这么优秀的人，目前多半都在国内顶级大公司担任非常重要的职务。<br/>
-到底是自由职业的门槛太高？还是自由的代价太大？</p>
+<p>自由职业<br />
+自由职业者，并不自由<br />
+这不是一句博人眼球的说道，在国外，自由工作者由于拥有非常好的社会保障福利。可以没有后顾之忧。而在国内呢？辞掉工作做一个自由职业者，意味着没了工资，社保，以及一切，还有人说要为了自由而辞掉工作做一个自由职业者？<br />
+那么你很快就会发现，为了一日三餐，为了生活，你马上不得不投入到紧张的工作中去，当你完成手头的工作准备睡觉之前，还必须得担忧明天有没有活接。这种吃者这顿要思考下一顿的生活，自由？为了追求自由而反而失去了自由。在国内要成为自由职业者，需要强大的知识技能储备，和优秀的自律，以及科学的时间分配。这么优秀的人，目前多半都在国内顶级大公司担任非常重要的职务。<br />
+到底是自由职业的门槛太高？还是自由的代价太大？  </p>
 
 <hr />
 ]]></content>
@@ -927,64 +984,53 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
     <updated>2015-07-07T11:13:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2015/07/07/wo-yu-you-xi</id>
     <content type="html"><![CDATA[<hr />
-
-<blockquote><p>The farther backward you can look, the farther forward you will see.<br/>
-——Winston Churchill</p></blockquote>
+<blockquote>
+  <p>The farther backward you can look, the farther forward you will see.<br />
+——Winston Churchill    </p>
+</blockquote>
 
 <hr />
-
-<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br/>
+<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br />
 某一天，拿着零花钱去买冰棒，要是当初，把钱买了冰棒。。。。。。
-<img src="http://zhizhen.github.io/images/blog_image/games/konglongkuaida.png" alt="" /></p>
-
+<img src="http://zhizhen.github.io/images/blog_image/games/konglongkuaida.png" alt="" />
 <!--more-->
-
-
-<p>原本是在恐龙的世界里生存，但是，最坏最恶心的BOSS永远都是人类，即便，在这恐龙的世界里。。。。。。</p>
+原本是在恐龙的世界里生存，但是，最坏最恶心的BOSS永远都是人类，即便，在这恐龙的世界里。。。。。。  </p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/mingjiang.png" alt="" /></p>
 
 <p>十八般兵器，耍得再熟练，永远都怕背后猥琐着徘徊的小兵。</p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/shihun.png" alt="" /></p>
 
 <p>我一直在思考，日本人在打斗设计上的高度，是否与之民族好狠斗勇精神相关。</p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/sanguozhi.png" alt="" /></p>
 
 <p>草剑，在这里可不是割草的剑</p>
 
 <hr />
-
 <p>转眼间二十多年过去，有时候不仅在回忆里问自己，那个鼻子刚刚够得着摇杆的小孩,真的是我吗？
 <img src="http://zhizhen.github.io/images/blog_image/games/xingsugedou.png" alt="" />
 大哥，这么多影子，你好意思叫无影？</p>
 
 <hr />
-
 <p>我曾有一方地盘，在这里，不用被高年级同学収保护费，我就是王，称霸一方
 <img src="http://zhizhen.github.io/images/blog_image/games/jietoubawang.png" alt="" />
 格斗鼻祖，掌握了勾拳，别人再扔多少板子都打不赢你</p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/xiyoushiezhuan.png" alt="" />
-它总是让我想起那个同桌，一块板子从西天取经回来，而且，是带着我这个坑。。。。。。<br/>
+它总是让我想起那个同桌，一块板子从西天取经回来，而且，是带着我这个坑。。。。。。<br />
 时隔多年，不知道你在哪里。</p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/quanhuang97.png" alt="" />
 如果说这个是街机的巅峰，我相信没人有异议</p>
 
 <hr />
-
 <p><img src="http://zhizhen.github.io/images/blog_image/games/sanguozhanji.png" alt="" />
 高中升学考试那天中午，一块板子干死了曹操。并且，下午考数学，150分的试卷考了140多分。这是一个圆满的结束。</p>
 ]]></content>
@@ -995,34 +1041,32 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
     <link href="http://zhizhen.github.io/blog/2014/12/27/chu-tan-erlang-mysql-driver/"/>
     <updated>2014-12-27T11:41:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2014/12/27/chu-tan-erlang-mysql-driver</id>
-    <content type="html"><![CDATA[<h2>历史</h2>
+    <content type="html"><![CDATA[<h2 id="section">历史</h2>
+<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。  </p>
 
-<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。</p>
-
-<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。</p>
+<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。  </p>
 
 <!--more-->
 
-
-<p>在erlang-mysql-driver从ejabberd分支fork出来之后，Yxa跟ejabberd分支都有一些改动并没有合并到erlang-mysql-driver里来，不过很有可能这些也不重要。这些小修改对erlang-mysql-driver是否能达到最终目的来讲并不明显。</p>
+<p>在erlang-mysql-driver从ejabberd分支fork出来之后，Yxa跟ejabberd分支都有一些改动并没有合并到erlang-mysql-driver里来，不过很有可能这些也不重要。这些小修改对erlang-mysql-driver是否能达到最终目的来讲并不明显。  </p>
 
 <p>这几个fork发展到现在，似乎最终都在上层接口层变得非常复杂，mysql.erl,开始与mysql_conn.erl 高度耦合在一起。也许这也正是为什么这几个fork从来没有合并过了。</p>
 
-<p>erlang-mysql-driver 一直没被知晓，直到07年十月，写rebar项目的这个家伙Dave Smith,对他做了一些更新，并且放到了github上。现在它已经被很多开发者fork并且活跃在github上。</p>
+<p>erlang-mysql-driver 一直没被知晓，直到07年十月，写rebar项目的这个家伙Dave Smith,对他做了一些更新，并且放到了github上。现在它已经被很多开发者fork并且活跃在github上。 </p>
 
 <p>从Yariv原项目里面fork出来的许多并行分支里，有一个跟Dave（rebar）fork出来的没有关联，就是Nick Gerakines 的项目，我猜他应该是erlang-mysql-driver 这些forks里面技术最强的。Nick对它进行了大量的代码整理工作，尽管它很少被人知道，被fork也不多。并且到最后，这个项目因为更好的Emysql而终止。</p>
 
-<p>老古董了，呵呵<br/>
+<p>老古董了，呵呵<br />
 有兴趣的可以看看Emysql,在<a href="https://github.com/Eonblast/Emysql">Eonblast</a>这个分支里，有对这几个驱动的分析</p>
 
-<h2>模型</h2>
+<h2 id="section-1">模型</h2>
 
-<p>这是它的进程模型：<br/>
-<img src="http://zhizhen.github.io/images/erlang-mysql-driver-model.png" alt="" /></p>
+<p>这是它的进程模型：<br />
+![](/images/erlang-mysql-driver-model.png “”)</p>
 
-<p>call process 是调用数据库进程，mysql_dispatcher是调度进程，mysql_conn 是真正的数据库连接进程，它们是standalone的。</p>
+<p>call process 是调用数据库进程，mysql_dispatcher是调度进程，mysql_conn 是真正的数据库连接进程，它们是standalone的。  </p>
 
-<p>在mysql_dispatcher进程里进行调度，mysql_dispatcher 进程中，维护了一份连接进程的调度信息，用gb_trees存储。</p>
+<p>在mysql_dispatcher进程里进行调度，mysql_dispatcher 进程中，维护了一份连接进程的调度信息，用gb_trees存储。  </p>
 
 <p>mysql_dispatcher只做一个调度，并不真正替call process 工作，所以对于call process的call请求，是noreply的，把请求者Pid分发给mysql_conn，他们得到数据库结果后，分别去reply call process进程。这便是整个erlang-mysql-driver的pool 模型。</p>
 ]]></content>
@@ -1045,8 +1089,6 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
 </code></pre>
 
 <!--more-->
-
-
 <p>最后准备把这东西用上去的时候，发现之前队友已经加过了，给力。</p>
 ]]></content>
   </entry>
@@ -1056,7 +1098,7 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
     <link href="http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing/"/>
     <updated>2014-12-18T22:15:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2014/12/18/mac-sed-ti-huan-sou-suo-dao-wen-ben-de-xia-yi-xing</id>
-    <content type="html"><![CDATA[<p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行&hellip;
+    <content type="html"><![CDATA[<p>mac下用sed通过正则表达式实现文件中文本替换与linux还不一样，今天遇到一个很奇怪的需求，需要替换搜索到文本的下一行…
 举个例子，比如有一个test文件,内容是：</p>
 
 <pre><code>version
@@ -1070,8 +1112,6 @@ version
 </code></pre>
 
 <!--more-->
-
-
 <p>现在我要将所有version的下一行，也就是1.0.1, 1.0.2, 1.0.3全部都替换成我想要的值，比如1.0.4,在linux中，我们这样用</p>
 
 <pre><code>sed -i '/version/{n;s/.*/1.0.4/g;}' test
@@ -1082,26 +1122,26 @@ version
 <pre><code>sed -i '' '/version/{n;s/.*/1.0.4/g;}' test
 </code></pre>
 
-<p>多了个&#8217;&lsquo;,这是mac上sed用来存备份文件的，为空则不将修改前的文件备份。<br/>
+<p>多了个’‘,这是mac上sed用来存备份文件的，为空则不将修改前的文件备份。<br />
 sed 基本语法：</p>
 
 <pre><code>sed [options] { sed-commands } { input-file }
 </code></pre>
 
-<p>每次sed从{ input-file }读取一行，然后在这行上执行{ sed-commands }.<br/>
-n是sed命令之一，表示多读取一行，并从第二行开始操作，而后面的</p>
+<p>每次sed从{ input-file }读取一行，然后在这行上执行{ sed-commands }.<br />
+n是sed命令之一，表示多读取一行，并从第二行开始操作，而后面的  </p>
 
 <pre><code>s/.*/1.0.4/g
 </code></pre>
 
 <p>就是将这一行内容替换成1.0.4。s/old/new/g 是sed命令，跟vim里一样，表示替换，
-而这里的old是一个正则, &lsquo;.&#8217;在正则里表示匹配任意字符，而 &rsquo; * &lsquo; 在正则里表示重复，
-&rsquo; . * &lsquo; 组合起来表示替换这一行。</p>
+而这里的old是一个正则, ‘.’在正则里表示匹配任意字符，而 ‘ * ‘ 在正则里表示重复，
+‘ . * ‘ 组合起来表示替换这一行。</p>
 
-<p>只要你还是一个程序员，你就永远免不了要跟正则表达式打交道。<br/>
+<p>只要你还是一个程序员，你就永远免不了要跟正则表达式打交道。<br />
 最后，向大家推荐Steve Mansour的这本《正则表达式之道》:</p>
 
-<p><img src="http://zhizhen.github.io/images/regex-rules.png" alt="" /></p>
+<p>![](/images/regex-rules.png “”)</p>
 
 <p>全书只有11页，为数不多的案头必备书籍之一。</p>
 ]]></content>
@@ -1113,21 +1153,25 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
     <updated>2014-09-29T10:55:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2014/09/29/yi-ge-ren-yao-jing-li-3ci-cheng-chang</id>
     <content type="html"><![CDATA[<ul>
-<li><p>第一次在，发现自己不是世界中心的时候</p></li>
-<li><p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候</p></li>
-<li><p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候</p></li>
+  <li>
+    <p>第一次在，发现自己不是世界中心的时候  </p>
+  </li>
+  <li>
+    <p>第二次在，发现即使再怎么努力，终究还是有些事令人无能为力的时候  </p>
+  </li>
+  <li>
+    <p>第三次在，明知道有些事无能为力，但还是开始尽力争取的时候  </p>
+  </li>
 </ul>
 
-
 <!--more-->
+<p>还记得电影《大话西游》么，长大后再看，其实感触最深的，已经是至尊宝跪下来跟唐僧说的那句：<br />
+  师傅！弟子昔日罪孽深重，幸得观音大士指点迷津，现在已一心皈依我佛，决不再留恋尘世间半点情欲。护送师傅西天取经的重任，弟子愿一肩承担！  </p>
 
+<p><img src="http://zhizhen.github.io/images/zhizunbao.png" alt="" title="zhizunbao" /></p>
 
-<p>  还记得电影《大话西游》么，长大后再看，其实感触最深的，已经是至尊宝跪下来跟唐僧说的那句：<br/>
-  师傅！弟子昔日罪孽深重，幸得观音大士指点迷津，现在已一心皈依我佛，决不再留恋尘世间半点情欲。护送师傅西天取经的重任，弟子愿一肩承担！</p>
-
-<p>  <img src="http://zhizhen.github.io/images/zhizunbao.png" title="zhizunbao" alt="" /></p>
-
-<p> <embed src="http://www.xiami.com/widget/0_2079912/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed></p>
+<embed src="http://www.xiami.com/widget/0_2079912/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
+<p>&lt;/embed&gt; </p>
 
 <pre><code>一生所爱  
 演唱：卢冠庭
@@ -1157,10 +1201,9 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
 </code></pre>
 
 <ul>
-<li>最后，附图一张<br/>
-  <img src="http://zhizhen.github.io/images/dahuajieju.png" title="jieju" alt="" /></li>
+  <li>最后，附图一张<br />
+  <img src="http://zhizhen.github.io/images/dahuajieju.png" alt="" title="jieju" /></li>
 </ul>
-
 ]]></content>
   </entry>
   
@@ -1169,16 +1212,11 @@ n是sed命令之一，表示多读取一行，并从第二行开始操作，而�
     <link href="http://zhizhen.github.io/blog/2014/05/21/how-to-set-cookie-in-escript/"/>
     <updated>2014-05-21T10:10:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2014/05/21/how-to-set-cookie-in-escript</id>
-    <content type="html"><![CDATA[<h3>Question</h3>
-
-<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.</p>
-
-<hr />
-
+    <content type="html"><![CDATA[<h3 id="question">Question</h3>
+<p>As you see, I got a problem when I want to write a plugin with escript for nagios. I want to run net_adm:ping(Node) in an escript.<br />
+* * *
 <!--more-->
-
-
-<p>As you know, I need to keep my escript&rsquo;s cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)</p>
+As you know, I need to keep my escript’s cookie the same as the remote node. So what I need is to do erlang:set_cookie(node(), mycookie)  </p>
 
 <pre><code>#!/usr/bin/env escript
 
@@ -1197,22 +1235,18 @@ io:format("~p~n", [Resp]).
 2&gt; 
 </code></pre>
 
-<p>Wait a minute, what&rsquo;s nonode@nohost?</p>
+<p>Wait a minute, what’s nonode@nohost?
+    Eshell V5.10.4  (abort with ^G)
+    1&gt; erlang:set_cookie(node(), mycookie).
+    ** exception error: no function clause matching 
+                        erlang:set_cookie(nonode@nohost,mycookie) 
+    2&gt; node().
+    nonode@nohost
+    3&gt; </p>
 
-<pre><code>Eshell V5.10.4  (abort with ^G)
-1&gt; erlang:set_cookie(node(), mycookie).
-** exception error: no function clause matching 
-                    erlang:set_cookie(nonode@nohost,mycookie) 
-2&gt; node().
-nonode@nohost
-3&gt; 
-</code></pre>
-
-<p>So we need to start a erlang node, Oh! the escript didn&rsquo;t start one for us! when I searching in google, found someone who noticed erlang:setnode() , But there&rsquo;s no manual about how the specs we need? Somebody who knows? please contact me, thanks!</p>
-
-<hr />
-
-<p>So how could we solve this?</p>
+<p>So we need to start a erlang node, Oh! the escript didn’t start one for us! when I searching in google, found someone who noticed erlang:setnode() , But there’s no manual about how the specs we need? Somebody who knows? please contact me, thanks!
+* * *
+So how could we solve this?  </p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -1220,7 +1254,7 @@ nonode@nohost
 (mynode@127.0.0.1)2&gt;
 </code></pre>
 
-<p>You see? we got a node named &lsquo;<a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#109;&#x79;&#110;&#111;&#x64;&#x65;&#64;&#x31;&#x32;&#55;&#x2e;&#x30;&#46;&#x30;&#x2e;&#x31;">&#109;&#121;&#110;&#x6f;&#x64;&#101;&#64;&#49;&#50;&#x37;&#46;&#x30;&#46;&#x30;&#x2e;&#49;</a>&rsquo;, then we can set_cookie</p>
+<p>You see? we got a node named ‘mynode@127.0.0.1’, then we can set_cookie </p>
 
 <pre><code>Eshell V5.10.4  (abort with ^G)
 1&gt; net_kernel:start(['mynode@127.0.0.1', longnames]).
@@ -1235,8 +1269,7 @@ mycookie
 </code></pre>
 
 <hr />
-
-<p>So, we can write our escript like this:</p>
+<p>So, we can write our escript like this:  </p>
 
 <pre><code>#!/usr/bin/env escript
 
@@ -1247,8 +1280,7 @@ Resp = net_adm:ping(list_to_atom(Node)),
 io:format("~p~n", [Resp]).
 </code></pre>
 
-<h3>Notice</h3>
-
+<h3 id="notice">Notice</h3>
 <p>If you want to use this escript in nagios, better to add try catch for all:</p>
 
 <pre><code>#!/usr/bin/env escript
@@ -1266,6 +1298,7 @@ catch _:Reason
     halt(3)
 end.
 </code></pre>
+
 ]]></content>
   </entry>
   
@@ -1275,45 +1308,26 @@ end.
     <updated>2014-02-12T16:51:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2014/02/12/ubuntuxia-verilogshi-xian-jian-dan-yu-men</id>
     <content type="html"><![CDATA[<hr />
-
-<h3>第一步 搭建环境</h3>
-
-<p>verilog有两个比较常用的编译器：<br/>
-1. Icarus Verilog<br/>
-2. VeriWell Verilog Simulator</p>
-
+<p>### 第一步 搭建环境<br />
+verilog有两个比较常用的编译器：<br />
+1. Icarus Verilog<br />
+2. VeriWell Verilog Simulator<br />
 <!--more-->
+ubuntu源里面默认的是Icarus Verilog，安装编译器：  </p>
 
+<pre><code>sudo apt-get install verilog   然后再安装模拟器，用来查看波形的软件：  
 
-<p>ubuntu源里面默认的是Icarus Verilog，安装编译器：</p>
+sudo apt-get install gtkwave   这样就ok了 ### 第二步 写一个简单的与门   and.v
 
-<pre><code>sudo apt-get install verilog  
-</code></pre>
-
-<p>然后再安装模拟器，用来查看波形的软件：</p>
-
-<pre><code>sudo apt-get install gtkwave  
-</code></pre>
-
-<p>这样就ok了</p>
-
-<h3>第二步 写一个简单的与门</h3>
-
-<p>and.v</p>
-
-<pre><code>module add(a, b, c);
+module add(a, b, c);
 input a;
 input b;
 output c;
 
 assign c = a &amp; b;
-endmodule
-</code></pre>
+endmodule ok了，再写一个testbench，用来测试刚才的与门是否正常工作:   test_and.v
 
-<p>ok了，再写一个testbench，用来测试刚才的与门是否正常工作:<br/>
-test_and.v</p>
-
-<pre><code>`timescale 1ns/1ns
+`timescale 1ns/1ns
 module test_and;
 reg a;
 reg b;
@@ -1339,30 +1353,14 @@ end
 
 initial
     $monitor("a = %d, ", a, "b = %d, ", b, "c = %d\n", c);
-endmodule
+endmodule ### 第三步 编译运行和查看波形 在命令行下执行：
+
+iverilog -o my_and and.v test_and.v 执行完后会生成一个名为my_and 的文件，./my_and就能运行，如图：   ![](/images/verilog/verilog_and_output.jpg)   这个命令跟gcc很像，当然后期你也可以用MakeFile来写编译依赖关系。
+
+vvp -n my_and -lxt2 之后就会生成一个test.lxt的文件
+
+gtkwave test.lxt 然后选择t，同时选中a[0], b[0], c[0], 点击Insert, 就能看到波形了：结果如图:   ![](/images/verilog/verilog_simulator.jpg)
 </code></pre>
-
-<h3>第三步 编译运行和查看波形</h3>
-
-<p>在命令行下执行：</p>
-
-<pre><code>iverilog -o my_and and.v test_and.v
-</code></pre>
-
-<p>执行完后会生成一个名为my_and 的文件，./my_and就能运行，如图：<br/>
-<img src="http://zhizhen.github.io/images/verilog/verilog_and_output.jpg" alt="" /><br/>
-这个命令跟gcc很像，当然后期你也可以用MakeFile来写编译依赖关系。</p>
-
-<pre><code>vvp -n my_and -lxt2
-</code></pre>
-
-<p>之后就会生成一个test.lxt的文件</p>
-
-<pre><code>gtkwave test.lxt
-</code></pre>
-
-<p>然后选择t，同时选中a[0], b[0], c[0], 点击Insert, 就能看到波形了：结果如图:<br/>
-<img src="http://zhizhen.github.io/images/verilog/verilog_simulator.jpg" alt="" /></p>
 ]]></content>
   </entry>
   
@@ -1372,30 +1370,25 @@ endmodule
     <updated>2013-12-26T09:57:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/12/26/yue-du-skynet</id>
     <content type="html"><![CDATA[<p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
-优化的博客了。<br/>
+优化的博客了。<br />
 云风关于skynet的介绍说了，skynet主要还是参照了erlang的
 服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
-关于设计思想方面的说明。<br/>
+关于设计思想方面的说明。<br />
 不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
-代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。
+<!--more--></p>
 
-<!--more-->
-
-
-<h3>skynet是什么</h3>
-
-<p>请看原作者博客<a href="http://blog.codingnow.com/2012/08/skynet.html">skynet开源</a><br/>
-<em>“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。<br/>
-现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”</em><br/>
-由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。</p>
-
-<hr />
-
-<p>下面来看关于skynet架构的说明：<br/>
-<em>“这个系统是单进程多线程模型。”</em> <br/>
-<em>“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。<br/>
-线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”</em><br/>
-skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：</p>
+<h3 id="skynet">skynet是什么</h3>
+<p>请看原作者博客<a href="http://blog.codingnow.com/2012/08/skynet.html">skynet开源</a><br />
+<em>“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。<br />
+现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”</em><br />
+由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。 <br />
+<em>**
+下面来看关于skynet架构的说明：<br />
+*“这个系统是单进程多线程模型。”</em> <br />
+<em>“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。<br />
+线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”</em><br />
+skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：  </p>
 
 <pre><code>root = "./"
 thread = 8                                                                      
@@ -1408,78 +1401,58 @@ standalone = "0.0.0.0:2013"
 luaservice = root.."service/?.lua;"..root.."service/?/init.lua"
 cpath = root.."service/?.so"
 protopath = root.."proto"
-redis = root .. "redisconf"
-</code></pre>
+redis = root .. "redisconf" thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来   *** 来看看关于agent的说明：   *“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”*   是不是跟erlang的init, terminate 很像？   *“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。   一、一个服务的 callback 函数永远不会被并发。   二、一个服务向两一个服务发送的消息的次序是严格保证的。   我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”*   来看它的启动流程：   skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化   然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context   接着是logger, harbor, snlua这些服务模块的启动   所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环   亮代码：  
 
-<p>thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来</p>
-
-<hr />
-
-<p>来看看关于agent的说明：<br/>
-<em>“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”</em><br/>
-是不是跟erlang的init, terminate 很像？<br/>
-<em>“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。<br/>
-一、一个服务的 callback 函数永远不会被并发。<br/>
-二、一个服务向两一个服务发送的消息的次序是严格保证的。<br/>
-我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”</em><br/>
-来看它的启动流程：<br/>
-skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化<br/>
-然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context<br/>
-接着是logger, harbor, snlua这些服务模块的启动<br/>
-所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环<br/>
-亮代码：</p>
-
-<pre><code>void 
+void 
 skynet_start(struct skynet_config * config) {
-    skynet_group_init();
-    skynet_harbor_init(config-&gt;harbor);
-    skynet_handle_init(config-&gt;harbor);
-    skynet_mq_init();
-    skynet_module_init(config-&gt;module_path);
-    skynet_timer_init();
-    skynet_socket_init();
+	skynet_group_init();
+	skynet_harbor_init(config-&gt;harbor);
+	skynet_handle_init(config-&gt;harbor);
+	skynet_mq_init();
+	skynet_module_init(config-&gt;module_path);
+	skynet_timer_init();
+	skynet_socket_init();
 
-    struct skynet_context *ctx;
-    ctx = skynet_context_new("logger", config-&gt;logger);
-    if (ctx == NULL) {
-        fprintf(stderr,"launch logger error");
-        exit(1);
-    }   
+	struct skynet_context *ctx;
+	ctx = skynet_context_new("logger", config-&gt;logger);
+	if (ctx == NULL) {
+    	fprintf(stderr,"launch logger error");
+    	exit(1);
+	}   
 
-    if (config-&gt;standalone) {
-        if (_start_master(config-&gt;standalone)) {
-            fprintf(stderr, "Init fail : mater");
-            return;
-        }   
-    }   
-    // harbor must be init first
-    if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
-        fprintf(stderr, "Init fail : no master");
-        return;
-    }   
+	if (config-&gt;standalone) {
+    	if (_start_master(config-&gt;standalone)) {
+        	fprintf(stderr, "Init fail : mater");
+        	return;
+    	}   
+	}   
+	// harbor must be init first
+	if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
+    	fprintf(stderr, "Init fail : no master");
+    	return;
+	}   
 
-    ctx = skynet_context_new("localcast", NULL);
-    if (ctx == NULL) {
-        fprintf(stderr,"launch local cast error");
-        exit(1);
-    }   
-    ctx = skynet_context_new("snlua", "launcher");
-    if (ctx) {
-        skynet_command(ctx, "REG", ".launcher");
-        ctx = skynet_context_new("snlua", config-&gt;start);
-    }   
+	ctx = skynet_context_new("localcast", NULL);
+	if (ctx == NULL) {
+    	fprintf(stderr,"launch local cast error");
+    	exit(1);
+	}   
+	ctx = skynet_context_new("snlua", "launcher");
+	if (ctx) {
+    	skynet_command(ctx, "REG", ".launcher");
+    	ctx = skynet_context_new("snlua", config-&gt;start);
+	}   
 
-    _start(config-&gt;thread);
-    skynet_socket_free();                                                       
+	_start(config-&gt;thread);
+	skynet_socket_free();                                                       
 }
 </code></pre>
 
-<h3>skynet集群及RPC</h3>
-
-<p>云风的博客<a href="http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html">skynet集群及RPC</a>上这么写着：<br/>
-<em>“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”</em><br/>
-按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。<br/>
-而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件</p>
+<h3 id="skynetrpc">skynet集群及RPC</h3>
+<p>云风的博客<a href="http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html">skynet集群及RPC</a>上这么写着：<br />
+<em>“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”</em><br />
+按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。<br />
+而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件 </p>
 
 <pre><code>#ifndef SKYNET_HARBOR_H                                                          
 #define SKYNET_HARBOR_H
@@ -1497,13 +1470,13 @@ skynet_start(struct skynet_config * config) {
 
 // 消息目的skynet节点名，包含一个名字和一个32位无符号的id
 struct remote_name {
-    char name[GLOBALNAME_LENGTH];
-    uint32_t handle;
+	char name[GLOBALNAME_LENGTH];
+	uint32_t handle;
 };
 
 struct remote_message {
-    struct remote_name destination;
-    const void * message;
+	struct remote_name destination;
+	const void * message;
     size_t sz; 
 };
 
@@ -1518,25 +1491,17 @@ void skynet_harbor_init(int harbor);
 // 启动harbor
 int skynet_harbor_start(const char * master, const char *local);
 
-#endif
-</code></pre>
-
-<p>看这段文字：<br/>
-<em>&ldquo;为了定位方便，我希望整个系统里，所有服务节点都有唯一 id 。那么最简单的方案就是限制有限的机器数量、同时设置中心服务器来协调。我用 32bit 的 id 来标识 skynet 上的服务节点。其中高 8 位是机器标识，低 24 位是同一台机器上的服务节点 id 。我们用简单的判断算法就可以知道一个 id 是远程 id 还是本地 id （只需要比较高 8 位就可以了）。&rdquo;</em><br/>
-HANDLE_REMOTE_SHIFT 其实是用来取高8位机器识别码，而HANDLE_MASK则是取低24位skynet节点唯一id长度。我们看一下skynet_harbor_send(skyner_harbor.c 13行) 发消息函数的实现就知道：</p>
-
-<pre><code>void 
+#endif 看这段文字：   *"为了定位方便，我希望整个系统里，所有服务节点都有唯一 id 。那么最简单的方案就是限制有限的机器数量、同时设置中心服务器来协调。我用 32bit 的 id 来标识 skynet 上的服务节点。其中高 8 位是机器标识，低 24 位是同一台机器上的服务节点 id 。我们用简单的判断算法就可以知道一个 id 是远程 id 还是本地 id （只需要比较高 8 位就可以了）。"*   HANDLE_REMOTE_SHIFT 其实是用来取高8位机器识别码，而HANDLE_MASK则是取低24位skynet节点唯一id长度。我们看一下skynet_harbor_send(skyner_harbor.c 13行) 发消息函数的实现就知道：  
+ 
+void 
 skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session) {
-    int type = rmsg-&gt;sz &gt;&gt; HANDLE_REMOTE_SHIFT;
-    rmsg-&gt;sz &amp;= HANDLE_MASK;
-    assert(type != PTYPE_SYSTEM &amp;&amp; type != PTYPE_HARBOR);                                       
-    skynet_context_send(REMOTE, rmsg, sizeof(*rmsg) , source, type , session);
-}
-</code></pre>
+	int type = rmsg-&gt;sz &gt;&gt; HANDLE_REMOTE_SHIFT;
+	rmsg-&gt;sz &amp;= HANDLE_MASK;
+	assert(type != PTYPE_SYSTEM &amp;&amp; type != PTYPE_HARBOR);                                       
+	skynet_context_send(REMOTE, rmsg, sizeof(*rmsg) , source, type , session);
+} 通过将sz向右移24位来取高8位的机器识别码，而通过与0xffffff相与来取低24位的id，在断言这里，有PTYPE_SYSTEM 和PTYPE_HARBOR 两个宏定义在skynet.h中定义着，它们标识着skynet中的消息类型，看skynet.h:
 
-<p>通过将sz向右移24位来取高8位的机器识别码，而通过与0xffffff相与来取低24位的id，在断言这里，有PTYPE_SYSTEM 和PTYPE_HARBOR 两个宏定义在skynet.h中定义着，它们标识着skynet中的消息类型，看skynet.h:</p>
-
-<pre><code>...
+...
 #define PTYPE_TEXT 0
 #define PTYPE_RESPONSE 1
 #define PTYPE_MULTICAST 2
@@ -1553,118 +1518,83 @@ skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session) {
 
 #define PTYPE_TAG_DONTCOPY 0x10000
 #define PTYPE_TAG_ALLOCSESSION 0x20000
-...
-</code></pre>
+... 再来看 skynet_harbor.c里面skynet_harbor_message_isremote(skynet_harbor.c 36行) 的实现:
 
-<p>再来看 skynet_harbor.c里面skynet_harbor_message_isremote(skynet_harbor.c 36行) 的实现:</p>
-
-<pre><code>int 
+int 
 skynet_harbor_message_isremote(uint32_t handle) {
-    int h = (handle &amp; ~HANDLE_MASK);
-    return h != HARBOR &amp;&amp; h !=0;
-}
-</code></pre>
+	int h = (handle &amp; ~HANDLE_MASK);
+	return h != HARBOR &amp;&amp; h !=0;
+} 挺简单的一个位运算，好了，再看skynet_harbor_register(skynet_harbor.c 21行)：
 
-<p>挺简单的一个位运算，好了，再看skynet_harbor_register(skynet_harbor.c 21行)：</p>
-
-<pre><code>void 
+void 
 skynet_harbor_register(struct remote_name *rname) {
-    int i;
-    int number = 1;
-    for (i=0;i&lt;GLOBALNAME_LENGTH;i++) {
-        char c = rname-&gt;name[i];
-        if (!(c &gt;= '0' &amp;&amp; c &lt;='9')) {
-            number = 0;
-            break;
-        }   
-    }   
-    assert(number == 0); 
-    skynet_context_send(REMOTE, rname, sizeof(*rname), 0, PTYPE_SYSTEM , 0); 
-}
-</code></pre>
+	int i;
+	int number = 1;
+	for (i=0;i&lt;GLOBALNAME_LENGTH;i++) {
+    	char c = rname-&gt;name[i];
+    	if (!(c &gt;= '0' &amp;&amp; c &lt;='9')) {
+       		number = 0;
+        	break;
+    	}   
+	}   
+	assert(number == 0); 
+	skynet_context_send(REMOTE, rname, sizeof(*rname), 0, PTYPE_SYSTEM , 0); 
+} 看到了，harbor在register的时候向master节点发送的是类型PTYPE_SYSTEM的系统消息，并且source id为0， session 也为0，但是skynet_context_send 函数干了什么呢？   好了，等我们先看完skynet_harbor_init(skynet_harbor.c 42行) 和skynet_harbor_start(skynet_harbor.c 47行)分别做了什么之后，再来看skynet_context_send 到底干了什么  
 
-<p>看到了，harbor在register的时候向master节点发送的是类型PTYPE_SYSTEM的系统消息，并且source id为0， session 也为0，但是skynet_context_send 函数干了什么呢？<br/>
-好了，等我们先看完skynet_harbor_init(skynet_harbor.c 42行) 和skynet_harbor_start(skynet_harbor.c 47行)分别做了什么之后，再来看skynet_context_send 到底干了什么</p>
-
-<pre><code>void
+void
 skynet_harbor_init(int harbor) {
-    HARBOR = (unsigned int)harbor &lt;&lt; HANDLE_REMOTE_SHIFT;
+	HARBOR = (unsigned int)harbor &lt;&lt; HANDLE_REMOTE_SHIFT;
 }
 
 int
 skynet_harbor_start(const char * master, const char *local) {
-    size_t sz = strlen(master) + strlen(local) + 32; 
-    char args[sz];
-    sprintf(args, "%s %s %d",master,local,HARBOR &gt;&gt; HANDLE_REMOTE_SHIFT);
-    struct skynet_context * inst = skynet_context_new("harbor",args);
-    if (inst == NULL) {
-        return 1;
-    }   
-    REMOTE = inst;
+	size_t sz = strlen(master) + strlen(local) + 32; 
+	char args[sz];
+	sprintf(args, "%s %s %d",master,local,HARBOR &gt;&gt; HANDLE_REMOTE_SHIFT);
+	struct skynet_context * inst = skynet_context_new("harbor",args);
+	if (inst == NULL) {
+    	return 1;
+	}   
+	REMOTE = inst;
 
-    return 0;
-}  
-</code></pre>
+	return 0;
+}   哦，init函数里设置了HARBOR的值，它在skynet_harbor.c 第10行声明着。   而start函数设置了REMOTE的值，它在skynet_harbor.c 第9行声明着。   skynet_context_send(skynet_server.c 第682行)
 
-<p>哦，init函数里设置了HARBOR的值，它在skynet_harbor.c 第10行声明着。<br/>
-而start函数设置了REMOTE的值，它在skynet_harbor.c 第9行声明着。<br/>
-skynet_context_send(skynet_server.c 第682行)</p>
+void
+skynet_context_send(struct skynet_context * ctx, void * msg, size_t sz, uint32_t 	source, int type, int session) {
+	struct skynet_message smsg;
+	smsg.source = source;
+	smsg.session = session;
+	smsg.data = msg;
+	smsg.sz = sz | type &lt;&lt; HANDLE_REMOTE_SHIFT;
 
-<pre><code>void
-skynet_context_send(struct skynet_context * ctx, void * msg, size_t sz, uint32_t    source, int type, int session) {
-    struct skynet_message smsg;
-    smsg.source = source;
-    smsg.session = session;
-    smsg.data = msg;
-    smsg.sz = sz | type &lt;&lt; HANDLE_REMOTE_SHIFT;
+	skynet_mq_push(ctx-&gt;queue, &amp;smsg);
+}  它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。   最终harbor的register消息发向了哪里呢？master ! *** #### RPC核心和模块化思想 RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：   *"master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。   master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。   skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。"*   skynet/config配置文件里面有这么两条配置：
 
-    skynet_mq_push(ctx-&gt;queue, &amp;smsg);
-} 
-</code></pre>
+master = "127.0.0.1:2013"
+standalone = "0.0.0.0:2013"   然后再看：
 
-<p>它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。<br/>
-最终harbor的register消息发向了哪里呢？master !</p>
-
-<hr />
-
-<h4>RPC核心和模块化思想</h4>
-
-<p>RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：<br/>
-<em>&ldquo;master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。<br/>
-master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。<br/>
-skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。&rdquo;</em><br/>
-skynet/config配置文件里面有这么两条配置：</p>
-
-<pre><code>master = "127.0.0.1:2013"
-standalone = "0.0.0.0:2013"  
-</code></pre>
-
-<p>然后再看：</p>
-
-<pre><code>skynet_start(struct skynet_config * config) {
+skynet_start(struct skynet_config * config) {
 // ...
 if (config-&gt;standalone) {
-    if (_start_master(config-&gt;standalone)) {
-        fprintf(stderr, "Init fail : mater");
-        return;
-    }
+	if (_start_master(config-&gt;standalone)) {
+		fprintf(stderr, "Init fail : mater");
+		return;
+	}
 }
 
 // harbor must be init first
 if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
-    fprintf(stderr, "Init fail : no master");
-    return;
+	fprintf(stderr, "Init fail : no master");
+	return;
 }
 // ...
-}
+} 这里配得standalone = "0.0.0.0:2013" 就表示这个skynet节点在本机开启2013端口作为master使用。   而如果这个节点不是master，那么这里配的master = "127.0.0.1:2013" 则告诉它master在哪里。  
 </code></pre>
-
-<p>这里配得standalone = &ldquo;0.0.0.0:2013&rdquo; 就表示这个skynet节点在本机开启2013端口作为master使用。<br/>
-而如果这个节点不是master，那么这里配的master = &ldquo;127.0.0.1:2013&rdquo; 则告诉它master在哪里。</p>
 
 <p>master纪录所有worker的信息是在skynet_handle文件实现的一个哈希表存储的。当由skynet_harbor发起注册register的时候，它就实现了一个句柄handle到skynet_context的映射。</p>
 
-<p>真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c &hellip;等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。</p>
+<p>真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c …等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。  </p>
 
 <p>基本上以上就是skynet的主体流程了。</p>
 ]]></content>
@@ -1676,29 +1606,17 @@ if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
     <updated>2013-12-03T11:50:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/12/03/haskell-er</id>
     <content type="html"><![CDATA[<p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
-在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
-创建hello.hs文件</p>
-
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br />
+创建hello.hs文件
 <!--more-->
+    main = putStrLn “Hello world !”
+保存之后，编译
+    ghc -o hello hello.hs
+编译之后执行
+    ./hello
+便能够看到
+    Hello world !</p>
 
-
-<pre><code>main = putStrLn "Hello world !"
-</code></pre>
-
-<p>保存之后，编译</p>
-
-<pre><code>ghc -o hello hello.hs
-</code></pre>
-
-<p>编译之后执行</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>便能够看到</p>
-
-<pre><code>Hello world !
-</code></pre>
 ]]></content>
   </entry>
   
@@ -1708,11 +1626,9 @@ if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
     <updated>2013-11-30T10:00:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/11/30/haskell-1</id>
     <content type="html"><![CDATA[<p>Haskell是一门纯函数式语言。它因为monads以及其类型系统而出名，初窥haskell,倒是觉得
-其中的列表跟erlang特别像。<br/>
-下面是基础语法：</p>
-
-<!--more-->
-
+其中的列表跟erlang特别像。<br />
+下面是基础语法：
+<!--more--></p>
 
 <pre><code>-- 单行注释以两个破折号开头
 {-  多行注释被
@@ -1745,7 +1661,7 @@ not False
 -----------------------------------------------
 -- 列表和元组 
 -----------------------------------------------
-
+ 
 -- 一个列表中得每一个元素都必须是相同类型
 [1, 2, 3, 4, 5] == [1..5] -- True
 
@@ -2054,6 +1970,7 @@ What is your name?
 Friend!
 Hello, Friend!
 </code></pre>
+
 ]]></content>
   </entry>
   
@@ -2063,27 +1980,20 @@ Hello, Friend!
     <updated>2013-11-22T20:54:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/11/22/cocos2dxjie-mi-zhi-xing-luawen-jian</id>
     <content type="html"><![CDATA[<p>前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
-解密后的lua代码了</p>
+解密后的lua代码了  </p>
 
 <!--more-->
-
-
 <hr />
+<p>cocos2dx是这样使用lua引擎的
+    // 初始化lua引擎
+    CCLuaEngine* pEngine = CCLuaEngine::defaultEngine();
+    CCScriptEngineManager::sharedManager()-&gt;setScriptEngine(pEngine);</p>
 
-<p>cocos2dx是这样使用lua引擎的</p>
+<pre><code>CCLuaStack *pStack = pEngine-&gt;getLuaStack();
+                        
+pStack-&gt;addLuaLoader(cocos2dx_lua_loader); 这里添加了cocos2dx_lua_loader,那么，在cocos2dx_lua_loader里面：
 
-<pre><code>// 初始化lua引擎
-CCLuaEngine* pEngine = CCLuaEngine::defaultEngine();
-CCScriptEngineManager::sharedManager()-&gt;setScriptEngine(pEngine);
-
-CCLuaStack *pStack = pEngine-&gt;getLuaStack();
-
-pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
-</code></pre>
-
-<p>这里添加了cocos2dx_lua_loader,那么，在cocos2dx_lua_loader里面：</p>
-
-<pre><code>int cocos2dx_lua_loader(lua_State *L)
+int cocos2dx_lua_loader(lua_State *L)
 {
     std::string filename(luaL_checkstring(L, 1));
     // 这里我们将它改成查找.so后缀的lua文件
@@ -2092,7 +2002,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     {
         filename = filename.substr(0, pos);
     }
-
+    
     pos = filename.find_first_of(".");
     while (pos != std::string::npos)
     {
@@ -2101,7 +2011,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     }
     //后缀改为.so
     filename.append(".so");
-
+    
     //使用一个tmpBuffer来读取密文
     unsigned long tmpSize = 0;
     unsigned char* tmpBuffer = CCFileUtils::sharedFileUtils()-&gt;getFileData(filename.c_str(), "rb", &amp;tmpSize);
@@ -2110,7 +2020,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     //解密后再传给codeBuffer执行
     unsigned long codeBufferSize = 0;
     unsigned char* codeBuffer = xxtea_decrypt(tmpBuffer, tmpSize, (unsigned char*)SCRIPT_KEY, sizeof(SCRIPT_KEY), &amp;codeBufferSize);
-
+    
     if (codeBuffer)
     {
         if (luaL_loadbuffer(L, (char*)codeBuffer, codeBufferSize, filename.c_str()) != 0)
@@ -2124,7 +2034,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     {
         CCLog("can not get file data of %s", filename.c_str());
     }
-
+    
     return 1;
 }
 </code></pre>
@@ -2134,7 +2044,7 @@ cocos2dx_lua_loader 这个函数会在当lua文件被required 进来的时候调
 解密的效果。
 enjoying!
 就在昨天，quick-cocos2dx 的2.2.1版本发布，已经支持lua的加密和解密了，也可以参考一下
-<a href="http://cn.quick-x.com/">http://cn.quick-x.com/</a></p>
+http://cn.quick-x.com/</p>
 ]]></content>
   </entry>
   
@@ -2148,19 +2058,15 @@ enjoying!
 执行.</p>
 
 <!--more-->
-
-
 <hr />
+<p>加密工具我用c写了一个,代码放在github上了：https://github.com/zhizhen/cocos2dx-lua-crypto.git<br />
+关键代码如下
+    FILE <em>file;
+    char</em> inPath = argv[1];     //源文件路径
+    char* outPath = argv[2];    //目标文件路径
+    unsigned char* fileData = malloc(FILE_LEN);</p>
 
-<p>加密工具我用c写了一个,代码放在github上了：<a href="https://github.com/zhizhen/cocos2dx-lua-crypto.git  ">https://github.com/zhizhen/cocos2dx-lua-crypto.git  </a>
-关键代码如下</p>
-
-<pre><code>FILE *file;
-char* inPath = argv[1];     //源文件路径
-char* outPath = argv[2];    //目标文件路径
-unsigned char* fileData = malloc(FILE_LEN);
-
-file = fopen(inPath, "rb");
+<pre><code>file = fopen(inPath, "rb");
 unsigned long num = fread(fileData, 1, FILE_LEN, file);
 fclose(file);
 
@@ -2169,12 +2075,8 @@ unsigned char* data = xxtea_encrypt(fileData, num, (unsigned char*)KEY, 32, &amp
 
 file = fopen(outPath, "web+");
 fwrite(data, 1, dataLen, file);
-fclose(file);
-</code></pre>
-
-<p>在sh代码中遍历文件夹，调用c生成的工具对单个文件进行加密</p>
-
-<pre><code>#!/bin/sh
+fclose(file); 在sh代码中遍历文件夹，调用c生成的工具对单个文件进行加密
+#!/bin/sh
 EXDIR=`cd $(dirname $0); pwd`
 cd "$EXDIR/$1"
 
@@ -2206,11 +2108,8 @@ deepls(){
 
 deepls $FROMDIR $TODIR
 
-find $TODIR -name '*.lua' -exec rm {} \;
+find $TODIR -name '*.lua' -exec rm {} \; 执行./build.sh 就能将lua文件夹中的lua脚本全部加密后放到out目录下，然后就剩下 怎么在cocos2dx里面修改代码读取加密后的脚本问题了
 </code></pre>
-
-<p>执行./build.sh 就能将lua文件夹中的lua脚本全部加密后放到out目录下，然后就剩下
-怎么在cocos2dx里面修改代码读取加密后的脚本问题了</p>
 ]]></content>
   </entry>
   

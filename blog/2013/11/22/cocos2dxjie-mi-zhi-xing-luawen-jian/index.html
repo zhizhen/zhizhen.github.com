@@ -10,8 +10,7 @@
 
   
   <meta name="description" content="前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
-解密后的lua代码了 cocos2dx是这样使用lua引擎的 // 初始化lua引擎
-CCLuaEngine* pEngine = CCLuaEngine::defaultEngine(); &hellip;">
+解密后的lua代码了 cocos2dx是这样使用lua引擎的 // 初始化lua引擎 CCLuaEngine* pEngine = CCLuaEngine::defaultEngine(); &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +30,22 @@ CCLuaEngine* pEngine = CCLuaEngine::defaultEngine(); &hellip;">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -108,27 +123,20 @@ CCLuaEngine* pEngine = CCLuaEngine::defaultEngine(); &hellip;">
 
 
 <div class="entry-content"><p>前一篇写了怎么将lua文件加密成，那么接着就该在cocos2dx中修改代码，使之能执行
-解密后的lua代码了</p>
+解密后的lua代码了  </p>
 
 <!--more-->
-
-
 <hr />
+<p>cocos2dx是这样使用lua引擎的
+    // 初始化lua引擎
+    CCLuaEngine* pEngine = CCLuaEngine::defaultEngine();
+    CCScriptEngineManager::sharedManager()-&gt;setScriptEngine(pEngine);</p>
 
-<p>cocos2dx是这样使用lua引擎的</p>
+<pre><code>CCLuaStack *pStack = pEngine-&gt;getLuaStack();
+                        
+pStack-&gt;addLuaLoader(cocos2dx_lua_loader); 这里添加了cocos2dx_lua_loader,那么，在cocos2dx_lua_loader里面：
 
-<pre><code>// 初始化lua引擎
-CCLuaEngine* pEngine = CCLuaEngine::defaultEngine();
-CCScriptEngineManager::sharedManager()-&gt;setScriptEngine(pEngine);
-
-CCLuaStack *pStack = pEngine-&gt;getLuaStack();
-
-pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
-</code></pre>
-
-<p>这里添加了cocos2dx_lua_loader,那么，在cocos2dx_lua_loader里面：</p>
-
-<pre><code>int cocos2dx_lua_loader(lua_State *L)
+int cocos2dx_lua_loader(lua_State *L)
 {
     std::string filename(luaL_checkstring(L, 1));
     // 这里我们将它改成查找.so后缀的lua文件
@@ -137,7 +145,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     {
         filename = filename.substr(0, pos);
     }
-
+    
     pos = filename.find_first_of(".");
     while (pos != std::string::npos)
     {
@@ -146,7 +154,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     }
     //后缀改为.so
     filename.append(".so");
-
+    
     //使用一个tmpBuffer来读取密文
     unsigned long tmpSize = 0;
     unsigned char* tmpBuffer = CCFileUtils::sharedFileUtils()-&gt;getFileData(filename.c_str(), "rb", &amp;tmpSize);
@@ -155,7 +163,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     //解密后再传给codeBuffer执行
     unsigned long codeBufferSize = 0;
     unsigned char* codeBuffer = xxtea_decrypt(tmpBuffer, tmpSize, (unsigned char*)SCRIPT_KEY, sizeof(SCRIPT_KEY), &amp;codeBufferSize);
-
+    
     if (codeBuffer)
     {
         if (luaL_loadbuffer(L, (char*)codeBuffer, codeBufferSize, filename.c_str()) != 0)
@@ -169,7 +177,7 @@ pStack-&gt;addLuaLoader(cocos2dx_lua_loader);
     {
         CCLog("can not get file data of %s", filename.c_str());
     }
-
+    
     return 1;
 }
 </code></pre>
@@ -179,7 +187,7 @@ cocos2dx_lua_loader 这个函数会在当lua文件被required 进来的时候调
 解密的效果。
 enjoying!
 就在昨天，quick-cocos2dx 的2.2.1版本发布，已经支持lua的加密和解密了，也可以参考一下
-<a href="http://cn.quick-x.com/">http://cn.quick-x.com/</a></p>
+http://cn.quick-x.com/</p>
 </div>
 
 

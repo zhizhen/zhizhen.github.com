@@ -11,7 +11,8 @@
   
   <meta name="description" content="在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
 在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行
-创建hello.hs文件 main = putStrLn "Hello world !" 保存之后，编译 ghc - &hellip;">
+创建hello.hs文件 main = putStrLn “Hello world !”
+保存之后，编译 ghc - &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +32,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -108,29 +125,17 @@
 
 
 <div class="entry-content"><p>在haskell(一)中学习了haskell的基本语法。在输入ghci之后能够进入haskell终端，
-在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br/>
-创建hello.hs文件</p>
-
+在终端里可以执行运算，写一些简单的函数，接下来要在文件中写代码，并编译，执行<br />
+创建hello.hs文件
 <!--more-->
+    main = putStrLn “Hello world !”
+保存之后，编译
+    ghc -o hello hello.hs
+编译之后执行
+    ./hello
+便能够看到
+    Hello world !</p>
 
-
-<pre><code>main = putStrLn "Hello world !"
-</code></pre>
-
-<p>保存之后，编译</p>
-
-<pre><code>ghc -o hello hello.hs
-</code></pre>
-
-<p>编译之后执行</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>便能够看到</p>
-
-<pre><code>Hello world !
-</code></pre>
 </div>
 
 

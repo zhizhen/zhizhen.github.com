@@ -9,11 +9,12 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="﻿&mdash;&ndash;
+  <meta name="description" content="﻿—
 layout: post
-title: &ldquo;平方根倒数速算法&rdquo;
+title: “平方根倒数速算法”
 date: 2019-05-14 20:28
-comments: true categories: 在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数 &hellip;">
+comments: true
+categories: — 在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。 起源 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -33,6 +34,22 @@ comments: true categories: 在计算机图形学领域，若要求取照明和�
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -112,134 +129,237 @@ comments: true categories: 在计算机图形学领域，若要求取照明和�
   </header>
 
 
-  <div class="entry-content"><p>﻿&mdash;&ndash;
+  <div class="entry-content"><p>﻿—
 layout: post
-title: &ldquo;平方根倒数速算法&rdquo;
+title: “平方根倒数速算法”
 date: 2019-05-14 20:28
-comments: true</p>
+comments: true
+categories: 
+—</p>
 
-<h2>categories: </h2>
-
-<blockquote><p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p></blockquote>
+<blockquote>
+  <p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p>
+</blockquote>
 
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/OpenArena-Rocket.jpg/300px-OpenArena-Rocket.jpg" alt="第一人称射击游戏　OpenArena" /></p>
 
-<h1>起源</h1>
+<h1 id="section">起源</h1>
 
 <p>此算法最早被认为是由约翰·卡马克所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知，此算法最早由加里·塔罗利（Gary Tarolli）在SGI Indigo的开发中使用。虽说随后的相关研究也提出了一些可能的来源，但至今为止仍未能确切知晓算法中所使用的特殊常数的起源。</p>
 
 <p>下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
-</span><span class='line'>    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>
-</span><span class='line'><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) );</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+</span><span class="line">    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span><span class="line">    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
+</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>                  <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
+</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>               <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
+</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>   <span class="c1">// 1st iteration （第一次迭代）</span>
+</span><span class="line"><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：  </p>
 
-<p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Float_w_significand.svg/590px-Float_w_significand.svg.png" alt="Float w significand.svg" />
-将上述结构表示成公式即为</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Float_w_significand.svg/590px-Float_w_significand.svg.png" alt="Float w significand.svg" />    </p>
 
-<p>$$
+<p>将上述结构表示成公式即为</p>
+
+<script type="math/tex; mode=display">
 x = (-1)^{Si}\cdot(1+m)\cdot^{E-B}
-$$</p>
+</script>
 
-<p>其中偏移量\(B=127\)，\(m\)表示有效数字的尾数（\(0&lt;m&lt;1\))，而指数\(E-B\)的值决定了有效数字（在Lomont和McEniry的论文中称为“尾数”（<em>mantissa</em>））代表的是小数还是整数。以上图为例，将描述代入有\(m=1\times2^{-2}=0.250\)），且\(E-B=124-127=-3\)，则可得其表示的浮点数为\(x=(1+0.250)\cdot2^{-3}=0.15625\)。</p>
+<p>其中偏移量$B=127$，$m$表示有效数字的尾数（$0&lt;m&lt;1$)，而指数$E-B$的值决定了有效数字（在Lomont和McEniry的论文中称为“尾数”（<em>mantissa</em>））代表的是小数还是整数。以上图为例，将描述代入有$m=1\times2^{-2}=0.250$），且$E-B=124-127=-3$，则可得其表示的浮点数为$x=(1+0.250)\cdot2^{-3}=0.15625$。</p>
 
-<p>| 符号位 |  |
-| 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | = | 127 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | = | 2 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | = | 1 |
-| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | = | 0 |
-| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | = | −1 |
-| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | = | −2 |
-| 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | = | −127 |
-| 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | = | −128 |</p>
+<table>
+  <tbody>
+    <tr>
+      <td>符号位</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>=</td>
+      <td>127</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>=</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>=</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>=</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>=</td>
+      <td>−1</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>=</td>
+      <td>−2</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>=</td>
+      <td>−127</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>=</td>
+      <td>−128</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>8位二进制整数补码示例</p>
+<p>8位二进制整数补码示例<br />
+如上所述，一个有符号正整数在二进制补码系统中的表示中首位为0，而后面的各位则用于表示其数值。将浮点数取别名存储为整数时，该整数的数值即为$I=E\times 2^{23}+M$，其中E表示指数，M表示有效数字；若以上图为例，图中样例若作为浮点数看待有$E=124$，$M=1\cdot 2^{21}$，则易知其转化而得的整数型号数值为$I=124\times 2^{23} + 2^{21}$。由于平方根倒数函数仅能处理正数，因此浮点数的符号位（即如上的Si）必为0，而这就保证了转换所得的有符号整数也必为正数。以上转换就为后面的计算带来了可行性，之后的第一步操作（逻辑右移一位）即是使该数的长整形式被2所除。</p>
 
-<p>如上所述，一个有符号正整数在二进制补码系统中的表示中首位为0，而后面的各位则用于表示其数值。将浮点数取别名存储为整数时，该整数的数值即为\(I=E\times 2^{23}+M\)，其中E表示指数，M表示有效数字；若以上图为例，图中样例若作为浮点数看待有\(E=124\)，\(M=1\cdot 2^{21}\)，则易知其转化而得的整数型号数值为\(I=124\times 2^{23} + 2^{21}\)。由于平方根倒数函数仅能处理正数，因此浮点数的符号位（即如上的Si）必为0，而这就保证了转换所得的有符号整数也必为正数。以上转换就为后面的计算带来了可行性，之后的第一步操作（逻辑右移一位）即是使该数的长整形式被2所除。</p>
+<h1 id="section-1">魔术数字</h1>
 
-<h1>魔术数字</h1>
+<p>对猜测平方根倒数速算法的最初构想来说，计算首次近似值所使用的常数<strong>0x5f3759df</strong>也是重要的线索。为确定程序员最初选此常数以近似求取平方根倒数的方法，Charles McEniry首先检验了在代码中选择任意常数R所求取出的首次近似值的精度。回想上一节关于整数和浮点数表示的比较：对于同样的32位二进制数字，若为浮点数表示时实际数值为$x=(1+m_x)2^{e_x}$，而若为整数表示时实际数值则为$I_x=E_xL+M_x$，其中$L=2^{n-1-b}$。以下等式引入了一些由指数和有效数字导出的新元素：</p>
 
-<p>对猜测平方根倒数速算法的最初构想来说，计算首次近似值所使用的常数<strong>0x5f3759df</strong>也是重要的线索。为确定程序员最初选此常数以近似求取平方根倒数的方法，Charles McEniry首先检验了在代码中选择任意常数R所求取出的首次近似值的精度。回想上一节关于整数和浮点数表示的比较：对于同样的32位二进制数字，若为浮点数表示时实际数值为\(x=(1+m_x)2^{e_x}\)，而若为整数表示时实际数值则为\(I_x=E_xL+M_x\)，其中\(L=2^{n-1-b}\)。以下等式引入了一些由指数和有效数字导出的新元素：</p>
+<script type="math/tex; mode=display">m_x = \frac{M_x}{L}</script>
 
-<p>$$
-m_x = \frac{M_x}{L}
-$$</p>
-
-<p>$$
-e_x=E_x &ndash; B,其中B=2^{b-1} &ndash; 1
-$$</p>
+<script type="math/tex; mode=display">e_x=E_x - B,其中B=2^{b-1} - 1</script>
 
 <p>再继续看McEniry 2007里的进一步说明：
 $$
 y=\frac{1}{\sqrt{x}}
 $$</p>
 
-<p>对等式的两边取二进制对数（\(\log _{2}\)，即函数\(f(n)=2^{n}\)的反函数，有</p>
+<p>对等式的两边取二进制对数（$\log _{2}$，即函数$f(n)=2^{n}$的反函数，有</p>
 
-<p>$$
-\log_2(y) = &ndash;\frac{1}{2}log_2(x)
-$$</p>
+<script type="math/tex; mode=display">
+\log_2(y) = -\frac{1}{2}log_2(x)
+</script>
 
-<p>$$
-\log_2(1+m_y) + e_y = &ndash;\frac{1}{2}\log_2(1+m_x) &ndash; \frac{1}{2}e_x
-$$</p>
+<script type="math/tex; mode=display">
+\log_2(1+m_y) + e_y = -\frac{1}{2}\log_2(1+m_x) - \frac{1}{2}e_x
+</script>
 
-<p>以如上方法，就能将浮点数x和y的相关指数消去，从而将乘方运算化为加法运算。而由于\(\log <em>{2}{(x)}\)与\(\log </em>{2}{(x^{-&frac12;})}\)线性相关，因此在\(x\)与\(y<em>{0}\)（即输入值与首次近似值）间就可以线性组合的方式创建方程。在此McEniry再度引入新数\(\sigma\)描述//(\log </em>{2}{(1+x)}\)与近似值R间的误差：由于\(0\leq x&lt;1\)，有\(\log<em>{2}(1+x)\approx x\)，则在此可定义\(\sigma \)与x的关系为\(\log </em>{2}{(1+x)}\cong x+\sigma \)，这一定义就能提供二进制对数的首次精度值（此处\(0\leq \sigma \leq {\tfrac {1}{3}}\)；当R为0x5f3759df时，有\(\sigma =0.0450461875791687011756\)。由此将\(\log _{2}{(1+x)}=x+\sigma\)代入上式，有：
+<p>以如上方法，就能将浮点数x和y的相关指数消去，从而将乘方运算化为加法运算。而由于$\log_{2}{x}$
+与$\log2(x^{-1/2})$线性相关，因此在$x$与$y{0}$（即输入值与首次近似值）间就可以线性组合的方式创建方程。在此McEniry再度引入新数$\sigma$描述$\log {2}{(1+x)}$与近似值R间的误差：由于$0\leq x&lt;1$，有$\log{2}(1+x)\approx x$，则在此可定义$\sigma $与x的关系为$\log {2}{(1+x)}\cong x+\sigma $，这一定义就能提供二进制对数的首次精度值（此处$0\leq \sigma \leq {\tfrac {1}{3}}$；当R为0x5f3759df时，有$\sigma =0.0450461875791687011756$。由此将$\log {2}{(1+x)}=x+\sigma$代入上式，有：
 $$
-m_y+\sigma+e_y=&ndash;\frac{1}{2}m_x-\frac{1}{2}\sigma-\frac{1}{2}e_x
+m_y+\sigma+e_y=-\frac{1}{2}m_x-\frac{1}{2}\sigma-\frac{1}{2}e_x
 $$</p>
 
-<p>参照首段等式代入\(M<em>{x}\)，\(E</em>{x}\)，\(B\)与\(L\)，有：</p>
+<p>参照首段等式代入$M{x}$，$E{x}$，$B$与$L$，有：</p>
 
-<p>$$
-M_y+(E_y-B)L=&ndash;\frac{3}{2}\sigma{L}&ndash;\frac{1}{2}M_x-\frac{1}{2}(E_x-B)L
-$$</p>
+<script type="math/tex; mode=display">
+M_y+(E_y-B)L=-\frac{3}{2}\sigma{L}-\frac{1}{2}M_x-\frac{1}{2}(E_x-B)L
+</script>
 
 <p>移项整理得：
 $$
 E_yL+M_y=\frac{3}{2}(B-\sigma)L-\frac{1}{2}(E_xL+M_x)
 $$</p>
 
-<p>如上所述，对于以浮点规格存储的正浮点数x，若将其作为长整型表示则示值为\(I<em>{x}=E</em>{x}L+M_{x}\)，由此即可根据x的整数表示导出y（在此\(y={\frac {1}{\sqrt {x}}}\)，亦即x的平方根倒数的首次近似值）的整数表示值，也即：
+<p>如上所述，对于以浮点规格存储的正浮点数x，若将其作为长整型表示则示值为$I{x}=E{x}L+M_{x}$，由此即可根据x的整数表示导出y（在此$y={\frac {1}{\sqrt {x}}}$，亦即x的平方根倒数的首次近似值）的整数表示值，也即：
 $$
 I_y=E_yL+M_y=R-\frac{1}{2}(E_xL+M_x)=R-\frac{1}{2}I_x
 $$</p>
 
-<p>最后导出的等式\(I<em>{y}=R-{\frac {1}{2}}I</em>{x}\)即与上节代码中i = 0x5f3759df &ndash; (i>>1);一行相契合，由此可见，在平方根倒数速算法中，对浮点数进行一次移位操作与整数减法，就可以可靠地输出一个浮点数的对应近似值。到此为止，McEniry只证明了，在常数R的辅助下，可近似求取浮点数的平方根倒数，但仍未能确定代码中的R值的选取方法。</p>
+<p>最后导出的等式$I{y}=R-{\frac {1}{2}}I{x}$即与上节代码中i = 0x5f3759df - (i»1);一行相契合，由此可见，在平方根倒数速算法中，对浮点数进行一次移位操作与整数减法，就可以可靠地输出一个浮点数的对应近似值。到此为止，McEniry只证明了，在常数R的辅助下，可近似求取浮点数的平方根倒数，但仍未能确定代码中的R值的选取方法。</p>
 
-<p>关于作一次移位与减法操作以使浮点数的指数被-2除的原理，Chris Lomont的论文中亦有个相对简单的解释：以\(10000=10^{4}\)为例，将其指数除-2可得\(10000^{-&frac12;}=10^{-2}=1/100\)；而由于浮点表示的指数有进行过偏移处理，所以指数的真实值e应为\(e=E-127\)，因此可知除法操作的实际结果为\(-e/2+127\)，这时用R（在此即为“魔术数字”0x5f3759df）减之即可使指数的最低有效数字转入有效数字域，之后重新转换为浮点数时，就能得到相当精确的平方根倒数近似值。在这里对常数R的选取亦有所讲究，若能选取一个好的R值，便可减少对指数进行除法与对有效数字域进行移位时可能产生的错误。基于这一标准，0xbe即是最合适的R值，而0xbe右移一位即可得到0x5f，这恰是魔术数字R的第一个字节。</p>
+<p>关于作一次移位与减法操作以使浮点数的指数被-2除的原理，Chris Lomont的论文中亦有个相对简单的解释：以$10000=10^{4}$为例，将其指数除-2可得$10000^{-1/2}=10^{-2}=1/100$；而由于浮点表示的指数有进行过偏移处理，所以指数的真实值e应为$e=E-127$，因此可知除法操作的实际结果为$-e/2+127$，这时用R（在此即为“魔术数字”0x5f3759df）减之即可使指数的最低有效数字转入有效数字域，之后重新转换为浮点数时，就能得到相当精确的平方根倒数近似值。在这里对常数R的选取亦有所讲究，若能选取一个好的R值，便可减少对指数进行除法与对有效数字域进行移位时可能产生的错误。基于这一标准，0xbe即是最合适的R值，而0xbe右移一位即可得到0x5f，这恰是魔术数字R的第一个字节。</p>
+
 </div>
   
   
@@ -277,7 +397,7 @@ $$</p>
   </header>
 
 
-  <div class="entry-content"><p> Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
+  <div class="entry-content"><p>Cocos2d-x 3.x的label使用了freetype字体引擎（<a href="http://www.freetype.org/">http://www.freetype.org/</a>），可以很轻松的实现描边和阴影效果。所以本篇文章只针对于sprite来实现描边效果。</p>
 
 <p>官方demo中描边shader没有看懂，看效果好像是有点问题，透明的部分变成了黑色。作者也没有怎么解释，直接丢了一个网址出来（<a href="http://www.idevgames.com/forums/thread-3010.html">http://www.idevgames.com/forums/thread-3010.html</a>），看样子是参考了这个帖子。</p>
 
@@ -287,107 +407,106 @@ $$</p>
 
 <p>下面是我改动后的代码：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
-</span><span class='line'>varying vec2 v_texCoord; // 纹理坐标
-</span><span class='line'>uniform float outlineSize; // 描边宽度，以像素为单位
-</span><span class='line'>uniform vec3 outlineColor; // 描边颜色
-</span><span class='line'>uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
-</span><span class='line'>
-</span><span class='line'>// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
-</span><span class='line'>int stroke = 0;
-</span><span class='line'>float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
-</span><span class='line'>vec2 unit = 1.0 / textureSize.xy;//单位坐标
-</span><span class='line'>vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
-</span><span class='line'>float a = texture2D(CC_Texture0, v_texCoord + offset).a;
-</span><span class='line'>if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
-</span><span class='line'>{
-</span><span class='line'>stroke = 1;
-</span><span class='line'>}
-</span><span class='line'>return stroke;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>void main(){
-</span><span class='line'>vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
-</span><span class='line'>if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
-</span><span class='line'>{
-</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
-</span><span class='line'>return;
-</span><span class='line'>}
-</span><span class='line'>// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
-</span><span class='line'>int strokeCount = 0;
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(0.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(30.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(60.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(90.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(120.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(150.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(180.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(210.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(240.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(270.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(300.0);
-</span><span class='line'>strokeCount += getIsStrokeWithAngel(330.0);
-</span><span class='line'>
-</span><span class='line'>if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
-</span><span class='line'>{
-</span><span class='line'>myC.rgb = outlineColor;
-</span><span class='line'>myC.a = 1.0;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>gl_FragColor = v_fragmentColor * myC;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">varying vec4 v_fragmentColor; // vertex shader传入，setColor设置的颜色
+</span><span class="line">varying vec2 v_texCoord; // 纹理坐标
+</span><span class="line">uniform float outlineSize; // 描边宽度，以像素为单位
+</span><span class="line">uniform vec3 outlineColor; // 描边颜色
+</span><span class="line">uniform vec2 textureSize; // 纹理大小（宽和高），为了计算周围各点的纹理坐标，必须传入它，因为纹理坐标范围是0~1
+</span><span class="line">
+</span><span class="line">// 判断在这个角度上距离为outlineSize那一点是不是透明int getIsStrokeWithAngel(float angel){
+</span><span class="line">int stroke = 0;
+</span><span class="line">float rad = angel * 0.01745329252; // 这个浮点数是 pi / 180，角度转弧度
+</span><span class="line">vec2 unit = 1.0 / textureSize.xy;//单位坐标
+</span><span class="line">vec2 offset = vec2(outlineSize * cos(rad) * unit.x, outlineSize * sin(rad) * unit.y); //偏移量
+</span><span class="line">float a = texture2D(CC_Texture0, v_texCoord + offset).a;
+</span><span class="line">if (a &gt;= 0.5)// 我把alpha值大于0.5都视为不透明，小于0.5都视为透明
+</span><span class="line">{
+</span><span class="line">stroke = 1;
+</span><span class="line">}
+</span><span class="line">return stroke;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">void main(){
+</span><span class="line">vec4 myC = texture2D(CC_Texture0, v_texCoord); // 正在处理的这个像素点的颜色
+</span><span class="line">if (myC.a &gt;= 0.5) // 不透明，不管，直接返回
+</span><span class="line">{
+</span><span class="line">gl_FragColor = v_fragmentColor * myC;
+</span><span class="line">return;
+</span><span class="line">}
+</span><span class="line">// 这里肯定有朋友会问，一个for循环就搞定啦，怎么这么麻烦！其实我一开始也是用for的，但后来在安卓某些机型（如小米4）会直接崩溃，查找资料发现OpenGL es并不是很支持循环，while和for都不要用
+</span><span class="line">int strokeCount = 0;
+</span><span class="line">strokeCount += getIsStrokeWithAngel(0.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(30.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(60.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(90.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(120.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(150.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(180.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(210.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(240.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(270.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(300.0);
+</span><span class="line">strokeCount += getIsStrokeWithAngel(330.0);
+</span><span class="line">
+</span><span class="line">if (strokeCount &gt; 0) // 四周围至少有一个点是不透明的，这个点要设成描边颜色
+</span><span class="line">{
+</span><span class="line">myC.rgb = outlineColor;
+</span><span class="line">myC.a = 1.0;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">gl_FragColor = v_fragmentColor * myC;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p> 大致的逻辑是：</p>
+<p>大致的逻辑是：</p>
 
 <p>先判断当前像素是否透明，如果不透明则直接返回。如果是透明像素，就判断这个点周围12个方向，每个方向距离当前像素距离是outlineSize的像素点是否透明，只要有一个是非透明像素，就把当前像素点设为描边的颜色，并设置成非透明。</p>
 
@@ -431,135 +550,134 @@ $$</p>
   </header>
 
 
-  <div class="entry-content"><blockquote><p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p></blockquote>
+  <div class="entry-content"><blockquote>
+  <p>模糊效果在游戏中经常会用到，有的为了突出前景会把背景给模糊化，有的是因为一些技能需要模糊效果。模糊是shader中较为简单的一种应用。cocos2dx 3.x给的demo中，就有sprite的模糊的效果。</p>
+</blockquote>
 
 <p>先说下这个模糊算法的大致思路，我们在片段着色器中可以得到当前像素点的颜色值，要想让这个颜色变得模糊，就要让它与它周围的像素点的颜色稍微接近一点，那么我们就需要拿到这个像素点周围的像素点的颜色值，我们把这些个像素点的值加起来取平均值，就得到了一个区域内的平均颜色。</p>
 
 <p>如果直接使用这个颜色的话，最终的效果会变得很模糊，如果我们只是想稍微模糊一点的话，就要让这个平均值更接近于当前像素点原本的颜色，为此，我们取均值的时候对每个像素点增加了一个权重的定义，当前像素点的权重最高，依次向周围减弱，使得最后得到的均值的颜色更接近于当前像素点原始的颜色。</p>
 
-<p> 看代码：</p>
+<p>看代码：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float;
+</span><span class="line">#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">uniform vec2 resolution;//模糊对象的实际分辨率
+</span><span class="line">uniform float blurRadius;//半径
+</span><span class="line">uniform float sampleNum;//间隔的段数
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2);
+</span><span class="line">
+</span><span class="line">void main(void){
+</span><span class="line">vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
+</span><span class="line">gl_FragColor = vec4(col) * v_fragmentColor;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">vec4 blur(vec2 p){
+</span><span class="line">if (blurRadius &gt; 0.0 &amp;&amp; sampleNum &gt; 1.0)
+</span><span class="line">{
+</span><span class="line">vec4 col = vec4(0);
+</span><span class="line">vec2 unit = 1.0 / resolution.xy;//单位坐标
+</span><span class="line">
+</span><span class="line">float r = blurRadius;
+</span><span class="line">float sampleStep = r / sampleNum;
+</span><span class="line">
+</span><span class="line">float count = 0.0;
+</span><span class="line">//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
+</span><span class="line">for(float x = -r; x &lt; r; x += sampleStep)
+</span><span class="line">{
+</span><span class="line">for(float y = -r; y &lt; r; y += sampleStep)
+</span><span class="line">{
+</span><span class="line">float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
+</span><span class="line">col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
+</span><span class="line">count += weight;
+</span><span class="line">}
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">//得到实际模糊颜色的值
+</span><span class="line">
+</span><span class="line">return col / count;
+</span><span class="line">}
+</span><span class="line">
+</span><span class="line">return texture2D(CC_Texture0, p);
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float;
-</span><span class='line'>#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>uniform vec2 resolution;//模糊对象的实际分辨率
-</span><span class='line'>uniform float blurRadius;//半径
-</span><span class='line'>uniform float sampleNum;//间隔的段数
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2);
-</span><span class='line'>
-</span><span class='line'>void main(void){
-</span><span class='line'>vec4 col = blur(v_texCoord); //* v_fragmentColor.rgb;
-</span><span class='line'>gl_FragColor = vec4(col) * v_fragmentColor;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>vec4 blur(vec2 p){
-</span><span class='line'>if (blurRadius &gt; 0.0 && sampleNum &gt; 1.0)
-</span><span class='line'>{
-</span><span class='line'>vec4 col = vec4(0);
-</span><span class='line'>vec2 unit = 1.0 / resolution.xy;//单位坐标
-</span><span class='line'>
-</span><span class='line'>float r = blurRadius;
-</span><span class='line'>float sampleStep = r / sampleNum;
-</span><span class='line'>
-</span><span class='line'>float count = 0.0;
-</span><span class='line'>//遍历一个矩形，当前的坐标为中心点，遍历矩形中每个像素点的颜色
-</span><span class='line'>for(float x = -r; x &lt; r; x += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>for(float y = -r; y &lt; r; y += sampleStep)
-</span><span class='line'>{
-</span><span class='line'>float weight = (r - abs(x)) * (r - abs(y));//权重，p点的权重最高，向四周依次减少
-</span><span class='line'>col += texture2D(CC_Texture0, p + vec2(x * unit.x, y * unit.y)) * weight;
-</span><span class='line'>count += weight;
-</span><span class='line'>}
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>//得到实际模糊颜色的值
-</span><span class='line'>
-</span><span class='line'>return col / count;
-</span><span class='line'>}
-</span><span class='line'>
-</span><span class='line'>return texture2D(CC_Texture0, p);
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p> 精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
+<p>精度限定符和varying变量等的一些基础的知识在前面的博客中遇到的已经说过。</p>
 
 <p>uniform变量是顶点着色器和片段着色器共享使用的变量，uniform的值不能被改变。</p>
 
 <p>uniform变量是由宿主程序设置的，代码如下：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> void EffectBlur::setTarget(EffectSprite *sprite)
-</span><span class='line'>{
-</span><span class='line'>Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
-</span><span class='line'>_glprogramstate-&gt;setUniformVec2("resolution", size);
-</span><span class='line'>#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
-</span><span class='line'>_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
-</span><span class='line'>#endif
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"> void EffectBlur::setTarget(EffectSprite *sprite)
+</span><span class="line">{
+</span><span class="line">Size size = sprite-&gt;getTexture()-&gt;getContentSizeInPixels();
+</span><span class="line">_glprogramstate-&gt;setUniformVec2("resolution", size);
+</span><span class="line">#if (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("blurRadius", _blurRadius);
+</span><span class="line">_glprogramstate-&gt;setUniformFloat("sampleNum", _blurSampleNum);
+</span><span class="line">#endif
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p> 这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
+<p>这里宿主程序设置了resolution，blurRadius和sampleNum三个uniform变量。渲染的时候，顶点着色器和片段着色器都可以用到这三个变量的值。</p>
 
 <p>resolution是当前渲染node的实际分辨率。</p>
 
@@ -611,37 +729,34 @@ $$</p>
   </header>
 
 
-  <div class="entry-content"><p> ### 灰度shader</p>
+  <div class="entry-content"><p>### 灰度shader</p>
 
-<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#ifdef GL_ES
-</span><span class='line'>precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
-</span><span class='line'>
-</span><span class='line'>varying vec4 v_fragmentColor;
-</span><span class='line'>varying vec2 v_texCoord;
-</span><span class='line'>
-</span><span class='line'>void main(void)
-</span><span class='line'>
-</span><span class='line'>vec4 c = texture2D(CC_Texture0, v_texCoord);
-</span><span class='line'>gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
-</span><span class='line'>gl_FragColor.w = c.w;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>代码分析</h3>
+<p>最近在学习shader，就把cocos2d-x 3.x版本中的很简单也很常用的灰度shader拿出来学习一下。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">#ifdef GL_ES
+</span><span class="line">precision mediump float; // ES版本的精度限定符，精度变低后可以提高效率#endif
+</span><span class="line">
+</span><span class="line">varying vec4 v_fragmentColor;
+</span><span class="line">varying vec2 v_texCoord;
+</span><span class="line">
+</span><span class="line">void main(void)
+</span><span class="line">
+</span><span class="line">vec4 c = texture2D(CC_Texture0, v_texCoord);
+</span><span class="line">gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b);
+</span><span class="line">gl_FragColor.w = c.w;
+</span><span class="line">}</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+### 代码分析</p>
 
 <p>precision mediump float是open es特有的精度限定符，原本的浮点数精度是double，opengl es为了提高渲染效率，限定精度为float类型。</p>
 
@@ -651,38 +766,36 @@ $$</p>
 
 <p>CC_Texture0是一个采样器，在load shader的时候，引擎会预先把这些uniform变量给加载进来。</p>
 
-<p>下面这部分代码就是引擎预先加载进来的uniform变量：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>static const char * COCOS2D_SHADER_UNIFORMS =
-</span><span class='line'>"uniform mat4 CC_PMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVMatrix;\n"
-</span><span class='line'>"uniform mat4 CC_MVPMatrix;\n"
-</span><span class='line'>"uniform mat3 CC_NormalMatrix;\n"
-</span><span class='line'>"uniform vec4 CC_Time;\n"
-</span><span class='line'>"uniform vec4 CC_SinTime;\n"
-</span><span class='line'>"uniform vec4 CC_CosTime;\n"
-</span><span class='line'>"uniform vec4 CC_Random01;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture0;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture1;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture2;\n"
-</span><span class='line'>"uniform sampler2D CC_Texture3;\n"
-</span><span class='line'>"//CC INCLUDES END\n\n";
-</span></code></pre></td></tr></table></div></figure>
-
+<p>下面这部分代码就是引擎预先加载进来的uniform变量：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">static const char * COCOS2D_SHADER_UNIFORMS =
+</span><span class="line">"uniform mat4 CC_PMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVMatrix;\n"
+</span><span class="line">"uniform mat4 CC_MVPMatrix;\n"
+</span><span class="line">"uniform mat3 CC_NormalMatrix;\n"
+</span><span class="line">"uniform vec4 CC_Time;\n"
+</span><span class="line">"uniform vec4 CC_SinTime;\n"
+</span><span class="line">"uniform vec4 CC_CosTime;\n"
+</span><span class="line">"uniform vec4 CC_Random01;\n"
+</span><span class="line">"uniform sampler2D CC_Texture0;\n"
+</span><span class="line">"uniform sampler2D CC_Texture1;\n"
+</span><span class="line">"uniform sampler2D CC_Texture2;\n"
+</span><span class="line">"uniform sampler2D CC_Texture3;\n"
+</span><span class="line">"//CC INCLUDES END\n\n";
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>这些变量在shader里面如果没有用到的话，会被引擎给优化掉。</p>
 
@@ -692,19 +805,17 @@ $$</p>
 
 <p>这个shader很简单，就是改变了一下rgb的值。0.2126，0.7152，0.0722这几个系数据说是根据人眼对rgb这三种基本颜色识别的强弱算出来的。</p>
 
-<h3>使用示例</h3>
+<h3 id="section">使用示例</h3>
 
-<p>在cocos2dx 3.x版本中sprite变灰的代码例子：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>auto sprite = Sprite::create("HelloWorld.png");
-</span><span class='line'>sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code></pre></td></tr></table></div></figure>
-
-
-<p>效果如下图所示：</p>
+<p>在cocos2dx 3.x版本中sprite变灰的代码例子：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class=""><span class="line">auto sprite = Sprite::create("HelloWorld.png");
+</span><span class="line">sprite-&gt;setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE));</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+效果如下图所示：</p>
 
 <p><img src="/images/cocos2dxshader1.png" alt="" /></p>
+
 </div>
   
   
@@ -742,61 +853,63 @@ $$</p>
   </header>
 
 
-  <div class="entry-content"><h2>概念</h2>
+  <div class="entry-content"><h2 id="section">概念</h2>
 
-<blockquote><p>渲染流水线的工作任务是由一个三维场景出发、生成（或者说渲染）一张二维图像。 &mdash;冯乐乐《unity3d shader 入门精要》</p></blockquote>
+<blockquote>
+  <p>渲染流水线的工作任务是由一个三维场景出发、生成（或者说渲染）一张二维图像。 –冯乐乐《unity3d shader 入门精要》  </p>
+</blockquote>
 
 <p>这是一个比较标准的说法，因为不一定是渲染到显示器上，也有可能把渲染结果保存到一个Texture中，就是我们常说的RenderTarget。</p>
 
-<h2>阶段</h2>
-
+<h2 id="section-1">阶段</h2>
 <p>渲染流水线可以分为三个阶段：应用阶段、几何阶段、光栅化阶段
 <img src="https://upload-images.jianshu.io/upload_images/2203079-2fc4e265479f03c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540/format/webp" alt="" /></p>
 
 <ul>
-<li><p>应用阶段（CPU处理）</p>
+  <li>
+    <p>应用阶段（CPU处理）</p>
 
-<p>  这一阶段开发者需要准备好场景数据，如摄相机位置、视锥体、模型和光源等，接着，还需要做粗粒度的剔除工作（把看不见的物体剔除）
+    <p>这一阶段开发者需要准备好场景数据，如摄相机位置、视锥体、模型和光源等，接着，还需要做粗粒度的剔除工作（把看不见的物体剔除）
   最后，需要设置好每个模型的渲染状态（使用的材质、使用的纹理、使用的Shader等）
-  这一阶段最重要的输出是渲染所需的几何信息，即渲染图元（rendering primitives），渲染图元可以是点、线、三角面等。</p></li>
+  这一阶段最重要的输出是渲染所需的几何信息，即渲染图元（rendering primitives），渲染图元可以是点、线、三角面等。  </p>
+  </li>
 </ul>
-
 
 <p><img src="/images/render_flow_1.png" alt="" /></p>
 
 <p><img src="/images/render_flow_2.png" alt="" /></p>
 
 <ul>
-<li><p>几何阶段（GPU处理）</p>
+  <li>
+    <p>几何阶段（GPU处理）</p>
 
-<p>  几何阶段主要用于处理所有和我们绘制的几何相关的事情。几何阶段负责和每个渲染图元打交道，进行逐顶点、逐多边形的操作。这个阶段可以进一步分成更小的流水线阶段。
+    <p>几何阶段主要用于处理所有和我们绘制的几何相关的事情。几何阶段负责和每个渲染图元打交道，进行逐顶点、逐多边形的操作。这个阶段可以进一步分成更小的流水线阶段。
   几何阶段的一个重要任务就是把顶点坐标变换到屏幕空间中，再交给光栅器进行处理。
-  总结：输入的渲染图元->屏幕空间的二维顶点坐标、每个顶点对应深度、着色等信息</p></li>
+  总结：输入的渲染图元-&gt;屏幕空间的二维顶点坐标、每个顶点对应深度、着色等信息</p>
+  </li>
 </ul>
-
 
 <p><img src="/images/render_flow_4.png" alt="" /></p>
 
 <p><img src="/images/render_flow_3.png" alt="" /></p>
 
-<p><strong>注意，这里是裁剪(clipping)，CPU里面有做剔除(culling)  </strong></p>
+<p>**注意，这里是裁剪(clipping)，CPU里面有做剔除(culling)  **  </p>
 
 <ul>
-<li><p>光栅化阶段（GPU处理）</p>
+  <li>
+    <p>光栅化阶段（GPU处理）</p>
 
-<p>  将会使用上一个阶段传递的数据来产生屏幕上的像素，并渲染出最终的图像。主要任务是决定每个渲染图元中的哪些像素应该被绘制在屏幕上。</p></li>
+    <p>将会使用上一个阶段传递的数据来产生屏幕上的像素，并渲染出最终的图像。主要任务是决定每个渲染图元中的哪些像素应该被绘制在屏幕上。  </p>
+  </li>
 </ul>
 
-
-<h2>总结</h2>
-
-<h3>1.OpenGL和DirectX</h3>
+<h2 id="section-2">总结</h2>
+<p>### 1.OpenGL和DirectX</p>
 
 <p>开发者直接访问GPU是一件非常麻烦的事情，可能需要与各种寄存器、显存打交道，而图像编程接口在这些硬件的基础上实现了一层抽象。</p>
 
-<p>而OpenGL和DirectX就是这些图像应用编程接口，他们之间江湖恩怨，可以去看<a href="https://link.jianshu.com?t=http://blog.csdn.net/poem_qianmo/article/details/7522960">这篇文章</a>。这些接口架起了上层应用程序与底层GPU的沟通桥梁。上层应用程序向这些接口渲染命令，而这些接口会依次向显示驱动发送渲染命令，而显卡驱动会把这些命令翻译成GPU能听懂的语言来让他们进行工作。</p>
-
-<h3>2.HLSL、GLSL和CG</h3>
+<p>而OpenGL和DirectX就是这些图像应用编程接口，他们之间江湖恩怨，可以去看<a href="https://link.jianshu.com?t=http://blog.csdn.net/poem_qianmo/article/details/7522960">这篇文章</a>。这些接口架起了上层应用程序与底层GPU的沟通桥梁。上层应用程序向这些接口渲染命令，而这些接口会依次向显示驱动发送渲染命令，而显卡驱动会把这些命令翻译成GPU能听懂的语言来让他们进行工作。<br />
+### 2.HLSL、GLSL和CG</p>
 
 <p>这三个指的都是着色器的编程语言。</p>
 
@@ -804,21 +917,21 @@ $$</p>
 
 <p>GLSL：OpenGL Shading Language，OpenGL的着色器语言，优点在于其跨平台性，可以在Windows、Mac、Linux甚至移动平台使用，这种跨平台性是由于OpenGL没有提供着色器编译器，而是由显卡驱动来完成着色器的编译工作的。即只要显示驱动支持对GLSL的编译它就可以运行。</p>
 
-<p>CG：C for Graphics，NVIDIA的着色器语言，实现了真正意义上的跨平台，它会根据平台不同，编译成相应的中间语言。</p>
+<p>CG：C for Graphics，NVIDIA的着色器语言，实现了真正意义上的跨平台，它会根据平台不同，编译成相应的中间语言。  </p>
 
-<h3>3.Draw Call</h3>
+<h3 id="draw-call">3.Draw Call</h3>
 
 <p>Draw Call本身的意义很简单，就是CPU调用图像编程接口。</p>
 
-<h4>1.CPU和GPU是如何实现并行工作的？</h4>
+<h4 id="cpugpu">1.CPU和GPU是如何实现并行工作的？</h4>
 
 <p>主要的解决方案是<strong>命令缓冲区</strong>，命令缓冲区包含了一个命令队列，由CPU向其中添加命令，而由GPU从中读取命令，添加和读取的过程是独立的。这样使得CPU和GPU可以相互独立工作。当CPU需要渲染对象时，则向命令缓冲区中添加命令，而当GPU完成上一次渲染任务后，它就可以从命令队列中取出一个命令并执行它。</p>
 
-<h4>2.为什么Draw Call多了会影响帧率？</h4>
+<h4 id="draw-call-1">2.为什么Draw Call多了会影响帧率？</h4>
 
 <p>在每次调用Draw Call之间，CPU需要向GPU发送很多内容，包括数据、状态和命令。CPU需要完成很多工作，例如检查渲染状态等。而一旦CPU完成了这些准备工作，GPU就可以开始本次的渲染。GPU渲染的速度是比较CPU提交指令的速度要快很多的。所以性能的瓶颈会出现在CPU身上，如果Draw Call的数量太多，CPU就会把大量的时间花费在提交Draw Call上，造成CPU过载。</p>
 
-<h4>3.如何减少Draw Call？</h4>
+<h4 id="draw-call-2">3.如何减少Draw Call？</h4>
 
 <p>主要的解决方案是<strong>批处理（Batch）</strong>，把众多小的合并Draw Call合并成一个Draw Call，当然不是所有情况都能合并的。我们可以对网格进行合并，但是合并的过程是比较消耗时间的，因此批处理技术更适合于静态的网格。</p>
 
@@ -828,9 +941,10 @@ $$</p>
 
 <p>避免使用过多的材质，因为相同的材质会方便我们进行合并</p>
 
-<h4>4.什么是固定函数的流水线？</h4>
+<h4 id="section-3">4.什么是固定函数的流水线？</h4>
 
 <p>简称固定管线，通常是指在旧GPU上实现的渲染流水线。开发者没有对流水线完全控制权，只有一些配置操作，配置操作只有开和关</p>
+
 </div>
   
   
@@ -871,23 +985,20 @@ $$</p>
   <div class="entry-content"><p><img src="https://img-blog.csdn.net/20180507200340663?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppemhpZGV4aWFvbWluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="" /></p>
 
 <hr />
-
-<blockquote><p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p></blockquote>
-
-<hr />
-
-<p>一句话总结，用于在线性空间运算出非线性空间中的插值。</p>
+<blockquote>
+  <p>做图像处理的同学都听说过伽马矫正（Gamma Correction），但是比较少有能说的清楚，网上相关片段解释也晦涩难懂，在这里做一个整理</p>
+</blockquote>
 
 <hr />
-
-<p>相关文章：</p>
+<p>一句话总结，用于在线性空间运算出非线性空间中的插值。
+* * *
+相关文章：   </p>
 
 <ul>
-<li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a></li>
-<li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a></li>
-<li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a></li>
+  <li><a href="http://www.klayge.org/2011/02/26/gamma%E7%9A%84%E4%BC%A0%E8%AF%B4/">龚大的Gamma传说</a>  </li>
+  <li><a href="https://www.cnblogs.com/murongxiaopifu/p/9001314.html">聊聊Unity的Gamma校正以及线性工作流</a>  </li>
+  <li><a href="https://blog.csdn.net/candycat1992/article/details/46228771">以及乐乐的《 我理解的伽马校正（Gamma Correction）》</a>  </li>
 </ul>
-
 </div>
   
   
@@ -927,37 +1038,38 @@ $$</p>
 
   <div class="entry-content"><hr />
 
-<h2>我们要做一个牛逼的产品！</h2>
+<h2 id="section">我们要做一个牛逼的产品！</h2>
 
 <p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
 
-<h3>数据库集群解决什么问题</h3>
+<h3 id="section-1">数据库集群解决什么问题</h3>
 
-<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+<blockquote>
+  <p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。  </p>
+</blockquote>
 
-<h3>分布式数据库解决什么问题</h3>
+<h3 id="section-2">分布式数据库解决什么问题</h3>
 
-<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+<blockquote>
+  <p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。  </p>
+</blockquote>
 
 <hr />
-
 <p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并不适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
 
-<h2>简单了解一下mnesia的分布式</h2>
+<h2 id="mnesia">简单了解一下mnesia的分布式</h2>
 
 <ul>
-<li>适用范围：<br/>
+  <li>适用范围：<br />
 较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
-<li>优势：<br/>
+  <li>优势：<br />
 erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
-<li>问题：<br/>
-mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+  <li>问题：<br />
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br />
 n(n-1)/2，一旦数据量大，节点多，IO通信压力巨大。</li>
 </ul>
 
-
-<h3>实例：</h3>
-
+<h3 id="section-3">实例：</h3>
 <pre><code>-module(db_sync).
 
 -export([create_schema/0, create_table/0, i/0]).
@@ -1005,84 +1117,51 @@ read_account(ID) -&gt;
             -&gt;
             mnesia:read({account,
                 ID})
-            end).
-</code></pre>
-
-<p>xterm1中</p>
-
-<pre><code>erl -pa ebin -sname two -mnesia dir "two"
-</code></pre>
-
-<p>xterm2中</p>
-
-<pre><code>erl -pa
+            end). xterm1中  
+erl -pa ebin -sname two -mnesia dir "two" xterm2中
+erl -pa
 ebin -sname one -mnesia dir "one"
-db_sync:create_schema().
+db_sync:create_schema(). xterm1,xterm2中分别：
+mnesia:start(). 任意节点创建表:
+db_sync:create_table(). one节点插入数据:
+db_sync:add_account(2, "zhizhen", 18588748984). two节点查找数据:
+db_sync:read_account(2). 这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。
 </code></pre>
 
-<p>xterm1,xterm2中分别：</p>
-
-<pre><code>mnesia:start().
-</code></pre>
-
-<p>任意节点创建表:</p>
-
-<pre><code>db_sync:create_table().
-</code></pre>
-
-<p>one节点插入数据:</p>
-
-<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
-</code></pre>
-
-<p>two节点查找数据:</p>
-
-<pre><code>db_sync:read_account(2).
-</code></pre>
-
-<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
-
-<h2>那么百万级DAU的数据库怎么设计呢？</h2>
-
-<p>  答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
+<h2 id="dau">那么百万级DAU的数据库怎么设计呢？</h2>
+<p>答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
 
 <ul>
-<li>适用范围：
+  <li>适用范围：
 百万级甚至千万级大数据情况通用解决方案
 表的查询方式单一简单，最好是有唯一主键查询
 不做联表事务查询</li>
-<li>问题：
+  <li>问题：
 如果有事务的话，涉及到分布式事务，是非常复杂的</li>
 </ul>
 
+<h3 id="hash">简单的水平切分，hash</h3>
+<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。
+    simple_hash(Item) -&gt;
+        case Item rem 3 of
+            0 -&gt;
+                %insert data into user_table (ip:127.0.0.1)
+            1 -&gt;
+                %insert data into user_table (ip:127.0.0.2)
+            2 -&gt;
+                %insert data into user_table (ip:127.0.0.3)
+        end.</p>
 
-<h3>简单的水平切分，hash</h3>
-
-<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。</p>
-
-<pre><code>simple_hash(Item) -&gt;
-    case Item rem 3 of
-        0 -&gt;
-            %insert data into user_table (ip:127.0.0.1)
-        1 -&gt;
-            %insert data into user_table (ip:127.0.0.2)
-        2 -&gt;
-            %insert data into user_table (ip:127.0.0.3)
-    end.
-</code></pre>
-
-<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br/>
-这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br/>
+<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br />
+这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br />
 那有没有一种更好的办法，降低增加分片的成本呢？</p>
 
-<h3>一致性hash</h3>
+<h3 id="hash-1">一致性hash</h3>
+<p>借用David Wheeler一句名言:<br />
+&gt;All problems in computer science can be solved by another level of indirection.  </p>
 
-<p>借用David Wheeler一句名言:</p>
-
-<blockquote><p>All problems in computer science can be solved by another level of indirection.</p></blockquote>
-
-<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br/>
-有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：</p>
+<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br />
+有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：  </p>
 
 <pre><code>-module(hash).
 -compile(export_all).
@@ -1141,10 +1220,10 @@ simple_hash(Item) -&gt;
 
 <p>这样的话，增加2个sharding之后，只需要移动2千万条数据到新的sharding上即可。</p>
 
-<h2>参考文章</h2>
+<h2 id="section-4">参考文章</h2>
 
 <ul>
-<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+  <li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a> </li>
 </ul>
 
 </div>
@@ -1185,16 +1264,15 @@ simple_hash(Item) -&gt;
 
 
   <div class="entry-content"><hr />
-
-<blockquote><p>There are some birds that you can&rsquo;t lock,their every feather on their body is
-sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
+<blockquote>
+  <p>There are some birds that you can’t lock,their every feather on their body is
+sparkling with freedom  –《The Shawshank Redemption》</p>
+</blockquote>
 
 <hr />
-
 <p><img src="/images/2016/1.pic_hd.jpg" alt="" /></p>
 
-<p>来自《创游记》。</p>
-
+<p>来自《创游记》。
 </div>
   
   
@@ -1237,16 +1315,15 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
 
 
   <div class="entry-content"><hr />
-
-<blockquote><p>The farther backward you can look, the farther forward you will see.<br/>
-——Winston Churchill</p></blockquote>
+<blockquote>
+  <p>The farther backward you can look, the farther forward you will see.<br />
+——Winston Churchill    </p>
+</blockquote>
 
 <hr />
-
-<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br/>
+<p>不知道该从哪写起，真的忘了从哪开始，但是记得清楚，自那之后，一切都变了<br />
 某一天，拿着零花钱去买冰棒，要是当初，把钱买了冰棒。。。。。。
-<img src="/images/blog_image/games/konglongkuaida.png" alt="" /></p>
-
+<img src="/images/blog_image/games/konglongkuaida.png" alt="" />
 </div>
   
   
@@ -1288,11 +1365,10 @@ sparkling with freedom  &mdash;《The Shawshank Redemption》</p></blockquote>
   </header>
 
 
-  <div class="entry-content"><h2>历史</h2>
+  <div class="entry-content"><h2 id="section">历史</h2>
+<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。  </p>
 
-<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。</p>
-
-<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。</p>
+<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。  </p>
 
 </div>
   

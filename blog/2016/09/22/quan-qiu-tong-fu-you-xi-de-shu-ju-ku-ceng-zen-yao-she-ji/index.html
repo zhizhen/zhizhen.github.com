@@ -29,6 +29,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -107,37 +123,38 @@
 
 <div class="entry-content"><hr />
 
-<h2>我们要做一个牛逼的产品！</h2>
+<h2 id="section">我们要做一个牛逼的产品！</h2>
 
 <p>老大最近说公司要做一款百万级DAU的产品，考虑服务器端承对数据库的读写压力，需要一个数据库的优化方案。有一同事说准备用mnesia分布式，然后问我们会不会有性能问题，仔细思考了一下，感觉这位同学并没有找准解决方向。</p>
 
-<h3>数据库集群解决什么问题</h3>
+<h3 id="section-1">数据库集群解决什么问题</h3>
 
-<blockquote><p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。</p></blockquote>
+<blockquote>
+  <p>并行数据库系统的目标是充分发挥并行计算机的优势，利用系统中的各个处理机结点并行完成数据库任务，提高数据库系统的整体性能。  </p>
+</blockquote>
 
-<h3>分布式数据库解决什么问题</h3>
+<h3 id="section-2">分布式数据库解决什么问题</h3>
 
-<blockquote><p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。</p></blockquote>
+<blockquote>
+  <p>分布式数据库系统主要目的在于实现场地自治和数据的全局透明共享，而不要求利用网络中的各个结点来提高系统处理性能。  </p>
+</blockquote>
 
 <hr />
-
 <p>mnesia的分布式是提供了一个分布式数据库的解决方案，然而他并不适用于解决百万级用户量数据库读写的性能问题。所以说，那位同学没有找到解决问题的方向。</p>
 
-<h2>简单了解一下mnesia的分布式</h2>
+<h2 id="mnesia">简单了解一下mnesia的分布式</h2>
 
 <ul>
-<li>适用范围：<br/>
+  <li>适用范围：<br />
 较低负载情况下，需要全局透明的数据，比如全局排行榜之类的数据。</li>
-<li>优势：<br/>
+  <li>优势：<br />
 erlang原生支持，使用方便，开发速度较快，问题容易排查。</li>
-<li>问题：<br/>
-mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br/>
+  <li>问题：<br />
+mnesia分布式是一个全联通网络，节点间通信成本与节点关系是:<br />
 n(n-1)/2，一旦数据量大，节点多，IO通信压力巨大。</li>
 </ul>
 
-
-<h3>实例：</h3>
-
+<h3 id="section-3">实例：</h3>
 <pre><code>-module(db_sync).
 
 -export([create_schema/0, create_table/0, i/0]).
@@ -185,84 +202,51 @@ read_account(ID) -&gt;
             -&gt;
             mnesia:read({account,
                 ID})
-            end).
-</code></pre>
-
-<p>xterm1中</p>
-
-<pre><code>erl -pa ebin -sname two -mnesia dir "two"
-</code></pre>
-
-<p>xterm2中</p>
-
-<pre><code>erl -pa
+            end). xterm1中  
+erl -pa ebin -sname two -mnesia dir "two" xterm2中
+erl -pa
 ebin -sname one -mnesia dir "one"
-db_sync:create_schema().
+db_sync:create_schema(). xterm1,xterm2中分别：
+mnesia:start(). 任意节点创建表:
+db_sync:create_table(). one节点插入数据:
+db_sync:add_account(2, "zhizhen", 18588748984). two节点查找数据:
+db_sync:read_account(2). 这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。
 </code></pre>
 
-<p>xterm1,xterm2中分别：</p>
-
-<pre><code>mnesia:start().
-</code></pre>
-
-<p>任意节点创建表:</p>
-
-<pre><code>db_sync:create_table().
-</code></pre>
-
-<p>one节点插入数据:</p>
-
-<pre><code>db_sync:add_account(2, "zhizhen", 18588748984).
-</code></pre>
-
-<p>two节点查找数据:</p>
-
-<pre><code>db_sync:read_account(2).
-</code></pre>
-
-<p>这就是mnesia的分布式全联通节点，它已经在底层把数据同步了。在应用层面，就比较简单了。所以说，它解决的，是一个数据节点共享的问题。mnesia分布式甚至对节点间底层通信带宽要求很高，分布式节点最好处于同一机房内。</p>
-
-<h2>那么百万级DAU的数据库怎么设计呢？</h2>
-
-<p>  答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
+<h2 id="dau">那么百万级DAU的数据库怎么设计呢？</h2>
+<p>答案是水平分片(sharding) + 垂直分片,我们今天重点讲水平分片。</p>
 
 <ul>
-<li>适用范围：
+  <li>适用范围：
 百万级甚至千万级大数据情况通用解决方案
 表的查询方式单一简单，最好是有唯一主键查询
 不做联表事务查询</li>
-<li>问题：
+  <li>问题：
 如果有事务的话，涉及到分布式事务，是非常复杂的</li>
 </ul>
 
+<h3 id="hash">简单的水平切分，hash</h3>
+<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。
+    simple_hash(Item) -&gt;
+        case Item rem 3 of
+            0 -&gt;
+                %insert data into user_table (ip:127.0.0.1)
+            1 -&gt;
+                %insert data into user_table (ip:127.0.0.2)
+            2 -&gt;
+                %insert data into user_table (ip:127.0.0.3)
+        end.</p>
 
-<h3>简单的水平切分，hash</h3>
-
-<p>我们一般将大表的唯一键值作为hash的key,比如我们如果准备拆分一张3千万数据的表，做完hash之后，分插入3个分片(sharding)中。</p>
-
-<pre><code>simple_hash(Item) -&gt;
-    case Item rem 3 of
-        0 -&gt;
-            %insert data into user_table (ip:127.0.0.1)
-        1 -&gt;
-            %insert data into user_table (ip:127.0.0.2)
-        2 -&gt;
-            %insert data into user_table (ip:127.0.0.3)
-    end.
-</code></pre>
-
-<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br/>
-这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br/>
+<p>这时候，随着业务的增长，如果数据涨到5千万了，慢慢地发现3个sharding已经不能满足我们的需求了，这个时候，如果打算再增加两个sharding，我们需要怎么做呢？<br />
+这个时候我们需要根据新的hash规则把数据重新导入到5个sharding中，几乎5千万行数据都要移动一遍。假设mysql美秒钟的插入速度快达2000/s，即使这样的速度，也要让服务暂停8个小时左右。这个时候DBA肯定会跟你急的，因为他需要通宵导数据。<br />
 那有没有一种更好的办法，降低增加分片的成本呢？</p>
 
-<h3>一致性hash</h3>
+<h3 id="hash-1">一致性hash</h3>
+<p>借用David Wheeler一句名言:<br />
+&gt;All problems in computer science can be solved by another level of indirection.  </p>
 
-<p>借用David Wheeler一句名言:</p>
-
-<blockquote><p>All problems in computer science can be solved by another level of indirection.</p></blockquote>
-
-<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br/>
-有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：</p>
+<p>是的，任何计算机相关的问题，都可以通过增加一层来解决。一致性hash就是实现了这个虚拟层。erlang一个一致性hash的开源实现：<a href="https://github.com/sile/hash_ring">hash_ring</a> <br />
+有了hash_ring 之后，增加2个sharding就比较简单了，下面部分是伪代码：  </p>
 
 <pre><code>-module(hash).
 -compile(export_all).
@@ -321,10 +305,10 @@ simple_hash(Item) -&gt;
 
 <p>这样的话，增加2个sharding之后，只需要移动2千万条数据到新的sharding上即可。</p>
 
-<h2>参考文章</h2>
+<h2 id="section-4">参考文章</h2>
 
 <ul>
-<li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a></li>
+  <li><a href="http://www.cnblogs.com/xiaoMzjm/p/5223799.html">浅谈web网站架构演变过程</a> </li>
 </ul>
 
 </div>

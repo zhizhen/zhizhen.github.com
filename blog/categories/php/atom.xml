@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | 植臻]]></title>
   <link href="http://zhizhen.github.io/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T09:47:00+08:00</updated>
+  <updated>2019-05-15T10:20:16+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -18,19 +18,18 @@
     <link href="http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind/"/>
     <updated>2013-09-24T12:52:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/09/24/phpdelaystaticbind</id>
-    <content type="html"><![CDATA[<p>先看这段代码：</p>
+    <content type="html"><![CDATA[<p>先看这段代码：
+    &lt;?php
+    class A{
+        public static funciton create(){
+            return new static();
+        }
+        public static function createself(){
+            return new self();
+        }
+    }</p>
 
-<pre><code>&lt;?php
-class A{
-    public static funciton create(){
-        return new static();
-    }
-    public static function createself(){
-        return new self();
-    }
-}
-
-class B extends A{
+<pre><code>class B extends A{
 
 }
 
@@ -42,13 +41,10 @@ var_dump( C::createself() );
 ?&gt;
 </code></pre>
 
-<p>得到结果如下</p>
-
-<pre><code>object(B)#1 (0) { } 
-object(A)#1 (0) { } 
-</code></pre>
-
-<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+<p>得到结果如下
+    object(B)#1 (0) { } 
+    object(A)#1 (0) { } 
+原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
 static与self的区别就是它的执行环境是调用它的对象。</p>
 ]]></content>
   </entry>

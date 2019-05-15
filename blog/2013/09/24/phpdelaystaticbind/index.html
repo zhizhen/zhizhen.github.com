@@ -9,9 +9,7 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="先看这段代码： &lt;?php
-class A{ public static funciton create(){ return new static(); } public static function createself(){ return new self(); }
-} class B &hellip;">
+  <meta name="description" content="先看这段代码： &lt;?php class A{ public static funciton create(){ return new static(); } public static function createself(){ return new self(); } } class B &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +29,22 @@ class A{ public static funciton create(){ return new static(); } public static f
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -107,19 +121,18 @@ class A{ public static funciton create(){ return new static(); } public static f
   </header>
 
 
-<div class="entry-content"><p>先看这段代码：</p>
+<div class="entry-content"><p>先看这段代码：
+    &lt;?php
+    class A{
+        public static funciton create(){
+            return new static();
+        }
+        public static function createself(){
+            return new self();
+        }
+    }</p>
 
-<pre><code>&lt;?php
-class A{
-    public static funciton create(){
-        return new static();
-    }
-    public static function createself(){
-        return new self();
-    }
-}
-
-class B extends A{
+<pre><code>class B extends A{
 
 }
 
@@ -131,13 +144,10 @@ var_dump( C::createself() );
 ?&gt;
 </code></pre>
 
-<p>得到结果如下</p>
-
-<pre><code>object(B)#1 (0) { } 
-object(A)#1 (0) { } 
-</code></pre>
-
-<p>原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
+<p>得到结果如下
+    object(B)#1 (0) { } 
+    object(A)#1 (0) { } 
+原因是self关键词的执行环境是定义self的类，而不是调用它的对象，
 static与self的区别就是它的执行环境是调用它的对象。</p>
 </div>
 

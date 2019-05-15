@@ -13,8 +13,7 @@
 Makefile
 下面就来看看Makefile的作用
 假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:
-main.c /* main.c */
-#include "test1 &hellip;">
+main.c /* main.c */ #include “test1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -34,6 +33,22 @@ main.c /* main.c */
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -110,78 +125,52 @@ main.c /* main.c */
   </header>
 
 
-<div class="entry-content"><p>关于Makefile的介绍，不多说，详情见百度百科：<br/>
-<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br/>
+<div class="entry-content"><p>关于Makefile的介绍，不多说，详情见百度百科：<br />
+<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br />
 下面就来看看Makefile的作用
-假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br/>
-main.c</p>
+假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br />
+main.c
+    /* main.c */
+    #include “test1.h”
+    #include “test2.h”</p>
 
-<pre><code>/* main.c */
-#include "test1.h"
-#include "test2.h"
-
-int main(int argc, char **argv)
+<pre><code>int main(int argc, char **argv)
 {
     test1_print("hello ");
     test2_print("world !");
-}
-</code></pre>
-
-<p>test1.h</p>
-
-<pre><code>/* test1.h */
+} test1.h
+/* test1.h */
 #ifndef _TEST_1_H
 #define _TEST_1_H
 
 void test1_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test1.c</p>
-
-<pre><code>/* test1.c */
+#endif test1.c
+/* test1.c */
 #include "test1.h"
 
 void test1_print(char *print_str)
 {
     printf("This is test1 print %s \n", print_str);
-}
-</code></pre>
-
-<p>test2.h</p>
-
-<pre><code>/* test2.h */
+} test2.h
+/* test2.h */
 #ifndef _TEST_2_H
 
 void test2_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test2.c</p>
-
-<pre><code>/* test2.c */
+#endif test2.c
+/* test2.c */
 #include "test2.h"
 
 void test2_print(char *print_str)
 {
     printf("This is test2 print %s \n", print_str);
-}
-</code></pre>
-
-<p>在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main</p>
-
-<pre><code>gcc -c main.c   # 生成main.o 目标代码
+} 在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main
+gcc -c main.c   # 生成main.o 目标代码
 gcc -c test1.c  # 生成test1.o 目标代码
 gcc -c test2.c  # 生成test2.o 目标代码
 gcc -o main main.o test1.o test2.o  # 生成名为main的可执行文件
 
-./main  # 执行就能看到输出结果了
-</code></pre>
-
-<p>而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果：
-Makefile</p>
-
-<pre><code>main:main.o test1.o test2.o
+./main  # 执行就能看到输出结果了 而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果： Makefile
+main:main.o test1.o test2.o
 gcc -o main main.o test1.o test2.o
 
 main.o:main.c test1.h test2.h
@@ -191,29 +180,13 @@ test1.o:test1.c test1.h
 gcc -c test1.c
 
 test2.o:test2.c test2.h
-gcc -c test2.c
-</code></pre>
-
-<p>有了这个Makefile之后，我们只需要在目录下执行</p>
-
-<pre><code>make
-</code></pre>
-
-<p>就生成了名为main的可执行文件</p>
-
-<pre><code>./main
-</code></pre>
-
-<p>Makefile有三个非常有用的变量，$@; $^; $&lt; ：</p>
-
-<pre><code>$@ ：目标文件
+gcc -c test2.c 有了这个Makefile之后，我们只需要在目录下执行
+make 就生成了名为main的可执行文件
+./main Makefile有三个非常有用的变量，$@; $^; $&lt; ：
+$@ ：目标文件
 $^ ：所有的依赖文件
-$&lt; ：第一个依赖文件
-</code></pre>
-
-<p>于是简化后的Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+$&lt; ：第一个依赖文件 于是简化后的Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 main.o:main.c test1.h test2.h
@@ -223,26 +196,15 @@ test1.o:test1.c test1.h
 gcc -c $&lt;
 
 test2.o:test2.c test2.h
-gcc -c $&lt;
-</code></pre>
-
-<p>经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：</p>
-
-<pre><code>..c.o:
-gcc -c $&lt;
-</code></pre>
-
-<p>这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c
-于是Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+gcc -c $&lt; 经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：
+..c.o:
+gcc -c $&lt; 这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c 于是Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 ..c.o:
-gcc -c $&lt;
+gcc -c $&lt; 然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档
 </code></pre>
-
-<p>然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档</p>
 </div>
 
 

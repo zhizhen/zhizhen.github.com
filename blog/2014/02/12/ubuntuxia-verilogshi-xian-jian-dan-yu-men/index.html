@@ -9,7 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="第一步 搭建环境 verilog有两个比较常用的编译器：
+  <meta name="description" content="### 第一步 搭建环境
+verilog有两个比较常用的编译器：
 1. Icarus Verilog
 2. VeriWell Verilog Simulator ubuntu源里面默认的是Icarus Verilog，安装编译器： sudo apt-get install verilog &hellip;">
   
@@ -31,6 +32,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -108,45 +125,26 @@
 
 
 <div class="entry-content"><hr />
-
-<h3>第一步 搭建环境</h3>
-
-<p>verilog有两个比较常用的编译器：<br/>
-1. Icarus Verilog<br/>
-2. VeriWell Verilog Simulator</p>
-
+<p>### 第一步 搭建环境<br />
+verilog有两个比较常用的编译器：<br />
+1. Icarus Verilog<br />
+2. VeriWell Verilog Simulator<br />
 <!--more-->
+ubuntu源里面默认的是Icarus Verilog，安装编译器：  </p>
 
+<pre><code>sudo apt-get install verilog   然后再安装模拟器，用来查看波形的软件：  
 
-<p>ubuntu源里面默认的是Icarus Verilog，安装编译器：</p>
+sudo apt-get install gtkwave   这样就ok了 ### 第二步 写一个简单的与门   and.v
 
-<pre><code>sudo apt-get install verilog  
-</code></pre>
-
-<p>然后再安装模拟器，用来查看波形的软件：</p>
-
-<pre><code>sudo apt-get install gtkwave  
-</code></pre>
-
-<p>这样就ok了</p>
-
-<h3>第二步 写一个简单的与门</h3>
-
-<p>and.v</p>
-
-<pre><code>module add(a, b, c);
+module add(a, b, c);
 input a;
 input b;
 output c;
 
 assign c = a &amp; b;
-endmodule
-</code></pre>
+endmodule ok了，再写一个testbench，用来测试刚才的与门是否正常工作:   test_and.v
 
-<p>ok了，再写一个testbench，用来测试刚才的与门是否正常工作:<br/>
-test_and.v</p>
-
-<pre><code>`timescale 1ns/1ns
+`timescale 1ns/1ns
 module test_and;
 reg a;
 reg b;
@@ -172,30 +170,14 @@ end
 
 initial
     $monitor("a = %d, ", a, "b = %d, ", b, "c = %d\n", c);
-endmodule
+endmodule ### 第三步 编译运行和查看波形 在命令行下执行：
+
+iverilog -o my_and and.v test_and.v 执行完后会生成一个名为my_and 的文件，./my_and就能运行，如图：   ![](/images/verilog/verilog_and_output.jpg)   这个命令跟gcc很像，当然后期你也可以用MakeFile来写编译依赖关系。
+
+vvp -n my_and -lxt2 之后就会生成一个test.lxt的文件
+
+gtkwave test.lxt 然后选择t，同时选中a[0], b[0], c[0], 点击Insert, 就能看到波形了：结果如图:   ![](/images/verilog/verilog_simulator.jpg)
 </code></pre>
-
-<h3>第三步 编译运行和查看波形</h3>
-
-<p>在命令行下执行：</p>
-
-<pre><code>iverilog -o my_and and.v test_and.v
-</code></pre>
-
-<p>执行完后会生成一个名为my_and 的文件，./my_and就能运行，如图：<br/>
-<img src="/images/verilog/verilog_and_output.jpg" alt="" /><br/>
-这个命令跟gcc很像，当然后期你也可以用MakeFile来写编译依赖关系。</p>
-
-<pre><code>vvp -n my_and -lxt2
-</code></pre>
-
-<p>之后就会生成一个test.lxt的文件</p>
-
-<pre><code>gtkwave test.lxt
-</code></pre>
-
-<p>然后选择t，同时选中a[0], b[0], c[0], 点击Insert, 就能看到波形了：结果如图:<br/>
-<img src="/images/verilog/verilog_simulator.jpg" alt="" /></p>
 </div>
 
 

@@ -9,9 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="ubuntu上面是默认装了gdb的，输入 gdb -v 查看gdb的版本信息 zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 &hellip;">
+  <meta name="description" content="ubuntu上面是默认装了gdb的，输入 gdb -v
+查看gdb的版本信息 zhang@note:~/test_make$ gdb -v GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02 Copyright (C) 2012 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +30,22 @@ Copyright (C) 2012 &hellip;">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -107,160 +122,126 @@ Copyright (C) 2012 &hellip;">
   </header>
 
 
-<div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入</p>
+<div class="entry-content"><p>ubuntu上面是默认装了gdb的，输入
+    gdb -v
+查看gdb的版本信息
+    zhang@note:~/test_make$ gdb -v
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>.
+上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：
+    CFLAGS = -g
+    main:main.o test1.o test2.o
+	    gcc -o $@ $^
+    ..c.o:
+	    gcc $(CFLAGS) -c $&lt; 
+然后先删了老的main* 和*.o文件
+    zhang@note:~/test_make$ rm main
+    zhang@note:~/test_make$ rm *.o
+好了，重新编译
+    zhang@note:~/test_make$ make
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$
+编译完后运行gdb
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb)
+输入命令
+    (gdb) list
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+    (gdb) 
+    Line number 9 out of range; main.c has 8 lines.
+    (gdb)
+注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：
+    (gdb) list
+    No symbol table is loaded.  Use the “file” command.
+    (gdb)
+如果只想列出2-9行之间的代码
+    (gdb) list 2,9
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+如果只想列出某个函数
+    (gdb) list test1_print 
+    1   #include “stdio.h”
+    2   #include “test1.h”
+    3 <br />
+    4   void test1_print(char *print_str)
+    5   {
+    6       printf(“This is test1 print %s \n”, print_str);
+    7   }
+    (gdb)
+为了能够下断点查看变量值，我们改下main函数
+    void main(int argc, char **argv)
+       {
+           char msg1[128] = “Hello “;
+           char msg2[128] = “World !”;
+           test1_print(msg1);
+           test2_print(msg2);
+       }
+然后
+    zhang@note:~/test_make$ make        #编译
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb) list                          #列出代码
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       char msg1[128] = “Hello “;
+    7       char msg2[128] = “World !”;
+    8       test1_print(msg1);
+    9       test2_print(msg2);
+    10  }
+    (gdb) break 7                       #在第7行的位置下断点
+    Breakpoint 1 at 0x804847c: file main.c, line 7.
+    (gdb) run main                      #执行调试
+    Starting program: /home/zhang/test_make/main main</p>
 
-<pre><code>gdb -v
-</code></pre>
-
-<p>查看gdb的版本信息</p>
-
-<pre><code>zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
-</code></pre>
-
-<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
-
-<pre><code>CFLAGS = -g
-main:main.o test1.o test2.o
-    gcc -o $@ $^
-..c.o:
-    gcc $(CFLAGS) -c $&lt; 
-</code></pre>
-
-<p>然后先删了老的main<em> 和</em>.o文件</p>
-
-<pre><code>zhang@note:~/test_make$ rm main
-zhang@note:~/test_make$ rm *.o
-</code></pre>
-
-<p>好了，重新编译</p>
-
-<pre><code>zhang@note:~/test_make$ make
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$
-</code></pre>
-
-<p>编译完后运行gdb</p>
-
-<pre><code>zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb)
-</code></pre>
-
-<p>输入命令</p>
-
-<pre><code>(gdb) list
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-(gdb) 
-Line number 9 out of range; main.c has 8 lines.
-(gdb)
-</code></pre>
-
-<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
-
-<pre><code>(gdb) list
-No symbol table is loaded.  Use the "file" command.
-(gdb)
-</code></pre>
-
-<p>如果只想列出2-9行之间的代码</p>
-
-<pre><code>(gdb) list 2,9
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-</code></pre>
-
-<p>如果只想列出某个函数</p>
-
-<pre><code>(gdb) list test1_print 
-1   #include "stdio.h"
-2   #include "test1.h"
-3   
-4   void test1_print(char *print_str)
-5   {
-6       printf("This is test1 print %s \n", print_str);
-7   }
-(gdb)
-</code></pre>
-
-<p>为了能够下断点查看变量值，我们改下main函数</p>
-
-<pre><code>void main(int argc, char **argv)
-   {
-       char msg1[128] = "Hello ";
-       char msg2[128] = "World !";
-       test1_print(msg1);
-       test2_print(msg2);
-   }
-</code></pre>
-
-<p>然后</p>
-
-<pre><code>zhang@note:~/test_make$ make        #编译
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb) list                          #列出代码
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       char msg1[128] = "Hello ";
-7       char msg2[128] = "World !";
-8       test1_print(msg1);
-9       test2_print(msg2);
-10  }
-(gdb) break 7                       #在第7行的位置下断点
-Breakpoint 1 at 0x804847c: file main.c, line 7.
-(gdb) run main                      #执行调试
-Starting program: /home/zhang/test_make/main main
-
-Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
+<pre><code>Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
 7       char msg2[128] = "World !";
 (gdb) print msg1                    #查看断点处变量msg1的值
 $1 = "Hello ", '\000' &lt;repeats 121 times&gt;
@@ -269,13 +250,8 @@ Continuing.
 This is test1 print Hello  
 This is test2 print World ! 
 [Inferior 1 (process 3270) exited normally]
-(gdb)
-</code></pre>
-
-<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
-附上常用命令：</p>
-
-<pre><code>小结：常用的gdb命令
+(gdb) 看吧，这就是用gdb调试一个程序的完整过程，简单吧？:-) 附上常用命令：
+小结：常用的gdb命令
 backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
 breakpoint 在程序中设置一个断点
 cd 改变当前工作目录
@@ -307,6 +283,7 @@ up 上移栈帧，使另一函数成为当前函数
 watch 在程序中设置一个监测点（即数据断点）
 whatis 显示变量或函数类型 
 </code></pre>
+
 </div>
 
 

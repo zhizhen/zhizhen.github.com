@@ -9,7 +9,8 @@
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="历史 erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。 在Yariv &hellip;">
+  <meta name="description" content="历史
+erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。 在Yariv &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +30,22 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
 
   
   <script type="text/javascript">
@@ -105,34 +122,32 @@
   </header>
 
 
-<div class="entry-content"><h2>历史</h2>
+<div class="entry-content"><h2 id="section">历史</h2>
+<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。  </p>
 
-<p>erlang-mysql-driver 是Yariv Sadan 从Yxa这个数据库引擎的ejabberd这个分支里fork出来的一个项目，他(Yariv Sadan)把它做成了一个独立项目，并给他起了一个高大上的名字。之后便挂在Google Code 上。</p>
-
-<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。</p>
+<p>在Yariv Sadan去Facebook工作之前，他给加上了高级的prepared statements 和transactions 机制。并且修复了Yxa 版本之前落后的连接池问题。  </p>
 
 <!--more-->
 
-
-<p>在erlang-mysql-driver从ejabberd分支fork出来之后，Yxa跟ejabberd分支都有一些改动并没有合并到erlang-mysql-driver里来，不过很有可能这些也不重要。这些小修改对erlang-mysql-driver是否能达到最终目的来讲并不明显。</p>
+<p>在erlang-mysql-driver从ejabberd分支fork出来之后，Yxa跟ejabberd分支都有一些改动并没有合并到erlang-mysql-driver里来，不过很有可能这些也不重要。这些小修改对erlang-mysql-driver是否能达到最终目的来讲并不明显。  </p>
 
 <p>这几个fork发展到现在，似乎最终都在上层接口层变得非常复杂，mysql.erl,开始与mysql_conn.erl 高度耦合在一起。也许这也正是为什么这几个fork从来没有合并过了。</p>
 
-<p>erlang-mysql-driver 一直没被知晓，直到07年十月，写rebar项目的这个家伙Dave Smith,对他做了一些更新，并且放到了github上。现在它已经被很多开发者fork并且活跃在github上。</p>
+<p>erlang-mysql-driver 一直没被知晓，直到07年十月，写rebar项目的这个家伙Dave Smith,对他做了一些更新，并且放到了github上。现在它已经被很多开发者fork并且活跃在github上。 </p>
 
 <p>从Yariv原项目里面fork出来的许多并行分支里，有一个跟Dave（rebar）fork出来的没有关联，就是Nick Gerakines 的项目，我猜他应该是erlang-mysql-driver 这些forks里面技术最强的。Nick对它进行了大量的代码整理工作，尽管它很少被人知道，被fork也不多。并且到最后，这个项目因为更好的Emysql而终止。</p>
 
-<p>老古董了，呵呵<br/>
+<p>老古董了，呵呵<br />
 有兴趣的可以看看Emysql,在<a href="https://github.com/Eonblast/Emysql">Eonblast</a>这个分支里，有对这几个驱动的分析</p>
 
-<h2>模型</h2>
+<h2 id="section-1">模型</h2>
 
-<p>这是它的进程模型：<br/>
-<img src="/images/erlang-mysql-driver-model.png" alt="" /></p>
+<p>这是它的进程模型：<br />
+![](/images/erlang-mysql-driver-model.png “”)</p>
 
-<p>call process 是调用数据库进程，mysql_dispatcher是调度进程，mysql_conn 是真正的数据库连接进程，它们是standalone的。</p>
+<p>call process 是调用数据库进程，mysql_dispatcher是调度进程，mysql_conn 是真正的数据库连接进程，它们是standalone的。  </p>
 
-<p>在mysql_dispatcher进程里进行调度，mysql_dispatcher 进程中，维护了一份连接进程的调度信息，用gb_trees存储。</p>
+<p>在mysql_dispatcher进程里进行调度，mysql_dispatcher 进程中，维护了一份连接进程的调度信息，用gb_trees存储。  </p>
 
 <p>mysql_dispatcher只做一个调度，并不真正替call process 工作，所以对于call process的call请求，是noreply的，把请求者Pid分发给mysql_conn，他们得到数据库结果后，分别去reply call process进程。这便是整个erlang-mysql-driver的pool 模型。</p>
 </div>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c | 植臻]]></title>
   <link href="http://zhizhen.github.io/blog/categories/c/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T09:47:00+08:00</updated>
+  <updated>2019-05-15T10:20:16+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -19,30 +19,25 @@
     <updated>2013-12-26T09:57:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/12/26/yue-du-skynet</id>
     <content type="html"><![CDATA[<p>一直在关注云风大神的skynet，大神已经写了21篇关于skynet设计以及
-优化的博客了。<br/>
+优化的博客了。<br />
 云风关于skynet的介绍说了，skynet主要还是参照了erlang的
 服务器异步编程思想，鉴于做过erlang开发的缘故，我比较能理解他博客里面
-关于设计思想方面的说明。<br/>
+关于设计思想方面的说明。<br />
 不过c根基薄弱，加上也比较懒惰，一直没认真读代码，不过skynet主要部分
-代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。</p>
+代码并不多，代码跟设计一样飘逸，是深入学习c的好教材。
+<!--more--></p>
 
-<!--more-->
-
-
-<h3>skynet是什么</h3>
-
-<p>请看原作者博客<a href="http://blog.codingnow.com/2012/08/skynet.html">skynet开源</a><br/>
-<em>“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。<br/>
-现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”</em><br/>
-由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。</p>
-
-<hr />
-
-<p>下面来看关于skynet架构的说明：<br/>
-<em>“这个系统是单进程多线程模型。”</em> <br/>
-<em>“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。<br/>
-线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”</em><br/>
-skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：</p>
+<h3 id="skynet">skynet是什么</h3>
+<p>请看原作者博客<a href="http://blog.codingnow.com/2012/08/skynet.html">skynet开源</a><br />
+<em>“其实底层框架需要解决的基本问题是，把消息有序的，从一个点传递到另一个点。每个点是一个概念上的服务进程。这个进程可以有名字，也可以由系统分配出唯一名字。本质上，它提供了一个消息队列，所以最早我个人是希望用 zeromq 来开发的。<br />
+现在回想起来，无论是利用 erlang 还是 zeromq ，感觉都过于重量了。”</em><br />
+由此可知它是一个服务器端的消息框架，由于引入了lua，用户基于skynet可以创建由lua写的服务，也叫agent，而不同agent之间的通信就类似erlang里面不同进程的通信一样(不懂erlang的童鞋理解起来可能有点费力)。 <br />
+<em>**
+下面来看关于skynet架构的说明：<br />
+*“这个系统是单进程多线程模型。”</em> <br />
+<em>“我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。<br />
+线程数应该略大于系统的 CPU 核数，以防止系统饥饿。（只要服务不直接给自己不断发新的消息，就不会有服务被饿死”</em><br />
+skynet是单进程多线程模型，可以看skynet/config 这个配置文件里面：  </p>
 
 <pre><code>root = "./"
 thread = 8                                                                      
@@ -55,78 +50,58 @@ standalone = "0.0.0.0:2013"
 luaservice = root.."service/?.lua;"..root.."service/?/init.lua"
 cpath = root.."service/?.so"
 protopath = root.."proto"
-redis = root .. "redisconf"
-</code></pre>
+redis = root .. "redisconf" thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来   *** 来看看关于agent的说明：   *“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”*   是不是跟erlang的init, terminate 很像？   *“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。   一、一个服务的 callback 函数永远不会被并发。   二、一个服务向两一个服务发送的消息的次序是严格保证的。   我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”*   来看它的启动流程：   skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化   然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context   接着是logger, harbor, snlua这些服务模块的启动   所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环   亮代码：  
 
-<p>thread = 8 这里给skynet的线程池配置了8个线程，并在skynet_start里面给它们起起来</p>
-
-<hr />
-
-<p>来看看关于agent的说明：<br/>
-<em>“每个内部服务的实现，放在独立的动态库中。由动态库导出的三个接口 create init release 来创建出服务的实例。init 可以传递字符串参数来初始化实例。比如用 lua 实现的服务（这里叫 snlua ），可以在初始化时传递启动代码的 lua 文件名。”</em><br/>
-是不是跟erlang的init, terminate 很像？<br/>
-<em>“每个服务都是严格的被动的消息驱动的，以一个统一的 callback 函数的形式交给框架。框架从消息队列里取到消息，调度出接收的服务模块，找到 callback 函数入口，调用它。服务本身在没有被调度时，是不占用任何 CPU 的。框架做两个必要的保证。<br/>
-一、一个服务的 callback 函数永远不会被并发。<br/>
-二、一个服务向两一个服务发送的消息的次序是严格保证的。<br/>
-我用多线程模型来实现它。底层有一个线程消息队列，消息由三部分构成：源地址、目的地址、以及数据块。框架启动固定的多条线程，每条工作线程不断的从消息队列取到消息。根据目的地址获得服务对象。当服务正在工作（被锁住）就把消息放到服务自己的私有队列中。否则调用服务的 callback 函数。当 callback 函数运行完后，检查私有队列，并处理完再解锁。”</em><br/>
-来看它的启动流程：<br/>
-skynet_start函数里，显示group, harbor, handle, mq, module 这些组件的初始化<br/>
-然后启动所有服务模块，并根据配置中standalone来判断是否要启动skynet_context<br/>
-接着是logger, harbor, snlua这些服务模块的启动<br/>
-所有这些启动完毕之后，转入_start 函数开始线程池，进行消息dispatch循环<br/>
-亮代码：</p>
-
-<pre><code>void 
+void 
 skynet_start(struct skynet_config * config) {
-    skynet_group_init();
-    skynet_harbor_init(config-&gt;harbor);
-    skynet_handle_init(config-&gt;harbor);
-    skynet_mq_init();
-    skynet_module_init(config-&gt;module_path);
-    skynet_timer_init();
-    skynet_socket_init();
+	skynet_group_init();
+	skynet_harbor_init(config-&gt;harbor);
+	skynet_handle_init(config-&gt;harbor);
+	skynet_mq_init();
+	skynet_module_init(config-&gt;module_path);
+	skynet_timer_init();
+	skynet_socket_init();
 
-    struct skynet_context *ctx;
-    ctx = skynet_context_new("logger", config-&gt;logger);
-    if (ctx == NULL) {
-        fprintf(stderr,"launch logger error");
-        exit(1);
-    }   
+	struct skynet_context *ctx;
+	ctx = skynet_context_new("logger", config-&gt;logger);
+	if (ctx == NULL) {
+    	fprintf(stderr,"launch logger error");
+    	exit(1);
+	}   
 
-    if (config-&gt;standalone) {
-        if (_start_master(config-&gt;standalone)) {
-            fprintf(stderr, "Init fail : mater");
-            return;
-        }   
-    }   
-    // harbor must be init first
-    if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
-        fprintf(stderr, "Init fail : no master");
-        return;
-    }   
+	if (config-&gt;standalone) {
+    	if (_start_master(config-&gt;standalone)) {
+        	fprintf(stderr, "Init fail : mater");
+        	return;
+    	}   
+	}   
+	// harbor must be init first
+	if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
+    	fprintf(stderr, "Init fail : no master");
+    	return;
+	}   
 
-    ctx = skynet_context_new("localcast", NULL);
-    if (ctx == NULL) {
-        fprintf(stderr,"launch local cast error");
-        exit(1);
-    }   
-    ctx = skynet_context_new("snlua", "launcher");
-    if (ctx) {
-        skynet_command(ctx, "REG", ".launcher");
-        ctx = skynet_context_new("snlua", config-&gt;start);
-    }   
+	ctx = skynet_context_new("localcast", NULL);
+	if (ctx == NULL) {
+    	fprintf(stderr,"launch local cast error");
+    	exit(1);
+	}   
+	ctx = skynet_context_new("snlua", "launcher");
+	if (ctx) {
+    	skynet_command(ctx, "REG", ".launcher");
+    	ctx = skynet_context_new("snlua", config-&gt;start);
+	}   
 
-    _start(config-&gt;thread);
-    skynet_socket_free();                                                       
+	_start(config-&gt;thread);
+	skynet_socket_free();                                                       
 }
 </code></pre>
 
-<h3>skynet集群及RPC</h3>
-
-<p>云风的博客<a href="http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html">skynet集群及RPC</a>上这么写着：<br/>
-<em>“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”</em><br/>
-按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。<br/>
-而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件</p>
+<h3 id="skynetrpc">skynet集群及RPC</h3>
+<p>云风的博客<a href="http://blog.codingnow.com/2012/08/skynet_harbor_rpc.html">skynet集群及RPC</a>上这么写着：<br />
+<em>“最终，我们希望整个 skynet 系统可以部署到多台物理机上。这样，单进程的 skynet 节点是不够满足需求的。我希望 skynet 单节点是围绕单进程运作的，这样服务间才可以以接近零成本的交换数据。这样，进程和进程间（通常部署到不同的物理机上）通讯就做成一个比较外围的设置就好了。”</em><br />
+按照云风说的设计思路，我是这样理解的，服务器分为多个节点，例如网关节点，登陆节点，游戏场景节点等等，节点之间通过rpc通信，而节点内则是单进程多线程（后文统称skynet进程），采用共享内存进行数据交换。<br />
+而进行skynet进程间数据交换的部件就是skynet_harbor，我们来看skynet_harbor.h文件 </p>
 
 <pre><code>#ifndef SKYNET_HARBOR_H                                                          
 #define SKYNET_HARBOR_H
@@ -144,13 +119,13 @@ skynet_start(struct skynet_config * config) {
 
 // 消息目的skynet节点名，包含一个名字和一个32位无符号的id
 struct remote_name {
-    char name[GLOBALNAME_LENGTH];
-    uint32_t handle;
+	char name[GLOBALNAME_LENGTH];
+	uint32_t handle;
 };
 
 struct remote_message {
-    struct remote_name destination;
-    const void * message;
+	struct remote_name destination;
+	const void * message;
     size_t sz; 
 };
 
@@ -165,25 +140,17 @@ void skynet_harbor_init(int harbor);
 // 启动harbor
 int skynet_harbor_start(const char * master, const char *local);
 
-#endif
-</code></pre>
-
-<p>看这段文字：<br/>
-<em>&ldquo;为了定位方便，我希望整个系统里，所有服务节点都有唯一 id 。那么最简单的方案就是限制有限的机器数量、同时设置中心服务器来协调。我用 32bit 的 id 来标识 skynet 上的服务节点。其中高 8 位是机器标识，低 24 位是同一台机器上的服务节点 id 。我们用简单的判断算法就可以知道一个 id 是远程 id 还是本地 id （只需要比较高 8 位就可以了）。&rdquo;</em><br/>
-HANDLE_REMOTE_SHIFT 其实是用来取高8位机器识别码，而HANDLE_MASK则是取低24位skynet节点唯一id长度。我们看一下skynet_harbor_send(skyner_harbor.c 13行) 发消息函数的实现就知道：</p>
-
-<pre><code>void 
+#endif 看这段文字：   *"为了定位方便，我希望整个系统里，所有服务节点都有唯一 id 。那么最简单的方案就是限制有限的机器数量、同时设置中心服务器来协调。我用 32bit 的 id 来标识 skynet 上的服务节点。其中高 8 位是机器标识，低 24 位是同一台机器上的服务节点 id 。我们用简单的判断算法就可以知道一个 id 是远程 id 还是本地 id （只需要比较高 8 位就可以了）。"*   HANDLE_REMOTE_SHIFT 其实是用来取高8位机器识别码，而HANDLE_MASK则是取低24位skynet节点唯一id长度。我们看一下skynet_harbor_send(skyner_harbor.c 13行) 发消息函数的实现就知道：  
+ 
+void 
 skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session) {
-    int type = rmsg-&gt;sz &gt;&gt; HANDLE_REMOTE_SHIFT;
-    rmsg-&gt;sz &amp;= HANDLE_MASK;
-    assert(type != PTYPE_SYSTEM &amp;&amp; type != PTYPE_HARBOR);                                       
-    skynet_context_send(REMOTE, rmsg, sizeof(*rmsg) , source, type , session);
-}
-</code></pre>
+	int type = rmsg-&gt;sz &gt;&gt; HANDLE_REMOTE_SHIFT;
+	rmsg-&gt;sz &amp;= HANDLE_MASK;
+	assert(type != PTYPE_SYSTEM &amp;&amp; type != PTYPE_HARBOR);                                       
+	skynet_context_send(REMOTE, rmsg, sizeof(*rmsg) , source, type , session);
+} 通过将sz向右移24位来取高8位的机器识别码，而通过与0xffffff相与来取低24位的id，在断言这里，有PTYPE_SYSTEM 和PTYPE_HARBOR 两个宏定义在skynet.h中定义着，它们标识着skynet中的消息类型，看skynet.h:
 
-<p>通过将sz向右移24位来取高8位的机器识别码，而通过与0xffffff相与来取低24位的id，在断言这里，有PTYPE_SYSTEM 和PTYPE_HARBOR 两个宏定义在skynet.h中定义着，它们标识着skynet中的消息类型，看skynet.h:</p>
-
-<pre><code>...
+...
 #define PTYPE_TEXT 0
 #define PTYPE_RESPONSE 1
 #define PTYPE_MULTICAST 2
@@ -200,118 +167,83 @@ skynet_harbor_send(struct remote_message *rmsg, uint32_t source, int session) {
 
 #define PTYPE_TAG_DONTCOPY 0x10000
 #define PTYPE_TAG_ALLOCSESSION 0x20000
-...
-</code></pre>
+... 再来看 skynet_harbor.c里面skynet_harbor_message_isremote(skynet_harbor.c 36行) 的实现:
 
-<p>再来看 skynet_harbor.c里面skynet_harbor_message_isremote(skynet_harbor.c 36行) 的实现:</p>
-
-<pre><code>int 
+int 
 skynet_harbor_message_isremote(uint32_t handle) {
-    int h = (handle &amp; ~HANDLE_MASK);
-    return h != HARBOR &amp;&amp; h !=0;
-}
-</code></pre>
+	int h = (handle &amp; ~HANDLE_MASK);
+	return h != HARBOR &amp;&amp; h !=0;
+} 挺简单的一个位运算，好了，再看skynet_harbor_register(skynet_harbor.c 21行)：
 
-<p>挺简单的一个位运算，好了，再看skynet_harbor_register(skynet_harbor.c 21行)：</p>
-
-<pre><code>void 
+void 
 skynet_harbor_register(struct remote_name *rname) {
-    int i;
-    int number = 1;
-    for (i=0;i&lt;GLOBALNAME_LENGTH;i++) {
-        char c = rname-&gt;name[i];
-        if (!(c &gt;= '0' &amp;&amp; c &lt;='9')) {
-            number = 0;
-            break;
-        }   
-    }   
-    assert(number == 0); 
-    skynet_context_send(REMOTE, rname, sizeof(*rname), 0, PTYPE_SYSTEM , 0); 
-}
-</code></pre>
+	int i;
+	int number = 1;
+	for (i=0;i&lt;GLOBALNAME_LENGTH;i++) {
+    	char c = rname-&gt;name[i];
+    	if (!(c &gt;= '0' &amp;&amp; c &lt;='9')) {
+       		number = 0;
+        	break;
+    	}   
+	}   
+	assert(number == 0); 
+	skynet_context_send(REMOTE, rname, sizeof(*rname), 0, PTYPE_SYSTEM , 0); 
+} 看到了，harbor在register的时候向master节点发送的是类型PTYPE_SYSTEM的系统消息，并且source id为0， session 也为0，但是skynet_context_send 函数干了什么呢？   好了，等我们先看完skynet_harbor_init(skynet_harbor.c 42行) 和skynet_harbor_start(skynet_harbor.c 47行)分别做了什么之后，再来看skynet_context_send 到底干了什么  
 
-<p>看到了，harbor在register的时候向master节点发送的是类型PTYPE_SYSTEM的系统消息，并且source id为0， session 也为0，但是skynet_context_send 函数干了什么呢？<br/>
-好了，等我们先看完skynet_harbor_init(skynet_harbor.c 42行) 和skynet_harbor_start(skynet_harbor.c 47行)分别做了什么之后，再来看skynet_context_send 到底干了什么</p>
-
-<pre><code>void
+void
 skynet_harbor_init(int harbor) {
-    HARBOR = (unsigned int)harbor &lt;&lt; HANDLE_REMOTE_SHIFT;
+	HARBOR = (unsigned int)harbor &lt;&lt; HANDLE_REMOTE_SHIFT;
 }
 
 int
 skynet_harbor_start(const char * master, const char *local) {
-    size_t sz = strlen(master) + strlen(local) + 32; 
-    char args[sz];
-    sprintf(args, "%s %s %d",master,local,HARBOR &gt;&gt; HANDLE_REMOTE_SHIFT);
-    struct skynet_context * inst = skynet_context_new("harbor",args);
-    if (inst == NULL) {
-        return 1;
-    }   
-    REMOTE = inst;
+	size_t sz = strlen(master) + strlen(local) + 32; 
+	char args[sz];
+	sprintf(args, "%s %s %d",master,local,HARBOR &gt;&gt; HANDLE_REMOTE_SHIFT);
+	struct skynet_context * inst = skynet_context_new("harbor",args);
+	if (inst == NULL) {
+    	return 1;
+	}   
+	REMOTE = inst;
 
-    return 0;
-}  
-</code></pre>
+	return 0;
+}   哦，init函数里设置了HARBOR的值，它在skynet_harbor.c 第10行声明着。   而start函数设置了REMOTE的值，它在skynet_harbor.c 第9行声明着。   skynet_context_send(skynet_server.c 第682行)
 
-<p>哦，init函数里设置了HARBOR的值，它在skynet_harbor.c 第10行声明着。<br/>
-而start函数设置了REMOTE的值，它在skynet_harbor.c 第9行声明着。<br/>
-skynet_context_send(skynet_server.c 第682行)</p>
+void
+skynet_context_send(struct skynet_context * ctx, void * msg, size_t sz, uint32_t 	source, int type, int session) {
+	struct skynet_message smsg;
+	smsg.source = source;
+	smsg.session = session;
+	smsg.data = msg;
+	smsg.sz = sz | type &lt;&lt; HANDLE_REMOTE_SHIFT;
 
-<pre><code>void
-skynet_context_send(struct skynet_context * ctx, void * msg, size_t sz, uint32_t    source, int type, int session) {
-    struct skynet_message smsg;
-    smsg.source = source;
-    smsg.session = session;
-    smsg.data = msg;
-    smsg.sz = sz | type &lt;&lt; HANDLE_REMOTE_SHIFT;
+	skynet_mq_push(ctx-&gt;queue, &amp;smsg);
+}  它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。   最终harbor的register消息发向了哪里呢？master ! *** #### RPC核心和模块化思想 RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：   *"master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。   master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。   skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。"*   skynet/config配置文件里面有这么两条配置：
 
-    skynet_mq_push(ctx-&gt;queue, &amp;smsg);
-} 
-</code></pre>
+master = "127.0.0.1:2013"
+standalone = "0.0.0.0:2013"   然后再看：
 
-<p>它调用的是skynet_mq_push(skynet_mq.c 182行)，可见harbor使用skynet_mq 来传递消息，而skynet_mq则是skynet里面非常重要的一个组件，它实现了skynet agent之间的消息传递（这个有点类似erlang的cast message）。<br/>
-最终harbor的register消息发向了哪里呢？master !</p>
-
-<hr />
-
-<h4>RPC核心和模块化思想</h4>
-
-<p>RPC的实现，就是先创建一个master，然后所有的worker向master注册，而master纪录下所有注册信息，用云风的原话来讲：<br/>
-<em>&ldquo;master 服务其实就是一个简单的内存 key-value 数据库。数字 key 对应的 value 正是 harbor 的通讯地址。另外，支持了拥有全局名字的服务，也依靠 master 机器同步。比如，你可以从某台 skynet 节点注册一个叫 DATABASE 的服务节点，它只要将 DATABASE 和节点 id 的对应关系通知 master 机器，就可以依靠 master 机器同步给所有注册入网络的 skynet 节点。<br/>
-master 做的事情很简单，其实就是回应名字的查询，以及在更新名字后，同步给网络中所有的机器。<br/>
-skynet 节点，通过 master ，认识网络中所有其它 skynet 节点。它们相互一一建立单向通讯通道。也就是说，如果一共有 100 个 skynet 节点，在它们启动完毕后，会建立起 1 万条通讯通道。&rdquo;</em><br/>
-skynet/config配置文件里面有这么两条配置：</p>
-
-<pre><code>master = "127.0.0.1:2013"
-standalone = "0.0.0.0:2013"  
-</code></pre>
-
-<p>然后再看：</p>
-
-<pre><code>skynet_start(struct skynet_config * config) {
+skynet_start(struct skynet_config * config) {
 // ...
 if (config-&gt;standalone) {
-    if (_start_master(config-&gt;standalone)) {
-        fprintf(stderr, "Init fail : mater");
-        return;
-    }
+	if (_start_master(config-&gt;standalone)) {
+		fprintf(stderr, "Init fail : mater");
+		return;
+	}
 }
 
 // harbor must be init first
 if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
-    fprintf(stderr, "Init fail : no master");
-    return;
+	fprintf(stderr, "Init fail : no master");
+	return;
 }
 // ...
-}
+} 这里配得standalone = "0.0.0.0:2013" 就表示这个skynet节点在本机开启2013端口作为master使用。   而如果这个节点不是master，那么这里配的master = "127.0.0.1:2013" 则告诉它master在哪里。  
 </code></pre>
-
-<p>这里配得standalone = &ldquo;0.0.0.0:2013&rdquo; 就表示这个skynet节点在本机开启2013端口作为master使用。<br/>
-而如果这个节点不是master，那么这里配的master = &ldquo;127.0.0.1:2013&rdquo; 则告诉它master在哪里。</p>
 
 <p>master纪录所有worker的信息是在skynet_handle文件实现的一个哈希表存储的。当由skynet_harbor发起注册register的时候，它就实现了一个句柄handle到skynet_context的映射。</p>
 
-<p>真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c &hellip;等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。</p>
+<p>真正到master的实现，得先了解模块化思想，这里每个服务提供者都做成了一个模块，放在service-src目录下，比如service_master.c,service_harbor.c …等等。  这里文件名都叫service_XXX 其实就是文章开头所说的agent。在agent中，用户可以用c来实现所有需求，也可以调用lua。这样就用lua实现了类似erlang的gen_server 回调模式。skynet_module 的作用就是模块管理。最终这些模块（agent）都做成了.so文件加载。每个模块都实现了create, init, release 几个函数。  </p>
 
 <p>基本上以上就是skynet的主体流程了。</p>
 ]]></content>
@@ -322,160 +254,126 @@ if (skynet_harbor_start(config-&gt;master , config-&gt;local)) {
     <link href="http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb/"/>
     <updated>2013-06-15T16:31:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/06/15/linux-c-gdb</id>
-    <content type="html"><![CDATA[<p>ubuntu上面是默认装了gdb的，输入</p>
+    <content type="html"><![CDATA[<p>ubuntu上面是默认装了gdb的，输入
+    gdb -v
+查看gdb的版本信息
+    zhang@note:~/test_make$ gdb -v
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>.
+上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：
+    CFLAGS = -g
+    main:main.o test1.o test2.o
+	    gcc -o $@ $^
+    ..c.o:
+	    gcc $(CFLAGS) -c $&lt; 
+然后先删了老的main* 和*.o文件
+    zhang@note:~/test_make$ rm main
+    zhang@note:~/test_make$ rm *.o
+好了，重新编译
+    zhang@note:~/test_make$ make
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$
+编译完后运行gdb
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb)
+输入命令
+    (gdb) list
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+    (gdb) 
+    Line number 9 out of range; main.c has 8 lines.
+    (gdb)
+注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：
+    (gdb) list
+    No symbol table is loaded.  Use the “file” command.
+    (gdb)
+如果只想列出2-9行之间的代码
+    (gdb) list 2,9
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       test1_print(“Hello “);
+    7       test2_print(“World !”);
+    8   }
+如果只想列出某个函数
+    (gdb) list test1_print 
+    1   #include “stdio.h”
+    2   #include “test1.h”
+    3 <br />
+    4   void test1_print(char *print_str)
+    5   {
+    6       printf(“This is test1 print %s \n”, print_str);
+    7   }
+    (gdb)
+为了能够下断点查看变量值，我们改下main函数
+    void main(int argc, char **argv)
+       {
+           char msg1[128] = “Hello “;
+           char msg2[128] = “World !”;
+           test1_print(msg1);
+           test2_print(msg2);
+       }
+然后
+    zhang@note:~/test_make$ make        #编译
+    cc -g   -c -o main.o main.c
+    cc -g   -c -o test1.o test1.c
+    cc -g   -c -o test2.o test2.c
+    gcc -o main main.o test1.o test2.o
+    zhang@note:~/test_make$ gdb ./main
+    GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+    Copyright (C) 2012 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.  Type “show copying”
+    and “show warranty” for details.
+    This GDB was configured as “i686-linux-gnu”.
+    For bug reporting instructions, please see:
+    <a href="http://bugs.launchpad.net/gdb-linaro/">http://bugs.launchpad.net/gdb-linaro/</a>…
+    Reading symbols from /home/zhang/test_make/main…done.
+    (gdb) list                          #列出代码
+    1   #include “test1.h”
+    2   #include “test2.h”
+    3 <br />
+    4   void main(int argc, char **argv)
+    5   {
+    6       char msg1[128] = “Hello “;
+    7       char msg2[128] = “World !”;
+    8       test1_print(msg1);
+    9       test2_print(msg2);
+    10  }
+    (gdb) break 7                       #在第7行的位置下断点
+    Breakpoint 1 at 0x804847c: file main.c, line 7.
+    (gdb) run main                      #执行调试
+    Starting program: /home/zhang/test_make/main main</p>
 
-<pre><code>gdb -v
-</code></pre>
-
-<p>查看gdb的版本信息</p>
-
-<pre><code>zhang@note:~/test_make$ gdb -v
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;.
-</code></pre>
-
-<p>上一篇介绍了Makefile，在上一篇的例子里，我们在Makefile中加入-g编译选项，使Makefile文件如下：</p>
-
-<pre><code>CFLAGS = -g
-main:main.o test1.o test2.o
-    gcc -o $@ $^
-..c.o:
-    gcc $(CFLAGS) -c $&lt; 
-</code></pre>
-
-<p>然后先删了老的main<em> 和</em>.o文件</p>
-
-<pre><code>zhang@note:~/test_make$ rm main
-zhang@note:~/test_make$ rm *.o
-</code></pre>
-
-<p>好了，重新编译</p>
-
-<pre><code>zhang@note:~/test_make$ make
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$
-</code></pre>
-
-<p>编译完后运行gdb</p>
-
-<pre><code>zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb)
-</code></pre>
-
-<p>输入命令</p>
-
-<pre><code>(gdb) list
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-(gdb) 
-Line number 9 out of range; main.c has 8 lines.
-(gdb)
-</code></pre>
-
-<p>注意，这里我试过，如果Makefile里面的-g参数不写，或者写得不正确，list的时候会报：</p>
-
-<pre><code>(gdb) list
-No symbol table is loaded.  Use the "file" command.
-(gdb)
-</code></pre>
-
-<p>如果只想列出2-9行之间的代码</p>
-
-<pre><code>(gdb) list 2,9
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       test1_print("Hello ");
-7       test2_print("World !");
-8   }
-</code></pre>
-
-<p>如果只想列出某个函数</p>
-
-<pre><code>(gdb) list test1_print 
-1   #include "stdio.h"
-2   #include "test1.h"
-3   
-4   void test1_print(char *print_str)
-5   {
-6       printf("This is test1 print %s \n", print_str);
-7   }
-(gdb)
-</code></pre>
-
-<p>为了能够下断点查看变量值，我们改下main函数</p>
-
-<pre><code>void main(int argc, char **argv)
-   {
-       char msg1[128] = "Hello ";
-       char msg2[128] = "World !";
-       test1_print(msg1);
-       test2_print(msg2);
-   }
-</code></pre>
-
-<p>然后</p>
-
-<pre><code>zhang@note:~/test_make$ make        #编译
-cc -g   -c -o main.o main.c
-cc -g   -c -o test1.o test1.c
-cc -g   -c -o test2.o test2.c
-gcc -o main main.o test1.o test2.o
-zhang@note:~/test_make$ gdb ./main
-GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-For bug reporting instructions, please see:
-&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
-Reading symbols from /home/zhang/test_make/main...done.
-(gdb) list                          #列出代码
-1   #include "test1.h"
-2   #include "test2.h"
-3   
-4   void main(int argc, char **argv)
-5   {
-6       char msg1[128] = "Hello ";
-7       char msg2[128] = "World !";
-8       test1_print(msg1);
-9       test2_print(msg2);
-10  }
-(gdb) break 7                       #在第7行的位置下断点
-Breakpoint 1 at 0x804847c: file main.c, line 7.
-(gdb) run main                      #执行调试
-Starting program: /home/zhang/test_make/main main
-
-Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
+<pre><code>Breakpoint 1, main (argc=2, argv=0xbffff2c4) at main.c:7
 7       char msg2[128] = "World !";
 (gdb) print msg1                    #查看断点处变量msg1的值
 $1 = "Hello ", '\000' &lt;repeats 121 times&gt;
@@ -484,13 +382,8 @@ Continuing.
 This is test1 print Hello  
 This is test2 print World ! 
 [Inferior 1 (process 3270) exited normally]
-(gdb)
-</code></pre>
-
-<p>看吧，这就是用gdb调试一个程序的完整过程，简单吧？:&ndash;)
-附上常用命令：</p>
-
-<pre><code>小结：常用的gdb命令
+(gdb) 看吧，这就是用gdb调试一个程序的完整过程，简单吧？:-) 附上常用命令：
+小结：常用的gdb命令
 backtrace 显示程序中的当前位置和表示如何到达当前位置的栈跟踪（同义词：where）
 breakpoint 在程序中设置一个断点
 cd 改变当前工作目录
@@ -522,6 +415,7 @@ up 上移栈帧，使另一函数成为当前函数
 watch 在程序中设置一个监测点（即数据断点）
 whatis 显示变量或函数类型 
 </code></pre>
+
 ]]></content>
   </entry>
   
@@ -530,78 +424,52 @@ whatis 显示变量或函数类型
     <link href="http://zhizhen.github.io/blog/2013/06/04/linux-c-makefile/"/>
     <updated>2013-06-04T13:03:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/06/04/linux-c-makefile</id>
-    <content type="html"><![CDATA[<p>关于Makefile的介绍，不多说，详情见百度百科：<br/>
-<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br/>
+    <content type="html"><![CDATA[<p>关于Makefile的介绍，不多说，详情见百度百科：<br />
+<a href="http://baike.baidu.com/view/974566.htm">Makefile</a><br />
 下面就来看看Makefile的作用
-假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br/>
-main.c</p>
+假如我们的项目有main.c; test1.h; test1.c; test2.h; test2.c 这几个文件如下:<br />
+main.c
+    /* main.c */
+    #include “test1.h”
+    #include “test2.h”</p>
 
-<pre><code>/* main.c */
-#include "test1.h"
-#include "test2.h"
-
-int main(int argc, char **argv)
+<pre><code>int main(int argc, char **argv)
 {
     test1_print("hello ");
     test2_print("world !");
-}
-</code></pre>
-
-<p>test1.h</p>
-
-<pre><code>/* test1.h */
+} test1.h
+/* test1.h */
 #ifndef _TEST_1_H
 #define _TEST_1_H
 
 void test1_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test1.c</p>
-
-<pre><code>/* test1.c */
+#endif test1.c
+/* test1.c */
 #include "test1.h"
 
 void test1_print(char *print_str)
 {
     printf("This is test1 print %s \n", print_str);
-}
-</code></pre>
-
-<p>test2.h</p>
-
-<pre><code>/* test2.h */
+} test2.h
+/* test2.h */
 #ifndef _TEST_2_H
 
 void test2_print(char *print_str);
-#endif
-</code></pre>
-
-<p>test2.c</p>
-
-<pre><code>/* test2.c */
+#endif test2.c
+/* test2.c */
 #include "test2.h"
 
 void test2_print(char *print_str)
 {
     printf("This is test2 print %s \n", print_str);
-}
-</code></pre>
-
-<p>在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main</p>
-
-<pre><code>gcc -c main.c   # 生成main.o 目标代码
+} 在没有Makefile的情况下，我们这样子编译整个工程生成一个可执行程序main
+gcc -c main.c   # 生成main.o 目标代码
 gcc -c test1.c  # 生成test1.o 目标代码
 gcc -c test2.c  # 生成test2.o 目标代码
 gcc -o main main.o test1.o test2.o  # 生成名为main的可执行文件
 
-./main  # 执行就能看到输出结果了
-</code></pre>
-
-<p>而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果：
-Makefile</p>
-
-<pre><code>main:main.o test1.o test2.o
+./main  # 执行就能看到输出结果了 而Makefile就是用来说明这样一种关系的,看看我们怎么样用Makefile来达到同样的效果： Makefile
+main:main.o test1.o test2.o
 gcc -o main main.o test1.o test2.o
 
 main.o:main.c test1.h test2.h
@@ -611,29 +479,13 @@ test1.o:test1.c test1.h
 gcc -c test1.c
 
 test2.o:test2.c test2.h
-gcc -c test2.c
-</code></pre>
-
-<p>有了这个Makefile之后，我们只需要在目录下执行</p>
-
-<pre><code>make
-</code></pre>
-
-<p>就生成了名为main的可执行文件</p>
-
-<pre><code>./main
-</code></pre>
-
-<p>Makefile有三个非常有用的变量，$@; $^; $&lt; ：</p>
-
-<pre><code>$@ ：目标文件
+gcc -c test2.c 有了这个Makefile之后，我们只需要在目录下执行
+make 就生成了名为main的可执行文件
+./main Makefile有三个非常有用的变量，$@; $^; $&lt; ：
+$@ ：目标文件
 $^ ：所有的依赖文件
-$&lt; ：第一个依赖文件
-</code></pre>
-
-<p>于是简化后的Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+$&lt; ：第一个依赖文件 于是简化后的Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 main.o:main.c test1.h test2.h
@@ -643,26 +495,15 @@ test1.o:test1.c test1.h
 gcc -c $&lt;
 
 test2.o:test2.c test2.h
-gcc -c $&lt;
-</code></pre>
-
-<p>经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：</p>
-
-<pre><code>..c.o:
-gcc -c $&lt;
-</code></pre>
-
-<p>这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c
-于是Makefile变成了</p>
-
-<pre><code>main:main.o test1.o test2.o
+gcc -c $&lt; 经过简化后是简单了一点，不过还不是最简，Makefile有一个缺省规则：
+..c.o:
+gcc -c $&lt; 这个规则表示所有的.o文件都是依赖与之相应的.c文件的.例如test1.o依赖于test1.c 于是Makefile变成了
+main:main.o test1.o test2.o
 gcc -o $@ $^
 
 ..c.o:
-gcc -c $&lt;
+gcc -c $&lt; 然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档
 </code></pre>
-
-<p>然后make一下，发现了吧，这就Makefile的作用所在！关于Makefile，更多的可以查看相应文档</p>
 ]]></content>
   </entry>
   
@@ -671,33 +512,21 @@ gcc -c $&lt;
     <link href="http://zhizhen.github.io/blog/2013/06/04/linux-c-hello-world/"/>
     <updated>2013-06-04T12:35:00+08:00</updated>
     <id>http://zhizhen.github.io/blog/2013/06/04/linux-c-hello-world</id>
-    <content type="html"><![CDATA[<p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：</p>
-
-<pre><code>man gcc
-</code></pre>
-
-<p>下面就编写一个hello world吧，新建hello.c 内容如下：</p>
-
-<pre><code>int main(int argc, char ** argv)
-{
-    printf("Hello world ! \n");
-}
-</code></pre>
-
-<p>要编译这个程序，我们在命令行下执行:</p>
-
-<pre><code>gcc -o hello hello.c
-</code></pre>
-
-<p>-o  表示输出可执行文件
+    <content type="html"><![CDATA[<p>在linux下面，我们使用GNU的gcc编译器来编译C语言程序。关于gcc编译器，请查看：
+    man gcc
+下面就编写一个hello world吧，新建hello.c 内容如下：
+    int main(int argc, char ** argv)
+    {
+        printf(“Hello world ! \n”);
+    }
+要编译这个程序，我们在命令行下执行:
+    gcc -o hello hello.c
+-o  表示输出可执行文件
 -c  表示输出目标代码
 -g  表示加入调试信息
-gcc编译器就会为我们生成一个名叫hello 的可执行文件</p>
-
-<pre><code>./hello
-</code></pre>
-
-<p>执行就能看到程序输出的hello world 了</p>
+gcc编译器就会为我们生成一个名叫hello 的可执行文件
+    ./hello
+执行就能看到程序输出的hello world 了</p>
 ]]></content>
   </entry>
   
