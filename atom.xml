@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T10:20:16+08:00</updated>
+  <updated>2019-05-15T11:29:45+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -20,7 +20,7 @@
     <id>http://zhizhen.github.io/blog/2019/05/14/fast-inverse-square-root</id>
     <content type="html"><![CDATA[<p>﻿—
 layout: post
-title: “平方根倒数速算法”
+title: “fast inverse square root”
 date: 2019-05-14 20:28
 comments: true
 categories: 
