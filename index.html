@@ -122,7 +122,9 @@ comments: true</p>
 
 <blockquote><p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p></blockquote>
 
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/OpenArena-Rocket.jpg/300px-OpenArena-Rocket.jpg" alt="" /></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/OpenArena-Rocket.jpg/300px-OpenArena-Rocket.jpg" alt="第一人称射击游戏　OpenArena" /></p>
+
+<h1>起源</h1>
 
 <p>此算法最早被认为是由约翰·卡马克所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知，此算法最早由加里·塔罗利（Gary Tarolli）在SGI Indigo的开发中使用。虽说随后的相关研究也提出了一些可能的来源，但至今为止仍未能确切知晓算法中所使用的特殊常数的起源。</p>
 
@@ -146,19 +148,19 @@ comments: true</p>
 <span class='line-number'>16</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
 </span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span> <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
-</span><span class='line'>  <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span> <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
-</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span> <span class="c1">// 1st iteration （第一次迭代）</span>
-</span><span class='line'><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class='line'>    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>
+</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class='line'><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) );</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -187,7 +189,7 @@ $$</p>
 
 <p>如上所述，一个有符号正整数在二进制补码系统中的表示中首位为0，而后面的各位则用于表示其数值。将浮点数取别名存储为整数时，该整数的数值即为\(I=E\times 2^{23}+M\)，其中E表示指数，M表示有效数字；若以上图为例，图中样例若作为浮点数看待有\(E=124\)，\(M=1\cdot 2^{21}\)，则易知其转化而得的整数型号数值为\(I=124\times 2^{23} + 2^{21}\)。由于平方根倒数函数仅能处理正数，因此浮点数的符号位（即如上的Si）必为0，而这就保证了转换所得的有符号整数也必为正数。以上转换就为后面的计算带来了可行性，之后的第一步操作（逻辑右移一位）即是使该数的长整形式被2所除。</p>
 
-<h3>魔术数字</h3>
+<h1>魔术数字</h1>
 
 <p>对猜测平方根倒数速算法的最初构想来说，计算首次近似值所使用的常数<strong>0x5f3759df</strong>也是重要的线索。为确定程序员最初选此常数以近似求取平方根倒数的方法，Charles McEniry首先检验了在代码中选择任意常数R所求取出的首次近似值的精度。回想上一节关于整数和浮点数表示的比较：对于同样的32位二进制数字，若为浮点数表示时实际数值为\(x=(1+m_x)2^{e_x}\)，而若为整数表示时实际数值则为\(I_x=E_xL+M_x\)，其中\(L=2^{n-1-b}\)。以下等式引入了一些由指数和有效数字导出的新元素：</p>
 
