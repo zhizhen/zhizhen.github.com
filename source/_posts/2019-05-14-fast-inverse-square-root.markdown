@@ -16,7 +16,7 @@ categories:
 
 下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：
 
-```c
+```
 float Q_rsqrt( float number )
 {
     long i;
