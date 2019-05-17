@@ -1,74 +1,8 @@
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>植臻</title>
-  <meta name="author" content="张植臻">
-
-  
-  <meta name="description" content="﻿—
-layout: post
-title: “fast inverse square root”
-date: 2019-05-14 20:28
-comments: true
-categories: — 在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。 &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://zhizhen.github.io">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-41804716-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
 
 <body   >
-  <header role="banner"><!DOCTYPE html>
+  <header role="banner">
+  	<!DOCTYPE html>
 <!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
 <!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
@@ -78,12 +12,7 @@ MathJax.Hub.Config({
   <meta name="author" content="张植臻">
 
   
-  <meta name="description" content="﻿—
-layout: post
-title: “fast inverse square root”
-date: 2019-05-14 20:28
-comments: true
-categories: — 在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。 &hellip;">
+  <meta name="description" content="在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。 起源 此算法最早被认为是由约翰·卡马克所发明，但后来的调查显示，该算法在这之前就于计算机图形学的硬件与软件领域有所应用，如SGI和3dfx就曾在产品中应用此算法。而就现在所知 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -136,14 +65,15 @@ MathJax.Hub.Config({
 
 </head>
 
-<hgroup>
+  	<hgroup>
   <h1><a href="/">植臻</a></h1>
   
     <h2>谦虚、热情、简单、极致</h2>
   
 </hgroup>
 
-</header>
+
+  </header>
   <nav role="navigation"><ul class="subscription" data-subscription="rss">
   <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
@@ -164,14 +94,34 @@ MathJax.Hub.Config({
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>植臻</title>
+  <meta name="author" content="张植臻">
+
   
+  <meta name="description" content="">
   
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   
-    <article>
-      
-  <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+  <link rel="canonical" href="http://zhizhen.github.io">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="植臻" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <!-- mathjax config similar to math.stackexchange -->
@@ -191,8 +141,31 @@ MathJax.Hub.Config({
 <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
 
 
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41804716-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
     
-      <h1 class="entry-title"><a href="/blog/2019/05/14/fast-inverse-square-root/">Fast Inverse Square Root</a></h1>
+      <h1 class="entry-title"><a href="/blog/2019/05/14/inverse-square-root-fast/">平方根倒数快算法</a></h1>
     
     
       <p class="meta">
@@ -208,22 +181,16 @@ MathJax.Hub.Config({
   
 
 
-<time datetime="2019-05-14T00:00:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2019</time>
+<time datetime="2019-05-14T20:28:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2019</time>
         
-         | <a href="/blog/2019/05/14/fast-inverse-square-root/#disqus_thread">Comments</a>
+         | <a href="/blog/2019/05/14/inverse-square-root-fast/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>﻿—
-layout: post
-title: “fast inverse square root”
-date: 2019-05-14 20:28
-comments: true
-categories: 
-—</p>
+  <div class="entry-content"><hr />
 
 <blockquote>
   <p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p>
@@ -237,7 +204,7 @@ categories:
 
 <p>下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -253,23 +220,22 @@ categories:
 <span class="line-number">14</span>
 <span class="line-number">15</span>
 <span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
-</span><span class="line">    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span><span class="line">    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">float Q_rsqrt( float number )
+</span><span class="line">{
+</span><span class="line">    long i;
+</span><span class="line">    float x2, y;
+</span><span class="line">    const float threehalfs = 1.5F;
 </span><span class="line">
-</span><span class="line">    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>                  <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
-</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>               <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>   <span class="c1">// 1st iteration （第一次迭代）</span>
-</span><span class="line"><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class="line">    x2 = number * 0.5F;
+</span><span class="line">    y  = number;
+</span><span class="line">    i  = * ( long * ) &y;                  // evil floating point bit level hacking（对浮点数的邪恶位元hack）
+</span><span class="line">    i  = 0x5f3759df - ( i &gt;&gt; 1 );               // what the fuck?（这他妈的是怎么回事？）
+</span><span class="line">    y  = * ( float * ) &i;
+</span><span class="line">    y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration （第一次迭代）
+</span><span class="line">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）
 </span><span class="line">
-</span><span class="line">    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">    return y;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：  </p>
 
@@ -459,26 +425,6 @@ $$</p>
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2019/04/11/cocos2dx-shader-outline/">Cocos2dx Shader 描边</a></h1>
     
@@ -632,26 +578,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2019/04/11/cocos2dx-shader-blur/">Cocos2dx Shader 模糊</a></h1>
     
@@ -831,26 +757,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2019/04/11/cocos2dx-shader-gray/">Cocos2dx Shader 变灰</a></h1>
     
@@ -975,26 +881,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2019/04/11/render-flow/">渲染流水线(render Flow)</a></h1>
     
@@ -1124,26 +1010,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2019/04/10/gamma-correction/">伽马矫正 Gamma Correction</a></h1>
     
@@ -1198,26 +1064,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2016/09/22/quan-qiu-tong-fu-you-xi-de-shu-ju-ku-ceng-zen-yao-she-ji/">全球同服游戏的数据库层怎么设计</a></h1>
     
@@ -1445,26 +1291,6 @@ simple_hash(Item) -&gt;
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2016/05/07/yi-ci-wei-qi-dian/">以此为起点</a></h1>
     
@@ -1516,26 +1342,6 @@ sparkling with freedom  –《The Shawshank Redemption》</p>
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2015/07/07/wo-yu-you-xi/">我与街机</a></h1>
     
@@ -1587,26 +1393,6 @@ MathJax.Hub.Config({
     <article>
       
   <header>
-    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$']],
-    processEscapes: true,
-    skipTags: ['script', 'noscript', 'stye','textarea', 'pre', 'code']
-  },
-  messageStyle: "none",
-  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-});
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
-
-
     
       <h1 class="entry-title"><a href="/blog/2014/12/27/chu-tan-erlang-mysql-driver/">Erlang-mysql-driver</a></h1>
     
@@ -1668,7 +1454,7 @@ MathJax.Hub.Config({
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2019/05/14/fast-inverse-square-root/">Fast Inverse Square Root</a>
+        <a href="/blog/2019/05/14/inverse-square-root-fast/">平方根倒数快算法</a>
       </li>
     
       <li class="post">

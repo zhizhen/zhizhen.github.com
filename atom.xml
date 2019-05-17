@@ -4,7 +4,7 @@
   <title><![CDATA[植臻]]></title>
   <link href="http://zhizhen.github.io/atom.xml" rel="self"/>
   <link href="http://zhizhen.github.io/"/>
-  <updated>2019-05-15T11:29:45+08:00</updated>
+  <updated>2019-05-17T17:31:02+08:00</updated>
   <id>http://zhizhen.github.io/</id>
   <author>
     <name><![CDATA[张植臻]]></name>
@@ -14,17 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Fast Inverse Square Root]]></title>
-    <link href="http://zhizhen.github.io/blog/2019/05/14/fast-inverse-square-root/"/>
-    <updated>2019-05-14T00:00:00+08:00</updated>
-    <id>http://zhizhen.github.io/blog/2019/05/14/fast-inverse-square-root</id>
-    <content type="html"><![CDATA[<p>﻿—
-layout: post
-title: “fast inverse square root”
-date: 2019-05-14 20:28
-comments: true
-categories: 
-—</p>
+    <title type="html"><![CDATA[平方根倒数快算法]]></title>
+    <link href="http://zhizhen.github.io/blog/2019/05/14/inverse-square-root-fast/"/>
+    <updated>2019-05-14T20:28:00+08:00</updated>
+    <id>http://zhizhen.github.io/blog/2019/05/14/inverse-square-root-fast</id>
+    <content type="html"><![CDATA[<hr />
 
 <blockquote>
   <p>在计算机图形学领域，若要求取照明和投影的波动角度与反射效果，就常需计算平方根倒数。而浮点求平方根倒数运算带来的耗费巨大。</p>
@@ -38,7 +32,7 @@ categories:
 
 <p>下列代码是《雷神之锤III竞技场》源代码中平方根倒数速算法之实例。示例去除了C预处理器的指令，但附上了原有的注释：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -54,23 +48,22 @@ categories:
 <span class="line-number">14</span>
 <span class="line-number">15</span>
 <span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="kt">float</span> <span class="nf">Q_rsqrt</span><span class="p">(</span> <span class="kt">float</span> <span class="n">number</span> <span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
-</span><span class="line">    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span><span class="line">    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5F</span><span class="p">;</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">float Q_rsqrt( float number )
+</span><span class="line">{
+</span><span class="line">    long i;
+</span><span class="line">    float x2, y;
+</span><span class="line">    const float threehalfs = 1.5F;
 </span><span class="line">
-</span><span class="line">    <span class="n">x2</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">0.5F</span><span class="p">;</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">number</span><span class="p">;</span>
-</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">long</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>                  <span class="c1">// evil floating point bit level hacking（对浮点数的邪恶位元hack）</span>
-</span><span class="line">    <span class="n">i</span>  <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="p">);</span>               <span class="c1">// what the fuck?（这他妈的是怎么回事？）</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="o">*</span> <span class="p">(</span> <span class="kt">float</span> <span class="o">*</span> <span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
-</span><span class="line">    <span class="n">y</span>  <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span> <span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span> <span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="p">)</span> <span class="p">);</span>   <span class="c1">// 1st iteration （第一次迭代）</span>
-</span><span class="line"><span class="c1">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）</span>
+</span><span class="line">    x2 = number * 0.5F;
+</span><span class="line">    y  = number;
+</span><span class="line">    i  = * ( long * ) &y;                  // evil floating point bit level hacking（对浮点数的邪恶位元hack）
+</span><span class="line">    i  = 0x5f3759df - ( i &gt;&gt; 1 );               // what the fuck?（这他妈的是怎么回事？）
+</span><span class="line">    y  = * ( float * ) &i;
+</span><span class="line">    y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration （第一次迭代）
+</span><span class="line">//      y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed（第二次迭代，可以删除）
 </span><span class="line">
-</span><span class="line">    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">    return y;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>要理解这段代码，首先需了解浮点数的存储格式。一个浮点数以32个二进制位表示，而这32位由其意义分为三段：1个符号位，如若是0则为正数，反之为负数；接下来的8位表示经过[偏移处理]（这是为了使之能表示-127－128）后的指数；最后23位表示的则是[有效数字]中除最高位以外的其余数字。如图：  </p>
 
